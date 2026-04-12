@@ -513,7 +513,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 <div id="coach-sidebar">
   <div class="cs-hdr">
     <span class="cs-title">🧠 Coach</span>
-    <button class="cs-close" onclick="closeCoach()">✕</button>
+    <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:10px;color:var(--dim);letter-spacing:1px;">v" + APP_VERSION + "'</span><button class="cs-close" onclick="closeCoach()">✕</button></div>
   </div>
 
   <!-- Default: action list -->
@@ -705,6 +705,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 
 <script>
 'use strict';
+const APP_VERSION = '0.3.0';
 let demo=false, chatMsgs=[], curMode='';
 let tasks=[], selBucketVal='immediate';
 let pSecs=25*60, pTotal=25*60, pRun=false, pBreak=false, pSess=1, pTimer=null;
@@ -752,6 +753,8 @@ ${getProfileContext()}`;
 function goLive(){launch(false);}
 function goDemo(){demo=true;launch(true);}
 function launch(d){
+  // Set version
+  const vb=document.getElementById('version-badge');if(vb)vb.textContent='v'+APP_VERSION;
   // Load persisted tasks
   tasks = loadTasks();
   document.getElementById('app').classList.add('on');
