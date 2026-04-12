@@ -236,6 +236,146 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
   :root{--sidebar-w:88vw;}
   .col{min-width:200px;}
 }
+
+/* ── MOBILE BOARD: tabbed single column ── */
+@media(max-width:700px){
+  .board{flex-direction:column;overflow-x:hidden;overflow-y:hidden;padding-bottom:0;}
+  .col{min-width:100%;max-width:100%;border-right:none;border-bottom:1px solid var(--border);display:none;flex:none;height:100%;}
+  .col.mob-active{display:flex;}
+  .mob-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--bg);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+  .mob-tabs::-webkit-scrollbar{display:none;}
+  .mob-tab{flex:1;min-width:0;padding:10px 4px;text-align:center;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+  .mob-tab-name{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;white-space:nowrap;color:var(--dim);display:block;margin-bottom:3px;}
+  .mob-tab-count{display:inline-block;min-width:16px;height:16px;border-radius:8px;font-size:9px;font-family:'Syne',sans-serif;font-weight:700;line-height:16px;padding:0 4px;background:var(--surface2);color:var(--dim);}
+  .mob-tab.active-immediate{border-bottom-color:var(--immediate);}.mob-tab.active-immediate .mob-tab-name{color:var(--immediate);}.mob-tab.active-immediate .mob-tab-count{background:rgba(255,107,107,.15);color:var(--immediate);}
+  .mob-tab.active-today{border-bottom-color:var(--today);}.mob-tab.active-today .mob-tab-name{color:var(--today);}.mob-tab.active-today .mob-tab-count{background:rgba(245,166,35,.15);color:var(--today);}
+  .mob-tab.active-week{border-bottom-color:var(--week);}.mob-tab.active-week .mob-tab-name{color:var(--week);}.mob-tab.active-week .mob-tab-count{background:rgba(74,158,255,.15);color:var(--week);}
+  .mob-tab.active-planned{border-bottom-color:var(--planned);}.mob-tab.active-planned .mob-tab-name{color:var(--planned);}.mob-tab.active-planned .mob-tab-count{background:rgba(107,122,153,.2);color:var(--planned);}
+  .board-wrap{flex-direction:column;}
+  /* Larger tap targets on mobile */
+  .tc-body{padding:12px 12px 8px;}
+  .tc-txt{font-size:15px;}
+  .tcbtn{min-height:36px;padding:8px 14px;font-size:13px;}
+  .col-cards{padding:8px 10px 4px;}
+  /* FABs bigger on mobile */
+  #dictate-fab{height:52px;font-size:15px;padding:0 20px 0 6px;}
+  #add-fab{width:48px;height:48px;font-size:24px;}
+}
+@media(min-width:701px){
+  .mob-tabs{display:none;}
+  .col{display:flex!important;}
+}
+
+
+/* ── MOOD INTAKE SHEET ── */
+#mood-sheet{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:none;align-items:flex-end;justify-content:center;}
+#mood-sheet.on{display:flex;}
+.ms-inner{width:100%;max-width:500px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));animation:slideUp .25s ease;}
+.ms-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.ms-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);margin-bottom:4px;}
+.ms-sub{font-size:12px;color:var(--dim);margin-bottom:20px;}
+.ms-slider-group{margin-bottom:20px;}
+.ms-slider-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ms-slider-label{font-size:13px;color:var(--bright);font-weight:500;}
+.ms-slider-val{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;min-width:28px;text-align:right;}
+.ms-slider-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:4px;}
+.ms-pills-label{font-size:13px;color:var(--bright);font-weight:500;margin-bottom:10px;}
+.ms-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
+.ms-pill{background:var(--surface2);border:1px solid var(--border);border-radius:18px;padding:8px 14px;font-size:13px;color:var(--dim);cursor:pointer;transition:all .15s;}
+.ms-pill.sel{background:var(--mood);border-color:var(--mood);color:#0d0f14;}
+.ms-start{width:100%;background:var(--mood);border:none;border-radius:11px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;}
+.ms-start:active{opacity:.85;}
+
+
+/* ── ONBOARDING ── */
+#onboarding{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:flex;align-items:flex-end;justify-content:center;padding:0;}
+#onboarding.hidden{display:none;}
+.ob-sheet{width:100%;max-width:520px;background:var(--surface);border-radius:24px 24px 0 0;padding:28px 24px calc(24px + var(--sb));animation:slideUp .3s ease;max-height:92dvh;overflow-y:auto;}
+.ob-progress{display:flex;gap:6px;margin-bottom:24px;justify-content:center;}
+.ob-dot{width:24px;height:4px;border-radius:2px;background:var(--border);transition:background .3s;}
+.ob-dot.active{background:var(--stuck);}
+.ob-dot.done{background:var(--success);}
+
+/* Screen 1 */
+.ob-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;background:linear-gradient(120deg,var(--stuck),var(--morning));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.ob-tagline{font-size:12px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;}
+.ob-headline{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--bright);line-height:1.25;margin-bottom:12px;letter-spacing:-.3px;}
+.ob-body{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;}
+.ob-body strong{color:var(--bright);font-weight:600;}
+.ob-disclaimer{font-size:11px;color:var(--dim);font-style:italic;margin-bottom:20px;line-height:1.6;}
+
+/* Screen 2 — board explainer */
+.ob-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.ob-col-card{border-radius:12px;padding:12px 14px;border:1px solid var(--border);}
+.ob-col-label{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-bottom:3px;}
+.ob-col-desc{font-size:11px;color:var(--dim);line-height:1.5;}
+.ob-voice-box{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.ob-voice-icon{font-size:28px;flex-shrink:0;}
+.ob-voice-text{flex:1;}
+.ob-voice-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--bright);margin-bottom:3px;}
+.ob-voice-desc{font-size:12px;color:var(--dim);line-height:1.5;}
+
+/* Screen 3 — coach modes */
+.ob-coach-intro{font-size:14px;color:var(--text);line-height:1.65;margin-bottom:16px;}
+.ob-modes{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.ob-mode{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:var(--bg);}
+.ob-mode-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ob-mode-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-bottom:1px;}
+.ob-mode-desc{font-size:11px;color:var(--dim);}
+
+/* Do not show again */
+.ob-dontshow{display:flex;align-items:center;gap:9px;margin-bottom:18px;cursor:pointer;}
+.ob-dontshow input{width:18px;height:18px;accent-color:var(--success);cursor:pointer;}
+.ob-dontshow span{font-size:13px;color:var(--dim);}
+
+/* Nav buttons */
+.ob-nav{display:flex;gap:8px;align-items:center;}
+.ob-skip{background:none;border:none;color:var(--dim);font-size:13px;cursor:pointer;padding:4px 8px;font-family:'DM Sans',sans-serif;}
+.ob-skip:active{color:var(--bright);}
+.ob-next{flex:1;background:linear-gradient(120deg,var(--stuck),var(--morning));border:none;border-radius:11px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#0d0f14;cursor:pointer;transition:opacity .15s;}
+.ob-next:active{opacity:.85;}
+.ob-back{width:44px;height:44px;border-radius:11px;border:1px solid var(--border);background:var(--surface2);color:var(--dim);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.ob-back:active{color:var(--bright);}
+
+
+/* ── TASK EDIT SHEET ── */
+#edit-sheet{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:none;align-items:flex-end;justify-content:center;}
+#edit-sheet.on{display:flex;}
+.es-inner{width:100%;max-width:500px;background:var(--surface);border-radius:22px 22px 0 0;padding:20px 18px calc(18px + var(--sb));animation:slideUp .25s ease;}
+.es-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px;}
+.es-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.es-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);}
+.es-close{background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:16px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+.es-close:active{color:var(--bright);}
+.es-label{font-size:11px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.es-ta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 13px;color:var(--bright);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:none;min-height:48px;max-height:120px;margin-bottom:14px;transition:border-color .2s;line-height:1.5;}
+.es-ta:focus{border-color:var(--breakdown);}
+.es-ta::placeholder{color:var(--dim);}
+.es-notes{min-height:80px;max-height:160px;margin-bottom:16px;font-size:13px;}
+.es-bucket-label{font-size:11px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.es-buckets{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
+.es-bb{border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;cursor:pointer;background:var(--surface2);color:var(--dim);transition:all .15s;}
+.es-bb.sel{color:#0d0f14;}
+.es-bb[data-b="immediate"].sel{background:var(--immediate);border-color:var(--immediate);}
+.es-bb[data-b="today"].sel{background:var(--today);border-color:var(--today);}
+.es-bb[data-b="week"].sel{background:var(--week);border-color:var(--week);}
+.es-bb[data-b="planned"].sel{background:var(--planned);border-color:var(--planned);color:var(--bright);}
+.es-save{width:100%;background:var(--breakdown);border:none;border-radius:11px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;}
+.es-save:active{opacity:.85;}
+
+/* Triage suggestion cards in coach */
+.triage-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-top:8px;}
+.triage-task{font-size:13px;color:var(--bright);margin-bottom:6px;font-weight:500;}
+.triage-move{font-size:11px;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.triage-btns{display:flex;gap:6px;}
+.triage-accept{background:rgba(91,191,122,.12);border:1px solid rgba(91,191,122,.25);border-radius:7px;padding:6px 12px;font-size:12px;color:var(--success);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;}
+.triage-accept:active{background:rgba(91,191,122,.25);}
+.triage-reject{background:transparent;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:12px;color:var(--dim);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.triage-reject:active{color:var(--stuck);}
+
+/* Task card edit indicator */
+.tc-has-notes{font-size:10px;color:var(--dim);margin-top:3px;display:flex;align-items:center;gap:3px;}
+
 </style>
 </head>
 <body>
@@ -276,8 +416,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 
   <!-- Board -->
   <div class="board-wrap">
+    <div class="board-wrap-inner" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;">
+    <!-- Mobile column tabs (hidden on desktop) -->
+    <div class="mob-tabs" id="mob-tabs">
+      <div class="mob-tab active-immediate" id="mtab-immediate" onclick="mobSwitchCol('immediate')">
+        <span class="mob-tab-name">🔴 Now</span><span class="mob-tab-count" id="mcnt-immediate">0</span>
+      </div>
+      <div class="mob-tab" id="mtab-today" onclick="mobSwitchCol('today')">
+        <span class="mob-tab-name">🟡 Today</span><span class="mob-tab-count" id="mcnt-today">0</span>
+      </div>
+      <div class="mob-tab" id="mtab-week" onclick="mobSwitchCol('week')">
+        <span class="mob-tab-name">🔵 Week</span><span class="mob-tab-count" id="mcnt-week">0</span>
+      </div>
+      <div class="mob-tab" id="mtab-planned" onclick="mobSwitchCol('planned')">
+        <span class="mob-tab-name">📋 Plan</span><span class="mob-tab-count" id="mcnt-planned">0</span>
+      </div>
+    </div>
     <div class="board" id="board">
-      <div class="col" id="col-immediate" data-bucket="immediate">
+      <div class="col mob-active" id="col-immediate" data-bucket="immediate">
         <div class="col-hdr">
           <div class="col-title-wrap">
             <div class="col-dot" style="background:var(--immediate)"></div>
@@ -377,6 +533,79 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
   </div>
 </div>
 
+
+<!-- Mood intake sheet -->
+<div id="mood-sheet">
+  <div class="ms-inner">
+    <div class="ms-handle"></div>
+    <div class="ms-title">🧭 Quick state check</div>
+    <div class="ms-sub">Takes 20 seconds. Helps the coach skip the obvious questions.</div>
+
+    <div class="ms-slider-group">
+      <div class="ms-slider-row">
+        <span class="ms-slider-label">Energy level</span>
+        <span class="ms-slider-val" id="ms-energy-val" style="color:#f5a623">5</span>
+      </div>
+      <input type="range" min="1" max="10" value="5" id="ms-energy"
+        style="background:linear-gradient(90deg,#f5a623 50%,var(--border) 50%)"
+        oninput="msSl('energy','#f5a623',this)">
+      <div class="ms-slider-ends"><span>Flat / empty</span><span>Fully charged</span></div>
+    </div>
+
+    <div class="ms-slider-group">
+      <div class="ms-slider-row">
+        <span class="ms-slider-label">Anxiety</span>
+        <span class="ms-slider-val" id="ms-anxiety-val" style="color:#ff6b6b">5</span>
+      </div>
+      <input type="range" min="1" max="10" value="5" id="ms-anxiety"
+        style="background:linear-gradient(90deg,#ff6b6b 50%,var(--border) 50%)"
+        oninput="msSl('anxiety','#ff6b6b',this)">
+      <div class="ms-slider-ends"><span>Calm</span><span>Very anxious</span></div>
+    </div>
+
+    <div class="ms-slider-group">
+      <div class="ms-slider-row">
+        <span class="ms-slider-label">Focus capacity</span>
+        <span class="ms-slider-val" id="ms-focus-val" style="color:#4a9eff">5</span>
+      </div>
+      <input type="range" min="1" max="10" value="5" id="ms-focus"
+        style="background:linear-gradient(90deg,#4a9eff 50%,var(--border) 50%)"
+        oninput="msSl('focus','#4a9eff',this)">
+      <div class="ms-slider-ends"><span>Scattered</span><span>Sharp</span></div>
+    </div>
+
+    <div class="ms-pills-label">What's mainly sitting on you?</div>
+    <div class="ms-pills" id="ms-blocker-pills">
+      <button class="ms-pill" data-val="A specific task" onclick="msPill(this)">A specific task</button>
+      <button class="ms-pill" data-val="A person or relationship" onclick="msPill(this)">A person</button>
+      <button class="ms-pill" data-val="Volume of work" onclick="msPill(this)">Volume of work</button>
+      <button class="ms-pill" data-val="Nothing clear" onclick="msPill(this)">Nothing clear</button>
+      <button class="ms-pill" data-val="I'm actually fine" onclick="msPill(this)">I'm fine</button>
+    </div>
+
+    <button class="ms-start" onclick="submitMoodSheet()">Start mood check →</button>
+  </div>
+</div>
+
+
+<!-- Task edit sheet -->
+<div id="edit-sheet">
+  <div class="es-inner">
+    <div class="es-handle"></div>
+    <div class="es-top">
+      <span class="es-title">Edit task</span>
+      <button class="es-close" onclick="closeEditSheet()">✕</button>
+    </div>
+    <div class="es-label">Task</div>
+    <textarea class="es-ta" id="es-task-inp" placeholder="What needs to happen?" oninput="esAr(this)"></textarea>
+    <div class="es-label">Notes & comments</div>
+    <textarea class="es-ta es-notes" id="es-notes-inp" placeholder="Add context, links, dependencies, anything relevant…" oninput="esAr(this)"></textarea>
+    <div class="es-bucket-label">Bucket</div>
+    <div class="es-buckets" id="es-buckets"></div>
+    <button class="es-save" onclick="saveEditTask()">Save changes</button>
+  </div>
+</div>
+
 <!-- Dictate FAB -->
 <button id="dictate-fab" onclick="startDictation()">
   <div class="df-ic">🎙</div>Dictate Tasks
@@ -471,7 +700,7 @@ function launch(d){
   renderBoard();
 }
 // Auto-launch on page load
-window.addEventListener('DOMContentLoaded', () => { launch(false); });
+
 
 // ── Coach sidebar ──
 let coachOpen=false;
@@ -483,6 +712,12 @@ function openCoach(){
   const btn=document.getElementById('coach-toggle-btn');
   ov.classList.add('on');requestAnimationFrame(()=>{ov.classList.add('visible');sb.classList.add('open');});
   btn.classList.add('active');
+  // If coach is showing actions menu (not already in a chat), proactively read board
+  const actions=document.getElementById('cs-actions');
+  const chatEl=document.getElementById('cs-chat');
+  if(actions&&actions.style.display!=='none'&&chatEl&&!chatEl.classList.contains('on')){
+    coachReadBoard();
+  }
 }
 function closeCoach(){
   coachOpen=false;
@@ -494,7 +729,87 @@ function closeCoach(){
   setTimeout(()=>ov.classList.remove('on'),280);
 }
 
+
+// ── Mood sheet ──
+let moodData={energy:5,anxiety:5,focus:5,blocker:null};
+function openMoodSheet(){
+  // Reset sliders
+  ['energy','anxiety','focus'].forEach(id=>{
+    const sl=document.getElementById('ms-'+id);if(sl)sl.value=5;
+    const val=document.getElementById('ms-'+id+'-val');if(val)val.textContent=5;
+    const colors={'energy':'#f5a623','anxiety':'#ff6b6b','focus':'#4a9eff'};
+    if(sl)sl.style.background=`linear-gradient(90deg,${colors[id]} 50%,var(--border) 50%)`;
+  });
+  document.querySelectorAll('.ms-pill').forEach(p=>p.classList.remove('sel'));
+  moodData={energy:5,anxiety:5,focus:5,blocker:null};
+  document.getElementById('mood-sheet').classList.add('on');
+}
+function closeMoodSheet(){document.getElementById('mood-sheet').classList.remove('on');}
+document.addEventListener('click',e=>{if(e.target===document.getElementById('mood-sheet'))closeMoodSheet();});
+
+function msSl(id,color,el){
+  const v=parseInt(el.value);moodData[id]=v;
+  const vEl=document.getElementById('ms-'+id+'-val');if(vEl)vEl.textContent=v;
+  const pct=((v-1)/9*100).toFixed(0);
+  el.style.background=`linear-gradient(90deg,${color} ${pct}%,var(--border) ${pct}%)`;
+}
+function msPill(el){
+  document.querySelectorAll('.ms-pill').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');moodData.blocker=el.dataset.val;
+}
+function submitMoodSheet(){
+  closeMoodSheet();
+  // Build opener from slider data
+  const e=moodData.energy,a=moodData.anxiety,f=moodData.focus;
+  let read=e<=4&&a>=7?"Low energy, high anxiety — brain running hot on empty.":
+           e<=4?"Energy is low. We work with that, not against it.":
+           a>=7?"Anxiety running high. Something's got your brain on alert.":
+           f>=7?"Good focus capacity — let's use it.":"Middle of the road — enough to work with.";
+  const b=moodData.blocker&&moodData.blocker!=="I'm actually fine"?
+    `\n\nYou flagged "${moodData.blocker}". Tell me more.`:
+    "\n\nWhat would make today feel less stuck?";
+  const opener=read+b;
+  // Start the coach chat directly with this opener
+  curMode='mood';chatMsgs=[];di['mood']=di['mood']||0;
+  const cfg=M['mood'];
+  openCoach();
+  const actions=document.getElementById('cs-actions');
+  const chat=document.getElementById('cs-chat');
+  actions.style.display='none';chat.classList.add('on');
+  const modeEl=document.getElementById('cs-chat-mode');
+  modeEl.textContent=cfg.icon+' '+cfg.label;modeEl.style.color=cfg.color;
+  document.getElementById('cs-send').style.background=cfg.color;
+  document.getElementById('cs-msgs').innerHTML='';
+  csAddMsg('coach',opener);
+  chatMsgs.push({role:'assistant',content:opener});
+  // Add context summary as system context
+  const summary=`[Mood intake — Energy: ${e}/10 | Anxiety: ${a}/10 | Focus: ${f}/10${moodData.blocker?' | Blocker: '+moodData.blocker:''}]`;
+  chatMsgs.unshift({role:'user',content:summary},{role:'assistant',content:opener});
+  chatMsgs.shift();chatMsgs.shift();
+  chatMsgs=[{role:'user',content:summary},{role:'assistant',content:opener}];
+  setTimeout(()=>document.getElementById('cs-ta').focus(),100);
+}
+
+
+// ── Mobile column tabs ──
+let mobActiveCol = 'immediate';
+function mobSwitchCol(bucket){
+  // Only applies on mobile, harmless on desktop
+  document.querySelectorAll('.col').forEach(c=>c.classList.remove('mob-active'));
+  const col=document.getElementById('col-'+bucket);if(col)col.classList.add('mob-active');
+  document.querySelectorAll('.mob-tab').forEach(t=>t.className='mob-tab');
+  const tab=document.getElementById('mtab-'+bucket);if(tab)tab.classList.add('mob-tab','active-'+bucket);
+  mobActiveCol=bucket;
+}
+function updateMobCounts(){
+  ['immediate','today','week','planned'].forEach(b=>{
+    const n=tasks.filter(t=>t.bucket===b).length;
+    const el=document.getElementById('mcnt-'+b);if(el)el.textContent=n;
+  });
+}
+
 function startCoachMode(m){
+  if(m==='mood'){openMoodSheet();return;}
   curMode=m;chatMsgs=[];di[m]=di[m]||0;
   const cfg=M[m];
   const chat=document.getElementById('cs-chat');
@@ -515,6 +830,8 @@ function backToCoachActions(){
   document.getElementById('cs-chat').classList.remove('on');
   document.getElementById('cs-actions').style.display='';
   chatMsgs=[];curMode='';
+  // Clear typing indicator if present
+  csRmTyping();
 }
 
 function csAddMsg(role,text){
@@ -613,7 +930,7 @@ function makeCard(t){
   card.innerHTML=`
     <div class="tc-body" onclick="toggleCardActions('${t.id}')">
       <div class="tc-txt">${esc(t.text)}</div>
-      ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div>`:''}
+      ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div><div class="tc-has-notes">📝 has notes</div>`:''}
       <div class="tc-meta"><span class="tc-time">${fmt(t.createdAt)}</span></div>
     </div>
     <div class="tc-acts-row" id="acts-${t.id}">
@@ -689,6 +1006,7 @@ function addTask(text,notes,bucket){
 }
 
 function updateCounts(){
+  updateMobCounts();
   ['immediate','today','week','planned'].forEach(b=>{
     const n=tasks.filter(t=>t.bucket===b).length;
     const el=document.getElementById('cnt-'+b);if(el)el.textContent=n;
@@ -952,8 +1270,443 @@ function toggleDemo(){
   if(demo){bar.style.display='block';if(btn)btn.style.color='var(--morning)';}
   else{bar.style.display='none';if(btn)btn.style.color='';}
 }
+
+// ── Onboarding ──
+let obCurrent = 0;
+const OB_KEY = 'nudgley_onboarding_done';
+
+function obInit(){
+  if(localStorage.getItem(OB_KEY)==='1'){
+    document.getElementById('onboarding').classList.add('hidden');
+  }
+}
+
+function obShowScreen(n){
+  [0,1,2].forEach(i=>{
+    const s=document.getElementById('ob-screen-'+i);
+    if(s)s.style.display=i===n?'block':'none';
+    const dot=document.getElementById('ob-dot-'+i);
+    if(dot)dot.className='ob-dot'+(i<n?' done':i===n?' active':'');
+  });
+  obCurrent=n;
+}
+
+function obNext(){obShowScreen(obCurrent+1);}
+function obBack(){obShowScreen(obCurrent-1);}
+
+function obClose(){
+  document.getElementById('onboarding').classList.add('hidden');
+}
+
+function obFinish(){
+  if(document.getElementById('ob-dontshow-cb')?.checked){
+    localStorage.setItem(OB_KEY,'1');
+  }
+  obClose();
+}
+
+// Run on load
+window.addEventListener('DOMContentLoaded',()=>{
+  obInit();
+  launch(false);
+});
+
+
+// ── Task editing ──
+let editTaskId = null;
+let editBucketVal = 'immediate';
+
+function openEditSheet(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t)return;
+  editTaskId = id;
+  editBucketVal = t.bucket;
+  const inp = document.getElementById('es-task-inp');
+  const notes = document.getElementById('es-notes-inp');
+  if(inp)inp.value = t.text;
+  if(notes)notes.value = t.notes||'';
+  // Set bucket buttons
+  const buckets = document.getElementById('es-buckets');
+  if(buckets){
+    buckets.innerHTML = ['immediate','today','week','planned'].map(b=>{
+      const labels={immediate:'🔴 Immediate',today:'🟡 Today',week:'🔵 This Week',planned:'📋 To Plan'};
+      const isSel = b===t.bucket;
+      const color = BCOLS_RAW[b];
+      const style = isSel ? `background:${color};border-color:${color};color:${b==='planned'?'var(--bright)':'#0d0f14'}` : '';
+      return `<button class="es-bb${isSel?' sel':''}" data-b="${b}" style="${style}" onclick="esSelBucket(this)">${labels[b]}</button>`;
+    }).join('');
+  }
+  document.getElementById('edit-sheet').classList.add('on');
+  setTimeout(()=>{if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}},150);
+}
+
+function closeEditSheet(){
+  document.getElementById('edit-sheet').classList.remove('on');
+  editTaskId=null;
+}
+
+document.addEventListener('click',e=>{
+  if(e.target===document.getElementById('edit-sheet'))closeEditSheet();
+});
+
+function esSelBucket(el){
+  document.querySelectorAll('.es-bb').forEach(b=>{b.classList.remove('sel');b.style.cssText='';});
+  el.classList.add('sel');editBucketVal=el.dataset.b;
+  el.style.background=BCOLS_RAW[editBucketVal];
+  el.style.borderColor=BCOLS_RAW[editBucketVal];
+  el.style.color=editBucketVal==='planned'?'var(--bright)':'#0d0f14';
+}
+
+function saveEditTask(){
+  if(!editTaskId)return;
+  const txt = document.getElementById('es-task-inp')?.value.trim();
+  const notes = document.getElementById('es-notes-inp')?.value.trim();
+  if(!txt)return;
+  tasks = tasks.map(t=>t.id===editTaskId?{...t,text:txt,notes,bucket:editBucketVal}:t);
+  closeEditSheet();
+  renderBoard();
+}
+
+function esAr(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+
+
+// ── Proactive Coach: reads board on open ──
+
+function analyseBoardState(){
+  const immediate = tasks.filter(t=>t.bucket==='immediate');
+  const today = tasks.filter(t=>t.bucket==='today');
+  const week = tasks.filter(t=>t.bucket==='week');
+  const planned = tasks.filter(t=>t.bucket==='planned');
+  const total = tasks.length;
+
+  if(total===0) return {type:'empty'};
+
+  // Overloaded immediate (3+) → suggest triage
+  if(immediate.length>=3) return {type:'triage_immediate', immediate, today, week, planned};
+
+  // Everything piled into planned after voice dump → triage
+  if(planned.length>=3 && immediate.length===0 && today.length<=1)
+    return {type:'triage_planned', planned, immediate, today, week};
+
+  // Unbalanced board (5+ in any one column) → triage
+  const maxCol = Math.max(immediate.length, today.length, week.length, planned.length);
+  if(maxCol>=5) return {type:'triage_unbalanced', immediate, today, week, planned, total};
+
+  // Has immediate tasks → coach on most pressing
+  if(immediate.length>0) return {type:'coach_immediate', task:immediate[0], count:immediate.length};
+
+  // Has today tasks
+  if(today.length>0) return {type:'coach_today', task:today[0], count:today.length};
+
+  // Only future tasks
+  return {type:'coach_future', total, week:week.length, planned:planned.length};
+}
+
+function buildProactiveOpener(state){
+  if(state.type==='empty'){
+    return "Board's empty. Good time to either dictate your tasks for the day, or tell me what's on your mind and we'll get it structured.";
+  }
+  if(state.type==='coach_immediate'){
+    const extra = state.count>1 ? ` (and ${state.count-1} other${state.count>2?'s':''} in Immediate)` : '';
+    return `You've got **"${state.task.text}"** sitting in Immediate${extra}.
+
+Is that the right place to start, or is something else actually more pressing right now?`;
+  }
+  if(state.type==='coach_today'){
+    return `Nothing in Immediate — good. You've got **${state.count} thing${state.count>1?'s':''} on today's list**.
+
+Which one would make today feel like a win if it got done?`;
+  }
+  if(state.type==='coach_future'){
+    return `Your board has ${state.total} task${state.total>1?'s':''} but nothing urgent yet.
+
+Is that accurate — or are you underestimating what needs to happen today?`;
+  }
+  if(state.type==='triage_immediate'){
+    return `You've got **${state.immediate.length} things in Immediate** — that's a lot to hold at once.
+
+Let me triage these with you. I'll suggest which one to actually do first and whether any of the others belong somewhere else.`;
+  }
+  if(state.type==='triage_planned'){
+    return `Looks like you've captured ${state.planned.length} tasks but haven't prioritised them yet — probably just came in from a voice dump.
+
+Let me help you triage. I'll read through what's there and suggest where each one should go.`;
+  }
+  if(state.type==='triage_unbalanced'){
+    return `Your board has ${state.total} tasks and they're not evenly spread — some columns look overloaded.
+
+Want me to triage? I'll suggest which tasks are in the wrong column and you can approve or skip each one.`;
+  }
+  return "What's on your mind?";
+}
+
+const TRIAGE_DEMO = [
+  {task:"Prepare bid section outline", from:"planned", to:"today", reason:"This is blocking other work"},
+  {task:"Review programme plan structure", from:"week", to:"immediate", reason:"Sounds like it's been on your mind"},
+  {task:"Send status update email", from:"planned", to:"today", reason:"Quick win, shouldn't sit in To Plan"},
+];
+
+async function coachReadBoard(){
+  const state = analyseBoardState();
+  const opener = buildProactiveOpener(state);
+
+  // Show chat immediately with opener
+  curMode='chat';chatMsgs=[];di['chat']=di['chat']||0;
+  const cfg=M['chat'];
+  const actions=document.getElementById('cs-actions');
+  const chatEl=document.getElementById('cs-chat');
+  if(actions)actions.style.display='none';
+  if(chatEl)chatEl.classList.add('on');
+  const modeEl=document.getElementById('cs-chat-mode');
+  if(modeEl){modeEl.textContent='🧠 Coach';modeEl.style.color='var(--mood)';}
+  const sendBtn=document.getElementById('cs-send');
+  if(sendBtn)sendBtn.style.background='var(--mood)';
+  document.getElementById('cs-msgs').innerHTML='';
+  csAddMsg('coach',opener);
+  chatMsgs.push({role:'assistant',content:opener});
+
+  // If triage state, follow up with triage suggestions after short delay
+  const isTriageState = state.type.startsWith('triage');
+  if(isTriageState){
+    if(sendBtn)sendBtn.disabled=true;
+    csShowTyping();
+    await new Promise(r=>setTimeout(r, demo?1200:800));
+    csRmTyping();
+
+    if(demo){
+      // Demo triage cards
+      renderTriageCards(TRIAGE_DEMO);
+      const triageMsg = "Here's what I'd suggest. Tap Accept to move it, Reject to leave it where it is:";
+      csAddMsg('coach', triageMsg);
+      chatMsgs.push({role:'assistant',content:triageMsg});
+      // Insert triage cards into last message
+      const msgs=document.getElementById('cs-msgs');
+      const lastMsg=msgs.lastChild;
+      if(lastMsg){
+        const container=document.createElement('div');
+        container.id='triage-container';
+        TRIAGE_DEMO.forEach((s,i)=>{
+          const t=tasks.find(x=>x.text.toLowerCase().includes(s.task.toLowerCase().split(' ').slice(0,3).join(' ').toLowerCase()));
+          container.appendChild(buildTriageCard(s.task, s.from, s.to, s.reason, t?.id||null, i));
+        });
+        lastMsg.querySelector('.cs-bbl')?.appendChild(container);
+      }
+    } else {
+      // Live triage via API
+      await runLiveTriage(state);
+    }
+    if(sendBtn)sendBtn.disabled=false;
+  }
+  setTimeout(()=>document.getElementById('cs-ta')?.focus(),100);
+}
+
+function buildTriageCard(taskText, fromBucket, toBucket, reason, taskId, idx){
+  const bucketLabels={immediate:'🔴 Immediate',today:'🟡 Today',week:'🔵 This Week',planned:'📋 To Plan'};
+  const card=document.createElement('div');card.className='triage-card';card.id='tc-triage-'+idx;
+  card.innerHTML=`
+    <div class="triage-task">"${esc(taskText)}"</div>
+    <div class="triage-move"><span style="color:${BCOLS_RAW[fromBucket]||'#888'}">${bucketLabels[fromBucket]||fromBucket}</span> <span>→</span> <span style="color:${BCOLS_RAW[toBucket]||'#888'}">${bucketLabels[toBucket]||toBucket}</span></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:7px;">${esc(reason)}</div>
+    <div class="triage-btns">
+      <button class="triage-accept" onclick="acceptTriage('${esc(taskText)}','${toBucket}','tc-triage-${idx}','${taskId||''}')">✓ Accept</button>
+      <button class="triage-reject" onclick="rejectTriage('tc-triage-${idx}')">✕ Skip</button>
+    </div>`;
+  return card;
+}
+
+function acceptTriage(taskText, toBucket, cardId, taskId){
+  // Move task to suggested bucket
+  if(taskId){
+    tasks=tasks.map(t=>t.id===taskId?{...t,bucket:toBucket}:t);
+  } else {
+    // Find by text match
+    const match=tasks.find(t=>t.text.toLowerCase().includes(taskText.toLowerCase().split(' ').slice(0,3).join(' ').toLowerCase()));
+    if(match)tasks=tasks.map(t=>t.id===match.id?{...t,bucket:toBucket}:t);
+  }
+  renderBoard();
+  const card=document.getElementById(cardId);
+  if(card){card.style.opacity='.4';card.innerHTML='<div style="font-size:12px;color:var(--success);padding:6px 0">✓ Moved</div>';}
+}
+
+function rejectTriage(cardId){
+  const card=document.getElementById(cardId);
+  if(card){card.style.opacity='.3';card.innerHTML='<div style="font-size:12px;color:var(--dim);padding:6px 0">Skipped</div>';}
+}
+
+async function runLiveTriage(state){
+  const taskList=tasks.map(t=>`[${t.bucket}] ${t.text}`).join('\n');
+  const prompt=`The user's Nudgley task board contains:\n${taskList}\n\nAs their ADHD coach, suggest up to 4 triage moves — tasks that look like they're in the wrong column. Be direct and brief.\n\nRespond with ONLY valid JSON, no markdown:\n{"suggestions":[{"task":"exact task text","from":"current_bucket","to":"suggested_bucket","reason":"one short sentence why"}]}\n\nOnly suggest moves that genuinely help prioritisation. If the board looks fine, return {"suggestions":[]}.`;
+  try{
+    const res=await fetch('/api/nudge',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const raw=data.content[0].text.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(raw);
+    const suggestions=parsed.suggestions||[];
+    if(suggestions.length===0){
+      csAddMsg('coach',"Your board actually looks pretty well organised. What do you want to focus on first?");
+      return;
+    }
+    const intro=`Here's what I'd move. Tap Accept to action each one:`;
+    csAddMsg('coach',intro);
+    chatMsgs.push({role:'assistant',content:intro});
+    const msgs=document.getElementById('cs-msgs');
+    const lastMsg=msgs.lastChild;
+    if(lastMsg){
+      const container=document.createElement('div');container.id='triage-container';
+      suggestions.forEach((s,i)=>{
+        const t=tasks.find(x=>x.text===s.task||x.text.includes(s.task));
+        container.appendChild(buildTriageCard(s.task,s.from,s.to,s.reason,t?.id||null,i));
+      });
+      lastMsg.querySelector('.cs-bbl')?.appendChild(container);
+    }
+  }catch(e){
+    csAddMsg('coach',`Couldn't triage right now: ${e.message}`);
+  }
+}
+
+
 function fmt(d){return`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
+
+<!-- ── ONBOARDING OVERLAY ── -->
+<div id="onboarding">
+  <div class="ob-sheet">
+
+    <!-- Progress dots -->
+    <div class="ob-progress">
+      <div class="ob-dot active" id="ob-dot-0"></div>
+      <div class="ob-dot" id="ob-dot-1"></div>
+      <div class="ob-dot" id="ob-dot-2"></div>
+    </div>
+
+    <!-- ── SCREEN 1: What is Nudgley ── -->
+    <div id="ob-screen-0">
+      <div class="ob-logo">nudgley</div>
+      <div class="ob-tagline">Your ADHD task board</div>
+      <div class="ob-headline">The hardest part isn't the work.<br>It's starting it.</div>
+      <p class="ob-body">
+        If you have ADHD, your brain doesn't lack ideas — it lacks structure at the moment you need it most.
+        Nudgley gives you that structure: <strong>instantly, without friction, without setup.</strong>
+      </p>
+      <p class="ob-body">
+        Speak your tasks out loud. They land on your board, sorted and ready.
+        When you're stuck or overwhelmed, your Coach reads exactly what's on your board and tells you what to do next.
+      </p>
+      <p class="ob-body">
+        This isn't a wellness app. It's a tool for <strong>high-functioning professionals with ADHD</strong>
+        who need a system that works as fast as they think.
+      </p>
+      <p class="ob-disclaimer">Nudgley is not a medical device or a replacement for professional ADHD support.</p>
+      <div class="ob-nav">
+        <button class="ob-skip" onclick="obClose()">Skip intro</button>
+        <button class="ob-next" onclick="obNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: The Board ── -->
+    <div id="ob-screen-1" style="display:none">
+      <div class="ob-headline">Your board.<br>Four buckets, zero thinking.</div>
+      <p class="ob-body">Everything goes somewhere. Nothing gets lost. Your brain stops holding on to things it shouldn't have to remember.</p>
+
+      <div class="ob-cols">
+        <div class="ob-col-card" style="border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.05)">
+          <div class="ob-col-label" style="color:var(--immediate)">🔴 Immediate</div>
+          <div class="ob-col-desc">Drop everything. This needs to happen now.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.05)">
+          <div class="ob-col-label" style="color:var(--today)">🟡 Today</div>
+          <div class="ob-col-desc">Committed to today. Not tomorrow.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(74,158,255,.35);background:rgba(74,158,255,.05)">
+          <div class="ob-col-label" style="color:var(--week)">🔵 This Week</div>
+          <div class="ob-col-desc">On the radar. Not urgent yet.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(107,122,153,.35);background:rgba(107,122,153,.05)">
+          <div class="ob-col-label" style="color:var(--planned)">📋 To Plan</div>
+          <div class="ob-col-desc">Captured so your brain can let go.</div>
+        </div>
+      </div>
+
+      <div class="ob-voice-box">
+        <div class="ob-voice-icon">🎙</div>
+        <div class="ob-voice-text">
+          <div class="ob-voice-title">Speak, don't type</div>
+          <div class="ob-voice-desc">Tap <strong>Dictate Tasks</strong> at the bottom and speak naturally — "send the report today, prep slides this week." Nudgley extracts each task and puts it in the right column automatically.</div>
+        </div>
+      </div>
+
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obBack()">←</button>
+        <button class="ob-skip" onclick="obClose()">Skip</button>
+        <button class="ob-next" onclick="obNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: The Coach ── -->
+    <div id="ob-screen-2" style="display:none">
+      <div class="ob-headline">Your Coach.<br>Always reading your board.</div>
+      <p class="ob-coach-intro">Tap <strong>🧠 Coach</strong> in the top left whenever you need support. It already knows what's on your board — no context needed. Pick a mode:</p>
+
+      <div class="ob-modes">
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(245,166,35,.1)">🌅</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--morning)">Plan my day</div>
+            <div class="ob-mode-desc">Set one clear intention. Anchor the day before it escapes.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(255,107,107,.1)">🧱</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--stuck)">I'm stuck</div>
+            <div class="ob-mode-desc">Can't start, overthinking, restart loop. This cuts through it.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(74,158,255,.1)">🔧</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--breakdown)">Break it down</div>
+            <div class="ob-mode-desc">Turn a vague task into a first physical action.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(181,123,238,.1)">🧭</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--mood)">Mood check</div>
+            <div class="ob-mode-desc">Quick energy and headspace read before starting work.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(62,207,178,.1)">🌙</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--eod)">End of day</div>
+            <div class="ob-mode-desc">Close off properly. Acknowledge what got done.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(91,191,122,.1)">💬</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--chat)">Open chat</div>
+            <div class="ob-mode-desc">Think something through. No structure needed.</div>
+          </div>
+        </div>
+      </div>
+
+      <label class="ob-dontshow">
+        <input type="checkbox" id="ob-dontshow-cb">
+        <span>Don't show this again</span>
+      </label>
+
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obBack()">←</button>
+        <button class="ob-next" onclick="obFinish()" style="background:linear-gradient(120deg,var(--success),var(--eod))">Let's go →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
