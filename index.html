@@ -376,6 +376,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 /* Task card edit indicator */
 .tc-has-notes{font-size:10px;color:var(--dim);margin-top:3px;display:flex;align-items:center;gap:3px;}
 
+
+/* ── PROFILE PANEL ── */
+#profile-panel{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+#profile-panel.on{display:flex;}
+.pp-sheet{width:100%;max-width:520px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));animation:slideUp .25s ease;max-height:85dvh;overflow-y:auto;}
+.pp-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.pp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.pp-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);}
+.pp-close{background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:16px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+.pp-subtitle{font-size:12px;color:var(--dim);margin-bottom:18px;line-height:1.5;}
+.pp-section{margin-bottom:18px;}
+.pp-section-label{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.pp-entry{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:7px;font-size:13px;color:var(--text);line-height:1.5;}
+.pp-entry-meta{font-size:10px;color:var(--dim);margin-top:4px;}
+.pp-empty{font-size:13px;color:var(--dim);font-style:italic;}
+.pp-clear-btn{background:none;border:1px solid rgba(255,107,107,.3);border-radius:8px;color:var(--stuck);font-size:12px;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.pp-clear-btn:active{background:rgba(255,107,107,.08);}
+.pp-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;}
+.pp-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;}
+.pp-stat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--bright);}
+.pp-stat-lbl{font-size:10px;color:var(--dim);margin-top:2px;}
+
+/* Memory learn toast */
+.learn-toast{position:fixed;bottom:calc(90px + var(--sb));left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--mood);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--mood);z-index:200;white-space:nowrap;animation:up .2s ease;display:flex;align-items:center;gap:7px;}
+
 </style>
 </head>
 <body>
@@ -392,6 +417,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
     </div>
     <div class="hdr-logo">nudgley</div>
     <div class="hdr-right">
+      <button class="hbtn" onclick="openProfilePanel()" title="Your profile & memory">🧠</button>
       <button class="hbtn" onclick="togglePom()" title="Focus timer">⏱</button>
       <button class="hbtn" onclick="toggleDemo()" id="demo-toggle-btn" title="Demo mode">🎭</button>
     </div>
@@ -606,6 +632,37 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
   </div>
 </div>
 
+
+<!-- Profile / Memory panel -->
+<div id="profile-panel">
+  <div class="pp-sheet">
+    <div class="pp-handle"></div>
+    <div class="pp-top">
+      <span class="pp-title">🧠 What Nudgley knows about you</span>
+      <button class="pp-close" onclick="closeProfilePanel()">✕</button>
+    </div>
+    <p class="pp-subtitle">Built automatically from your coaching sessions. Gets more accurate over time.</p>
+
+    <div class="pp-stats">
+      <div class="pp-stat"><div class="pp-stat-val" id="pp-tasks-done">0</div><div class="pp-stat-lbl">Tasks done</div></div>
+      <div class="pp-stat"><div class="pp-stat-val" id="pp-sessions">0</div><div class="pp-stat-lbl">Sessions</div></div>
+      <div class="pp-stat"><div class="pp-stat-val" id="pp-insights">0</div><div class="pp-stat-lbl">Insights</div></div>
+    </div>
+
+    <div class="pp-section">
+      <div class="pp-section-label">Coaching insights</div>
+      <div id="pp-insights-list"><p class="pp-empty">No insights yet — start a coaching session.</p></div>
+    </div>
+
+    <div class="pp-section">
+      <div class="pp-section-label">Patterns noticed</div>
+      <div id="pp-patterns-list"><p class="pp-empty">Patterns emerge after a few sessions.</p></div>
+    </div>
+
+    <button class="pp-clear-btn" onclick="clearProfile()">Reset all memory</button>
+  </div>
+</div>
+
 <!-- Dictate FAB -->
 <button id="dictate-fab" onclick="startDictation()">
   <div class="df-ic">🎙</div>Dictate Tasks
@@ -687,12 +744,16 @@ const SYS=()=>`You are Nudgley, a direct no-nonsense ADHD coach for Steven.
 ABOUT STEVEN: Defence sector programme manager, Head of Commissioning. Possibly entering high-stress government bid — never ask for sensitive specifics. ADHD: task paralysis and emotional dysregulation under pressure. Core pattern: overthinks, restarts repeatedly, then leaves things to last minute. What works: dim lights, noise-cancelling headphones, lo-fi music.
 CURRENT BOARD: ${getTaskContext()}
 HOW TO COACH: DIRECT and FIRM. ONE clear action at a time. NAME the pattern. Under 100 words unless complex. ONE question max. Smallest possible first action. If you suggest a new task be added to the board, end your message with a line starting with "ADDTASK:" followed by the task text and bucket in format "ADDTASK: [bucket] task text" — the app will render an "Add to board" button automatically.
-LEGITIMATE CONCERNS: If wrong structure = real rework, acknowledge it — do not dismiss with "just start".`;
+LEGITIMATE CONCERNS: If wrong structure = real rework, acknowledge it — do not dismiss with "just start".
+
+${getProfileContext()}`;
 
 // ── Launch ──
 function goLive(){launch(false);}
 function goDemo(){demo=true;launch(true);}
 function launch(d){
+  // Load persisted tasks
+  tasks = loadTasks();
   document.getElementById('app').classList.add('on');
   document.getElementById('dictate-fab').classList.add('on');
   document.getElementById('add-fab').classList.add('on');
@@ -720,6 +781,11 @@ function openCoach(){
   }
 }
 function closeCoach(){
+  // Learn from session if coach closed mid-chat
+  const chatEl=document.getElementById('cs-chat');
+  if(chatEl&&chatEl.classList.contains('on')&&chatMsgs.length>=3&&curMode){
+    learnFromSession(curMode,[...chatMsgs]);
+  }
   coachOpen=false;
   const ov=document.getElementById('coach-overlay');
   const sb=document.getElementById('coach-sidebar');
@@ -727,6 +793,276 @@ function closeCoach(){
   ov.classList.remove('visible');sb.classList.remove('open');
   btn.classList.remove('active');
   setTimeout(()=>ov.classList.remove('on'),280);
+}
+
+
+
+// ══════════════════════════════════════════
+// LOCAL PERSISTENCE + COACHING MEMORY
+// ══════════════════════════════════════════
+
+const STORAGE_KEYS = {
+  tasks:       'nudgley_tasks',
+  profile:     'nudgley_profile',
+  stats:       'nudgley_stats',
+};
+
+// ── Profile structure ──
+// {
+//   insights: [{text, date, mode}]   — what coach learned per session
+//   patterns: [{text, count, date}]  — recurring patterns
+//   lastUpdated: ISO string
+// }
+
+function loadProfile(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.profile);
+    return raw ? JSON.parse(raw) : {insights:[], patterns:[], lastUpdated:null};
+  }catch(e){ return {insights:[], patterns:[], lastUpdated:null}; }
+}
+
+function saveProfile(profile){
+  profile.lastUpdated = new Date().toISOString();
+  localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
+}
+
+function loadStats(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.stats);
+    return raw ? JSON.parse(raw) : {tasksDone:0, sessions:0};
+  }catch(e){ return {tasksDone:0, sessions:0}; }
+}
+
+function saveStats(stats){
+  localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(stats));
+}
+
+// ── Task persistence ──
+function saveTasks(){
+  try{
+    localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(
+      tasks.map(t=>({...t, createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString() : t.createdAt}))
+    ));
+  }catch(e){ console.warn('Could not save tasks:', e); }
+}
+
+function loadTasks(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.tasks);
+    if(!raw) return [];
+    return JSON.parse(raw).map(t=>({...t, createdAt: new Date(t.createdAt)}));
+  }catch(e){ return []; }
+}
+
+// ── Hook task mutations to auto-save ──
+const _origAddTask = addTask;
+function addTask(text, notes, bucket){
+  _origAddTask(text, notes, bucket);
+  saveTasks();
+}
+
+const _origMoveTask = moveTask;
+function moveTask(id, bucket){
+  _origMoveTask(id, bucket);
+  saveTasks();
+}
+
+const _origCompleteTask = completeTask;
+function completeTask(id){
+  _origCompleteTask(id);
+  saveTasks();
+  // Increment done count
+  const stats = loadStats();
+  stats.tasksDone = (stats.tasksDone||0) + 1;
+  saveStats(stats);
+}
+
+const _origDeleteTask = deleteTask;
+function deleteTask(id){
+  if(!confirm('Delete this task?'))return;
+  tasks = tasks.filter(t=>t.id!==id);
+  renderBoard();
+  saveTasks();
+}
+
+const _origSaveEditTask = saveEditTask;
+function saveEditTask(){
+  if(!editTaskId)return;
+  const txt = document.getElementById('es-task-inp')?.value.trim();
+  const notes = document.getElementById('es-notes-inp')?.value.trim();
+  if(!txt)return;
+  tasks = tasks.map(t=>t.id===editTaskId?{...t,text:txt,notes,bucket:editBucketVal}:t);
+  closeEditSheet();
+  renderBoard();
+  saveTasks();
+}
+
+// ── Learn from session ──
+// Called after each coach session ends (back button pressed)
+async function learnFromSession(mode, msgs){
+  if(!msgs || msgs.length < 3) return; // Not enough to learn from
+  if(demo) return; // Don't learn in demo mode
+
+  const profile = loadProfile();
+  const stats = loadStats();
+  stats.sessions = (stats.sessions||0) + 1;
+  saveStats(stats);
+
+  // Build conversation summary for the LLM to analyse
+  const convo = msgs
+    .filter(m=>m.role==='user'||m.role==='assistant')
+    .slice(0,12) // cap to keep prompt small
+    .map(m=>`${m.role==='user'?'User':'Coach'}: ${m.content}`)
+    .join('\n');
+
+  const prompt = `You are analysing a Nudgley ADHD coaching session to extract learnings about this user.
+
+Session mode: ${mode}
+Conversation:
+${convo}
+
+Extract up to 2 useful insights about how this person works, what helps them, what blocks them, or patterns you notice. Be specific and brief (one sentence each).
+
+Also check if any of these patterns match something already known (would increment a count rather than add new insight).
+
+Respond ONLY with valid JSON:
+{
+  "insights": ["insight text here"],
+  "patterns": ["pattern text here"]
+}
+
+If nothing meaningful to learn, return {"insights":[],"patterns":[]}.`;
+
+  try{
+    const res = await fetch('/api/nudge',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}]})});
+    const data = await res.json();
+    const raw = data.content[0].text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const learned = JSON.parse(raw);
+
+    let updated = false;
+    const now = new Date().toISOString();
+
+    (learned.insights||[]).forEach(insight=>{
+      if(insight && insight.length > 10){
+        profile.insights.unshift({text:insight, date:now, mode});
+        updated = true;
+      }
+    });
+
+    (learned.patterns||[]).forEach(pattern=>{
+      if(!pattern || pattern.length < 5) return;
+      const existing = profile.patterns.find(p=>
+        p.text.toLowerCase().includes(pattern.toLowerCase().split(' ').slice(0,3).join(' '))
+      );
+      if(existing){existing.count=(existing.count||1)+1;existing.date=now;}
+      else{profile.patterns.unshift({text:pattern,count:1,date:now});}
+      updated = true;
+    });
+
+    // Keep caps: 20 insights, 10 patterns
+    profile.insights = profile.insights.slice(0,20);
+    profile.patterns = profile.patterns.slice(0,10);
+
+    if(updated){
+      saveProfile(profile);
+      showLearnToast();
+    }
+  }catch(e){ console.warn('Could not extract learnings:', e); }
+}
+
+function showLearnToast(){
+  const t = document.createElement('div');
+  t.className = 'learn-toast';
+  t.innerHTML = '🧠 Profile updated from this session';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// ── Build profile context for system prompt ──
+function getProfileContext(){
+  const profile = loadProfile();
+  if(!profile.insights.length && !profile.patterns.length) return '';
+  const parts = [];
+  if(profile.insights.length){
+    parts.push('LEARNED ABOUT THIS USER:\n' +
+      profile.insights.slice(0,5).map(i=>`- ${i.text}`).join('\n'));
+  }
+  if(profile.patterns.length){
+    parts.push('RECURRING PATTERNS:\n' +
+      profile.patterns.map(p=>`- ${p.text}${p.count>1?' (seen '+p.count+' times)':''}`).join('\n'));
+  }
+  return parts.join('\n');
+}
+
+// ── Profile panel ──
+function openProfilePanel(){
+  const profile = loadProfile();
+  const stats = loadStats();
+
+  document.getElementById('pp-tasks-done').textContent = stats.tasksDone||0;
+  document.getElementById('pp-sessions').textContent = stats.sessions||0;
+  document.getElementById('pp-insights').textContent =
+    (profile.insights?.length||0) + (profile.patterns?.length||0);
+
+  const insightsList = document.getElementById('pp-insights-list');
+  if(insightsList){
+    if(!profile.insights?.length){
+      insightsList.innerHTML = '<p class="pp-empty">No insights yet — start a coaching session.</p>';
+    } else {
+      insightsList.innerHTML = profile.insights.slice(0,8).map(i=>`
+        <div class="pp-entry">
+          ${esc(i.text)}
+          <div class="pp-entry-meta">${i.mode||'session'} · ${fmtDate(i.date)}</div>
+        </div>`).join('');
+    }
+  }
+
+  const patternsList = document.getElementById('pp-patterns-list');
+  if(patternsList){
+    if(!profile.patterns?.length){
+      patternsList.innerHTML = '<p class="pp-empty">Patterns emerge after a few sessions.</p>';
+    } else {
+      patternsList.innerHTML = profile.patterns.map(p=>`
+        <div class="pp-entry">
+          ${esc(p.text)}
+          <div class="pp-entry-meta">seen ${p.count||1} time${p.count>1?'s':''} · ${fmtDate(p.date)}</div>
+        </div>`).join('');
+    }
+  }
+
+  document.getElementById('profile-panel').classList.add('on');
+}
+
+function closeProfilePanel(){
+  document.getElementById('profile-panel').classList.remove('on');
+}
+
+document.addEventListener('click',e=>{
+  if(e.target===document.getElementById('profile-panel'))closeProfilePanel();
+});
+
+function clearProfile(){
+  if(!confirm('Reset all coaching memory? This cannot be undone.'))return;
+  localStorage.removeItem(STORAGE_KEYS.profile);
+  localStorage.removeItem(STORAGE_KEYS.stats);
+  closeProfilePanel();
+  showFlash('Memory cleared','var(--dim)');
+}
+
+function fmtDate(iso){
+  if(!iso)return'';
+  try{
+    const d=new Date(iso);
+    return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  }catch(e){return'';}
+}
+
+function showFlash(msg, color='var(--morning)'){
+  const f=document.createElement('div');
+  f.style.cssText=`position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${color};color:${color==='var(--dim)'?'var(--bright)':'#0d0f14'};border-radius:20px;padding:8px 18px;font-family:Syne,sans-serif;font-weight:700;font-size:13px;z-index:200;animation:up .2s ease;white-space:nowrap;`;
+  f.textContent=msg;
+  document.body.appendChild(f);setTimeout(()=>f.remove(),2500);
 }
 
 
@@ -827,10 +1163,13 @@ function startCoachMode(m){
 }
 
 function backToCoachActions(){
+  // Learn from this session before clearing
+  if(chatMsgs.length >= 3 && curMode){
+    learnFromSession(curMode, [...chatMsgs]);
+  }
   document.getElementById('cs-chat').classList.remove('on');
   document.getElementById('cs-actions').style.display='';
   chatMsgs=[];curMode='';
-  // Clear typing indicator if present
   csRmTyping();
 }
 
@@ -996,6 +1335,7 @@ function completeTask(id){
 }
 
 function deleteTask(id){
+  // Note: confirmation handled by wrapper above
   tasks=tasks.filter(t=>t.id!==id);renderBoard();
 }
 
