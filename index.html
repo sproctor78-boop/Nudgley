@@ -74,7 +74,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 .col-cards.drag-over{background:rgba(255,255,255,.03);}
 
 /* TASK CARD */
-.tc{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;cursor:grab;user-select:none;animation:up .18s ease;transition:box-shadow .15s,opacity .15s;border-left-width:3px;}
+.tc{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;cursor:grab;user-select:none;animation:up .18s ease;transition:box-shadow .15s,opacity .15s;border-left-width:3px;position:relative;}
 .tc:active{cursor:grabbing;}
 .tc.dragging{opacity:.4;}
 .tc.drag-placeholder{background:var(--surface2);border-style:dashed;opacity:.5;}
@@ -270,15 +270,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 /* ── MOOD INTAKE SHEET ── */
 #mood-sheet{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:none;align-items:flex-end;justify-content:center;}
 #mood-sheet.on{display:flex;}
-.ms-inner{width:100%;max-width:500px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));animation:slideUp .25s ease;}
+.ms-inner{width:100%;max-width:500px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 22px calc(20px + var(--sb));animation:slideUp .25s ease;}
 .ms-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
 .ms-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);margin-bottom:4px;}
 .ms-sub{font-size:12px;color:var(--dim);margin-bottom:20px;}
-.ms-slider-group{margin-bottom:20px;}
-.ms-slider-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ms-slider-group{margin-bottom:20px;display:block;width:100%;box-sizing:border-box;}
+.ms-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;width:100%;}
 .ms-slider-label{font-size:13px;color:var(--bright);font-weight:500;}
-.ms-slider-val{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;min-width:28px;text-align:right;}
+.ms-slider-val{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;min-width:32px;text-align:right;}
+.ms-slider-track{width:100%;display:block;box-sizing:border-box;}
 .ms-slider-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:4px;}
+input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;height:8px;border-radius:4px;outline:none;cursor:pointer;margin:2px 0 6px 0;box-sizing:border-box;}
+.ms-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--bright);border:3px solid var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.5);cursor:pointer;}
+.ms-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--bright);border:3px solid var(--bg);}
 .ms-pills-label{font-size:13px;color:var(--bright);font-weight:500;margin-bottom:10px;}
 .ms-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
 .ms-pill{background:var(--surface2);border:1px solid var(--border);border-radius:18px;padding:8px 14px;font-size:13px;color:var(--dim);cursor:pointer;transition:all .15s;}
@@ -363,6 +367,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 .es-save{width:100%;background:var(--breakdown);border:none;border-radius:11px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;}
 .es-save:active{opacity:.85;}
 
+
+/* Quick complete button on card */
+.tc-quick-done{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;
+  background:rgba(91,191,122,.08);border:1.5px solid rgba(91,191,122,.25);
+  color:var(--success);font-size:13px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:all .15s;opacity:0;z-index:5;}
+.tc:hover .tc-quick-done,.tc-quick-done:focus{opacity:1;}
+.tc-quick-done:active{background:rgba(91,191,122,.25);transform:scale(1.1);}
+/* Always visible on mobile */
+@media(max-width:700px){.tc-quick-done{opacity:1;}}
+
 /* Triage suggestion cards in coach */
 .triage-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-top:8px;}
 .triage-task{font-size:13px;color:var(--bright);margin-bottom:6px;font-weight:500;}
@@ -401,6 +416,99 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 /* Memory learn toast */
 .learn-toast{position:fixed;bottom:calc(90px + var(--sb));left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--mood);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--mood);z-index:200;white-space:nowrap;animation:up .2s ease;display:flex;align-items:center;gap:7px;}
 
+
+
+/* Mood sheet — explicit full-width layout */
+#mood-sheet{z-index:450;}
+#mood-sheet .ms-inner{
+  width:100%;
+  max-width:520px;
+  box-sizing:border-box;
+  padding:24px 24px calc(22px + var(--sb));
+}
+#mood-sheet /* ms-slider-group width already set above */
+#mood-sheet input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  display:block;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* ── TASK REVIEW SHEET ── */
+#review-sheet{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:450;display:none;align-items:flex-end;justify-content:center;}
+#review-sheet.on{display:flex;}
+.rv-inner{width:100%;max-width:540px;background:var(--surface);border-radius:22px 22px 0 0;padding:20px 18px calc(18px + var(--sb));max-height:88dvh;display:flex;flex-direction:column;animation:slideUp .25s ease;}
+.rv-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px;flex-shrink:0;}
+.rv-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;flex-shrink:0;}
+.rv-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);}
+.rv-close{background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:16px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rv-sub{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.5;flex-shrink:0;}
+.rv-raw{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--dim);line-height:1.5;margin-bottom:14px;flex-shrink:0;display:none;font-style:italic;}
+.rv-raw.show{display:block;}
+.rv-list{flex:1;overflow-y:auto;margin-bottom:14px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.rv-task{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;}
+.rv-task.deleting{opacity:.3;}
+.rv-task-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;background:var(--surface2);}
+.rv-task-check.checked{background:var(--success);border-color:var(--success);color:#0d0f14;}
+.rv-task-body{flex:1;min-width:0;}
+.rv-task-text{font-size:13px;color:var(--bright);line-height:1.45;outline:none;width:100%;background:transparent;border:none;font-family:'DM Sans',sans-serif;resize:none;min-height:20px;}
+.rv-task-text:focus{color:var(--bright);}
+.rv-task-bucket{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.rv-bb{border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;cursor:pointer;background:var(--surface2);color:var(--dim);transition:all .12s;}
+.rv-bb.sel{color:#0d0f14;}
+.rv-bb[data-b="immediate"].sel{background:var(--immediate);border-color:var(--immediate);}
+.rv-bb[data-b="today"].sel{background:var(--today);border-color:var(--today);}
+.rv-bb[data-b="week"].sel{background:var(--week);border-color:var(--week);}
+.rv-bb[data-b="planned"].sel{background:var(--planned);border-color:var(--planned);color:var(--bright);}
+.rv-task-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
+.rv-task-del:active{color:var(--stuck);}
+.rv-footer{display:flex;gap:8px;flex-shrink:0;}
+.rv-save{flex:1;background:var(--success);border:none;border-radius:11px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#0d0f14;cursor:pointer;}
+.rv-save:active{opacity:.85;}
+.rv-cancel{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px 18px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dim);cursor:pointer;}
+
+/* ── RE-ENTRY STRIP ── */
+#reentry-strip{display:none;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;animation:up .3s ease;}
+#reentry-strip.show{display:block;}
+.rs-start{display:flex;align-items:center;gap:10px;}
+.rs-label{font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.rs-task{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--bright);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rs-reason{font-size:11px;margin-top:1px;}
+.rs-start-btn{background:linear-gradient(120deg,var(--stuck),var(--morning));border:none;border-radius:8px;padding:7px 14px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:#0d0f14;cursor:pointer;flex-shrink:0;white-space:nowrap;}
+.rs-start-btn:active{opacity:.85;}
+.rs-meta{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+.rs-snapshot{display:flex;gap:12px;}
+.rs-snap-item{font-size:11px;color:var(--dim);}
+.rs-snap-item span{color:var(--text);font-weight:500;}
+.rs-dismiss{background:none;border:none;color:var(--dim);font-size:11px;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:2px;}
+.rs-reentry{font-size:11px;color:var(--dim);margin-top:5px;font-style:italic;}
+
+
+/* Quick complete tick on card */
+.tc-quick-done{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;
+  border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim);
+  transition:all .15s;z-index:2;}
+.tc-quick-done:active{background:var(--success);border-color:var(--success);color:#0d0f14;}
+.tc{position:relative;}
+
+
+/* ── MOMENTUM / OFF-BOARD LOG SHEET ── */
+.mo-sheet{width:100%;max-width:500px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));animation:slideUp .25s ease;}
+.mo-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.mo-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--bright);margin-bottom:4px;}
+.mo-sub{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.5;}
+.mo-inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--bright);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;margin-bottom:12px;transition:border-color .2s;}
+.mo-inp:focus{border-color:var(--success);}
+.mo-btns{display:flex;gap:8px;}
+.mo-log{flex:1;background:var(--success);border:none;border-radius:10px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#0d0f14;cursor:pointer;}
+.mo-log:active{opacity:.85;}
+.mo-cancel{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dim);cursor:pointer;}
+#mom-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:none;align-items:flex-end;justify-content:center;}
+#mom-overlay.on{display:flex;}
+
 </style>
 </head>
 <body>
@@ -419,7 +527,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
     <div class="hdr-right">
       <button class="hbtn" onclick="openProfilePanel()" title="Your profile & memory">🧠</button>
       <button class="hbtn" onclick="togglePom()" title="Focus timer">⏱</button>
-      <button class="hbtn" onclick="toggleDemo()" id="demo-toggle-btn" title="Demo mode">🎭</button>
+      <button class="hbtn" id="reentry-btn" onclick="reopenReentry()" title="Reopen daily guidance" style="display:none">🎯</button>
     </div>
   </div>
   <div class="demo-bar" id="demo-bar">⚡ Demo mode — add an API key for live coaching + smart task parsing</div>
@@ -443,6 +551,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
   <!-- Board -->
   <div class="board-wrap">
     <div class="board-wrap-inner" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;">
+
+    <!-- Re-entry decision strip -->
+    <div id="reentry-strip">
+      <div class="rs-start">
+        <div style="flex:1;min-width:0;">
+          <div class="rs-label">Start with</div>
+          <div class="rs-task" id="rs-task-name">—</div>
+          <div class="rs-reason" id="rs-task-reason"></div>
+        </div>
+        <button class="rs-start-btn" onclick="startRecommendedTask()">▶ Start</button>
+      </div>
+      <div class="rs-meta">
+        <div class="rs-snapshot" id="rs-snapshot"></div>
+        <button class="rs-dismiss" onclick="dismissReentry()">dismiss</button>
+      </div>
+      <div class="rs-reentry" id="rs-reentry"></div>
+    </div>
     <!-- Mobile column tabs (hidden on desktop) -->
     <div class="mob-tabs" id="mob-tabs">
       <div class="mob-tab active-immediate" id="mtab-immediate" onclick="mobSwitchCol('immediate')">
@@ -513,7 +638,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 <div id="coach-sidebar">
   <div class="cs-hdr">
     <span class="cs-title">🧠 Coach</span>
-    <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:10px;color:var(--dim);letter-spacing:1px;">v" + APP_VERSION + "'</span><button class="cs-close" onclick="closeCoach()">✕</button></div>
+    <div style="display:flex;align-items:center;gap:8px;"><span id="version-badge" style="font-size:10px;color:var(--dim);letter-spacing:1px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 7px;"></span><button class="cs-close" onclick="closeCoach()">✕</button></div>
   </div>
 
   <!-- Default: action list -->
@@ -568,33 +693,33 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
     <div class="ms-sub">Takes 20 seconds. Helps the coach skip the obvious questions.</div>
 
     <div class="ms-slider-group">
-      <div class="ms-slider-row">
+      <div class="ms-slider-header">
         <span class="ms-slider-label">Energy level</span>
         <span class="ms-slider-val" id="ms-energy-val" style="color:#f5a623">5</span>
       </div>
-      <input type="range" min="1" max="10" value="5" id="ms-energy"
+      <input type="range" class="ms-range" min="1" max="10" value="5" id="ms-energy"
         style="background:linear-gradient(90deg,#f5a623 50%,var(--border) 50%)"
         oninput="msSl('energy','#f5a623',this)">
       <div class="ms-slider-ends"><span>Flat / empty</span><span>Fully charged</span></div>
     </div>
 
     <div class="ms-slider-group">
-      <div class="ms-slider-row">
+      <div class="ms-slider-header">
         <span class="ms-slider-label">Anxiety</span>
         <span class="ms-slider-val" id="ms-anxiety-val" style="color:#ff6b6b">5</span>
       </div>
-      <input type="range" min="1" max="10" value="5" id="ms-anxiety"
+      <input type="range" class="ms-range" min="1" max="10" value="5" id="ms-anxiety"
         style="background:linear-gradient(90deg,#ff6b6b 50%,var(--border) 50%)"
         oninput="msSl('anxiety','#ff6b6b',this)">
       <div class="ms-slider-ends"><span>Calm</span><span>Very anxious</span></div>
     </div>
 
     <div class="ms-slider-group">
-      <div class="ms-slider-row">
+      <div class="ms-slider-header">
         <span class="ms-slider-label">Focus capacity</span>
         <span class="ms-slider-val" id="ms-focus-val" style="color:#4a9eff">5</span>
       </div>
-      <input type="range" min="1" max="10" value="5" id="ms-focus"
+      <input type="range" class="ms-range" min="1" max="10" value="5" id="ms-focus"
         style="background:linear-gradient(90deg,#4a9eff 50%,var(--border) 50%)"
         oninput="msSl('focus','#4a9eff',this)">
       <div class="ms-slider-ends"><span>Scattered</span><span>Sharp</span></div>
@@ -613,6 +738,42 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
   </div>
 </div>
 
+
+
+
+<!-- Momentum / off-board win log -->
+<div id="mom-overlay">
+  <div class="mo-sheet">
+    <div class="mo-handle"></div>
+    <div class="mo-title">Log a win ✓</div>
+    <div class="mo-sub">Something you did that wasn't on the board — quick wins, urgent things, anything.</div>
+    <input class="mo-inp" id="mom-inp" type="text" placeholder="e.g. Fixed the urgent client issue, Had the difficult conversation…" maxlength="120" onkeydown="momKey(event)">
+    <div class="mo-btns">
+      <button class="mo-log" onclick="logOffBoardWin()">Log it</button>
+      <button class="mo-cancel" onclick="hideMomOverlay()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task review sheet -->
+<div id="review-sheet">
+  <div class="rv-inner">
+    <div class="rv-handle"></div>
+    <div class="rv-top">
+      <div>
+        <div class="rv-title">Review your tasks</div>
+      </div>
+      <button class="rv-close" onclick="closeReviewSheet()">✕</button>
+    </div>
+    <p class="rv-sub" id="rv-sub">Edit, remove or re-bucket before saving. Tick to include.</p>
+    <div class="rv-raw" id="rv-raw"></div>
+    <div class="rv-list" id="rv-list"></div>
+    <div class="rv-footer">
+      <button class="rv-cancel" onclick="closeReviewSheet()">Cancel</button>
+      <button class="rv-save" onclick="saveReviewTasks()">Save tasks →</button>
+    </div>
+  </div>
+</div>
 
 <!-- Task edit sheet -->
 <div id="edit-sheet">
@@ -705,7 +866,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;hei
 
 <script>
 'use strict';
-const APP_VERSION = '0.3.0';
+const APP_VERSION = '0.5.2';
 let demo=false, chatMsgs=[], curMode='';
 let tasks=[], selBucketVal='immediate';
 let pSecs=25*60, pTotal=25*60, pRun=false, pBreak=false, pSess=1, pTimer=null;
@@ -771,17 +932,23 @@ let coachOpen=false;
 function toggleCoach(){coachOpen?closeCoach():openCoach();}
 function openCoach(){
   coachOpen=true;
+  // Ensure tasks are fresh from storage before coach reads them
+  if(!tasks.length){ tasks = loadTasks(); }
   const ov=document.getElementById('coach-overlay');
   const sb=document.getElementById('coach-sidebar');
   const btn=document.getElementById('coach-toggle-btn');
-  ov.classList.add('on');requestAnimationFrame(()=>{ov.classList.add('visible');sb.classList.add('open');});
+  ov.classList.add('on');
+  requestAnimationFrame(()=>{
+    ov.classList.add('visible');
+    sb.classList.add('open');
+    const actions=document.getElementById('cs-actions');
+    const chatEl=document.getElementById('cs-chat');
+    if(actions&&actions.style.display!=='none'&&chatEl&&!chatEl.classList.contains('on')){
+      // Small delay ensures any pending renderBoard/saveTasks has resolved
+      setTimeout(()=>coachReadBoard(), 50);
+    }
+  });
   btn.classList.add('active');
-  // If coach is showing actions menu (not already in a chat), proactively read board
-  const actions=document.getElementById('cs-actions');
-  const chatEl=document.getElementById('cs-chat');
-  if(actions&&actions.style.display!=='none'&&chatEl&&!chatEl.classList.contains('on')){
-    coachReadBoard();
-  }
 }
 function closeCoach(){
   // Learn from session if coach closed mid-chat
@@ -840,6 +1007,31 @@ function saveStats(stats){
   localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(stats));
 }
 
+// ── Done log: completed tasks persist for EOD + momentum ──
+const DONE_KEY = 'nudgley_done_log';
+function loadDoneLog(){
+  try{
+    const raw=localStorage.getItem(DONE_KEY);
+    if(!raw)return[];
+    return JSON.parse(raw).map(t=>({...t,completedAt:new Date(t.completedAt)}));
+  }catch(e){return[];}
+}
+function saveDoneLog(log){
+  try{localStorage.setItem(DONE_KEY,JSON.stringify(log.slice(0,50)));}catch(e){}
+}
+function addToDoneLog(task){
+  const log=loadDoneLog();
+  // Only keep today's entries
+  const today=new Date().toDateString();
+  const filtered=log.filter(t=>new Date(t.completedAt).toDateString()===today);
+  filtered.unshift({...task,completedAt:new Date().toISOString()});
+  saveDoneLog(filtered);
+}
+function getTodayDoneLog(){
+  const today=new Date().toDateString();
+  return loadDoneLog().filter(t=>new Date(t.completedAt).toDateString()===today);
+}
+
 // ── Task persistence ──
 function saveTasks(){
   try{
@@ -857,48 +1049,8 @@ function loadTasks(){
   }catch(e){ return []; }
 }
 
-// ── Hook task mutations to auto-save ──
-const _origAddTask = addTask;
-function addTask(text, notes, bucket){
-  _origAddTask(text, notes, bucket);
-  saveTasks();
-}
-
-const _origMoveTask = moveTask;
-function moveTask(id, bucket){
-  _origMoveTask(id, bucket);
-  saveTasks();
-}
-
-const _origCompleteTask = completeTask;
-function completeTask(id){
-  _origCompleteTask(id);
-  saveTasks();
-  // Increment done count
-  const stats = loadStats();
-  stats.tasksDone = (stats.tasksDone||0) + 1;
-  saveStats(stats);
-}
-
-const _origDeleteTask = deleteTask;
-function deleteTask(id){
-  if(!confirm('Delete this task?'))return;
-  tasks = tasks.filter(t=>t.id!==id);
-  renderBoard();
-  saveTasks();
-}
-
-const _origSaveEditTask = saveEditTask;
-function saveEditTask(){
-  if(!editTaskId)return;
-  const txt = document.getElementById('es-task-inp')?.value.trim();
-  const notes = document.getElementById('es-notes-inp')?.value.trim();
-  if(!txt)return;
-  tasks = tasks.map(t=>t.id===editTaskId?{...t,text:txt,notes,bucket:editBucketVal}:t);
-  closeEditSheet();
-  renderBoard();
-  saveTasks();
-}
+// ── Persistence: saveTasks called inside renderBoard so every mutation auto-saves ──
+// (Previous wrapper pattern caused infinite recursion via JS hoisting)
 
 // ── Learn from session ──
 // Called after each coach session ends (back button pressed)
@@ -940,6 +1092,7 @@ If nothing meaningful to learn, return {"insights":[],"patterns":[]}.`;
     const res = await fetch('/api/nudge',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}]})});
     const data = await res.json();
+    if(!res.ok||!data.content||!data.content[0])throw new Error(data.error?.message||'API unavailable');
     const raw = data.content[0].text.replace(/\`\`\`json|\`\`\`/g,'').trim();
     const learned = JSON.parse(raw);
 
@@ -1069,6 +1222,550 @@ function showFlash(msg, color='var(--morning)'){
 }
 
 
+
+// ══════════════════════════════════════════
+// CR1: ROBUST TASK PARSING PIPELINE
+// ══════════════════════════════════════════
+
+const ACTION_VERBS = [
+  'finalise','finalize','finish','complete','send','email','book','schedule',
+  'check','update','review','draft','write','prepare','create','chase','call',
+  'speak to','plan','sort','fix','organise','organize','confirm','submit',
+  'follow up','follow-up','contact','arrange','discuss','present','share',
+  'read','reply','respond','test','deploy','upload','download','build','design',
+  'develop','outline','research','analyse','analyze','document','record',
+  'notify','attend','cancel','reschedule','delegate','approve','sign'
+];
+
+const TEMPORAL_MARKERS = {
+  immediate: ['urgent','asap','immediately','right now','now','critical','emergency'],
+  today:     ['today','this morning','this afternoon','this evening','tonight','by eod','by end of day','by close'],
+  week:      ['this week','by friday','by thursday','by wednesday','by tuesday','by monday','later this week'],
+  planned:   ['next week','next month','someday','eventually','to plan','in future','later']
+};
+
+// Step 1: preprocess raw input
+function preprocessTaskInput(rawText) {
+  if(!rawText) return '';
+  return rawText
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]{2,}/g, ' ')     // collapse multiple spaces
+    .replace(/\n{3,}/g, '\n\n')     // max 2 newlines
+    .trim();
+}
+
+// Step 2: detect task boundaries — returns array of raw task strings
+function detectTaskBoundaries(text) {
+  // Try explicit delimiters first
+  let parts = [];
+
+  // Newline-separated
+  if(/\n/.test(text)) {
+    parts = text.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>3);
+    if(parts.length > 1) return parts;
+  }
+
+  // Bullet/number separated
+  if(/^[\s]*[-•*\d\.]+\s/m.test(text)) {
+    parts = text.split(/\n?[\s]*[-•*][\s]+|\n?[\s]*\d+[.)]\s+/)
+      .map(s=>s.trim()).filter(s=>s.length>3);
+    if(parts.length > 1) return parts;
+  }
+
+  // Semicolon separated
+  if(/;/.test(text) && text.split(';').length > 2) {
+    parts = text.split(';').map(s=>s.trim()).filter(s=>s.length>3);
+    if(parts.length > 1) return parts;
+  }
+
+  // Action verb detection — split on action verbs mid-sentence
+  const verbPattern = new RegExp(
+    '(?<=[^A-Z])(?=(?:' + ACTION_VERBS.map(v=>
+      v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
+    ).join('|') + ')\\s)',
+    'gi'
+  );
+
+  try {
+    const verbSplit = text.split(verbPattern).map(s=>s.trim()).filter(s=>s.length>3);
+    if(verbSplit.length > 1) return verbSplit;
+  } catch(e) {
+    // lookbehind not supported in this browser — fall through
+  }
+
+  // Last resort: split on comma+space before known verbs
+  const commaVerbParts = text.split(/,\s+(?=[A-Z]|(?:and\s+)?(?:finalise|finish|send|email|book|schedule|check|update|review|draft|write|prepare|create|chase|call|plan|sort|fix|confirm))/i)
+    .map(s=>s.replace(/^and\s+/i,'').trim()).filter(s=>s.length>3);
+  if(commaVerbParts.length > 1) return commaVerbParts;
+
+  // Single task or couldn't split — return whole thing
+  return [text];
+}
+
+// Step 3: extract draft tasks with bucket inference
+function extractDraftTasks(cleanedText) {
+  const boundaries = detectTaskBoundaries(cleanedText);
+
+  return boundaries.map((raw, i) => {
+    const text = raw
+      .replace(/^(and|also|then|plus|i need to|i want to|i would like to|please|can you|i should|we need to|we should)\s+/i,'')
+      .replace(/^[-•*\d.]+\s*/,'')
+      .trim();
+
+    // Capitalise first letter
+    const normalised = text.charAt(0).toUpperCase() + text.slice(1);
+
+    // Infer bucket from temporal markers
+    let bucket = 'today';
+    let confidence = 0.6;
+
+    const lower = text.toLowerCase();
+    for(const [b, markers] of Object.entries(TEMPORAL_MARKERS)) {
+      if(markers.some(m => lower.includes(m))) {
+        bucket = b;
+        confidence = 0.85;
+        break;
+      }
+    }
+
+    // Short tasks are likely quick wins → immediate or today
+    if(normalised.split(' ').length <= 5 && bucket === 'today') confidence = 0.7;
+
+    return {
+      id: 'draft_' + Date.now() + '_' + i,
+      text: normalised,
+      bucket,
+      confidence,
+      source: raw,
+      included: true
+    };
+  }).filter(t => t.text.length > 2);
+}
+
+// Step 4: safe parse — never throws, always returns something usable
+async function safeParseTasks(rawText) {
+  const cleaned = preprocessTaskInput(rawText);
+  if(!cleaned) return {tasks:[], raw:rawText, fallback:false};
+
+  // Client-side extraction first (no API needed, no overload risk)
+  const clientDrafts = extractDraftTasks(cleaned);
+
+  // If we got multiple tasks client-side and text isn't too long, skip API
+  const wordCount = cleaned.split(/\s+/).length;
+  if(clientDrafts.length >= 2 && wordCount < 80) {
+    return {tasks: clientDrafts, raw: rawText, fallback: false};
+  }
+
+  // For longer or ambiguous text, try API with chunking safety
+  if(demo) return {tasks: clientDrafts, raw: rawText, fallback: false};
+
+  // Chunk if very long (>200 words)
+  const chunks = wordCount > 200
+    ? chunkText(cleaned, 150)
+    : [cleaned];
+
+  let allTasks = [];
+  for(const chunk of chunks) {
+    try {
+      const apiTasks = await apiExtractTasks(chunk);
+      allTasks = allTasks.concat(apiTasks);
+    } catch(e) {
+      console.warn('API extraction failed for chunk, using client parse:', e.message);
+      // Fallback to client parse for this chunk
+      allTasks = allTasks.concat(extractDraftTasks(chunk));
+    }
+  }
+
+  // Deduplicate by text similarity
+  const seen = new Set();
+  const deduped = allTasks.filter(t => {
+    const key = t.text.toLowerCase().slice(0,30);
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return {tasks: deduped.length ? deduped : clientDrafts, raw: rawText, fallback: deduped.length === 0};
+}
+
+function chunkText(text, maxWords) {
+  const words = text.split(/\s+/);
+  const chunks = [];
+  for(let i=0; i<words.length; i+=maxWords) {
+    chunks.push(words.slice(i, i+maxWords).join(' '));
+  }
+  return chunks;
+}
+
+async function apiExtractTasks(text) {
+  const prompt = `Extract all tasks from this text. Return ONLY valid JSON, no markdown:\n{"tasks":[{"text":"task description","bucket":"immediate|today|week|planned"}]}\n\nRules: extract every action item, keep text concise, infer bucket from timing words.\n\nText: "${text}"`;
+
+  const res = await fetch('/api/nudge', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:400,
+      messages:[{role:'user', content:prompt}]
+    })
+  });
+
+  if(!res.ok) {
+    const err = await res.json().catch(()=>({error:{message:'API error'}}));
+    throw new Error(err.error?.message || 'API error ' + res.status);
+  }
+
+  const data = await res.json();
+  const raw = data.content[0].text.replace(/```json|```/g,'').trim();
+  const parsed = JSON.parse(raw);
+
+  return (parsed.tasks||[]).map((t,i) => ({
+    id: 'api_' + Date.now() + '_' + i,
+    text: t.text,
+    bucket: t.bucket || 'today',
+    confidence: 0.9,
+    source: t.text,
+    included: true
+  }));
+}
+
+// Step 5: show review screen
+function showReviewSheet(parseResult) {
+  const {tasks, raw, fallback} = parseResult;
+
+  const sub = document.getElementById('rv-sub');
+  const rawEl = document.getElementById('rv-raw');
+
+  if(fallback || tasks.some(t=>t.confidence < 0.5)) {
+    if(sub) sub.textContent = "I pulled out tasks as best I could — please review before saving.";
+    if(rawEl) { rawEl.textContent = 'Original: "' + raw + '"'; rawEl.classList.add('show'); }
+  } else {
+    if(sub) sub.textContent = `${tasks.length} task${tasks.length!==1?'s':''} found. Edit, remove or re-bucket before saving.`;
+    if(rawEl) rawEl.classList.remove('show');
+  }
+
+  renderReviewList(tasks);
+  document.getElementById('review-sheet').classList.add('on');
+  window._reviewTasks = tasks;
+}
+
+function renderReviewList(tasks) {
+  const list = document.getElementById('rv-list');
+  if(!list) return;
+  list.innerHTML = tasks.map((t,idx) => `
+    <div class="rv-task ${t.included===false?'deleting':''}" id="rvt-${idx}">
+      <div class="rv-task-check ${t.included!==false?'checked':''}" onclick="rvToggle(${idx})">
+        ${t.included!==false?'✓':''}
+      </div>
+      <div class="rv-task-body">
+        <textarea class="rv-task-text" rows="1"
+          oninput="rvUpdateText(${idx},this.value);rvAutoResize(this)"
+          onfocus="rvAutoResize(this)"
+        >${esc(t.text)}</textarea>
+        <div class="rv-task-bucket">
+          ${['immediate','today','week','planned'].map(b=>{
+            const labels={immediate:'🔴 Now',today:'🟡 Today',week:'🔵 Week',planned:'📋 Plan'};
+            const isSel = t.bucket===b;
+            const raw_colors={immediate:'#ff6b6b',today:'#f5a623',week:'#4a9eff',planned:'#6b7a99'};
+            const style = isSel ? `background:${raw_colors[b]};border-color:${raw_colors[b]};color:${b==='planned'?'#e6ecf6':'#0d0f14'}` : '';
+            return `<button class="rv-bb${isSel?' sel':''}" data-b="${b}" style="${style}"
+              onclick="rvSetBucket(${idx},this)">${labels[b]}</button>`;
+          }).join('')}
+        </div>
+      </div>
+      <button class="rv-task-del" onclick="rvDelete(${idx})">✕</button>
+    </div>`).join('');
+  // Auto-resize all textareas
+  setTimeout(()=>list.querySelectorAll('.rv-task-text').forEach(rvAutoResize),50);
+}
+
+function rvAutoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function rvToggle(idx){
+  window._reviewTasks[idx].included = window._reviewTasks[idx].included===false ? true : false;
+  renderReviewList(window._reviewTasks);
+}
+function rvUpdateText(idx,val){ if(window._reviewTasks[idx]) window._reviewTasks[idx].text=val; }
+function rvSetBucket(idx,el){
+  if(window._reviewTasks[idx]) window._reviewTasks[idx].bucket=el.dataset.b;
+  renderReviewList(window._reviewTasks);
+}
+function rvDelete(idx){
+  window._reviewTasks.splice(idx,1);
+  renderReviewList(window._reviewTasks);
+}
+function closeReviewSheet(){ document.getElementById('review-sheet').classList.remove('on'); }
+document.addEventListener('click',e=>{if(e.target===document.getElementById('review-sheet'))closeReviewSheet();});
+
+function saveReviewTasks(){
+  const toSave = (window._reviewTasks||[]).filter(t=>t.included!==false && t.text.trim().length>0);
+  toSave.forEach(t => addTask(t.text.trim(),'',t.bucket));
+  closeReviewSheet();
+  showFlash(`✓ ${toSave.length} task${toSave.length!==1?'s':''} added to board`,'var(--success)');
+}
+
+
+// ══════════════════════════════════════════
+// CR2: HOME SCREEN RE-ENTRY DECISION LAYER
+// ══════════════════════════════════════════
+
+const REENTRY_KEY = 'nudgley_reentry';
+const REENTRY_DISMISSED_KEY = 'nudgley_reentry_dismissed';
+
+function saveReentryState(){
+  const state = {
+    timestamp: new Date().toISOString(),
+    taskCount: tasks.length,
+    immediateTask: tasks.find(t=>t.bucket==='immediate')?.text || null,
+    allTaskIds: tasks.map(t=>t.id)
+  };
+  localStorage.setItem(REENTRY_KEY, JSON.stringify(state));
+}
+
+function loadReentryState(){
+  try{
+    const raw = localStorage.getItem(REENTRY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+// Simple rules-based recommendation — no AI needed
+function getRecommendedStartTask(taskList){
+  if(!taskList || !taskList.length) return null;
+
+  const now = new Date();
+  const lastState = loadReentryState();
+
+  // 1. Immediate tasks first
+  const immediates = taskList.filter(t=>t.bucket==='immediate');
+  if(immediates.length){
+    const pick = immediates[0];
+    return {task:pick, reason:'🔴 In Immediate', color:'var(--immediate)'};
+  }
+
+  // 2. Tasks that were immediate in last session but moved to today
+  if(lastState?.immediateTask){
+    const wasImmediate = taskList.find(t=>t.text===lastState.immediateTask && t.bucket==='today');
+    if(wasImmediate){
+      return {task:wasImmediate, reason:'Left from yesterday', color:'var(--today)'};
+    }
+  }
+
+  // 3. Today tasks — prefer older ones (been there longest)
+  const todays = taskList.filter(t=>t.bucket==='today');
+  if(todays.length){
+    // Sort by creation time ascending (oldest first)
+    const sorted = [...todays].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+    const oldest = sorted[0];
+    const ageMs = now - new Date(oldest.createdAt);
+    const ageHrs = ageMs / 3600000;
+    const reason = ageHrs > 20 ? "🕐 Been here a while" :
+                   todays.length > 3 ? `${todays.length} things today` :
+                   '🟡 Up next today';
+    return {task:oldest, reason, color:'var(--today)'};
+  }
+
+  // 4. Week tasks
+  const weeks = taskList.filter(t=>t.bucket==='week');
+  if(weeks.length){
+    const pick = weeks[0];
+    return {task:pick, reason:'📆 This week', color:'var(--week)'};
+  }
+
+  return null;
+}
+
+function getContextSnapshot(taskList){
+  const immediate = taskList.filter(t=>t.bucket==='immediate').length;
+  const today = taskList.filter(t=>t.bucket==='today').length;
+  const week = taskList.filter(t=>t.bucket==='week').length;
+  return {immediate, today, week, total:taskList.length};
+}
+
+function getReentryMemory(){
+  const state = loadReentryState();
+  if(!state) return null;
+  try{
+    const then = new Date(state.timestamp);
+    const now = new Date();
+    const hrs = (now - then) / 3600000;
+    if(hrs < 1) return null; // Same session, not useful
+    const timeLabel = hrs < 24 ? 'earlier today' : hrs < 48 ? 'yesterday' : `${Math.floor(hrs/24)} days ago`;
+    if(state.immediateTask){
+      return `Last session (${timeLabel}): "${state.immediateTask}" was urgent`;
+    }
+    return null;
+  }catch(e){ return null; }
+}
+
+function renderReentryStrip(){
+  const strip = document.getElementById('reentry-strip');
+  if(!strip) return;
+
+  // Show once per day — dismiss persists until next calendar day
+  const today=new Date().toDateString();
+  const dismissedDay=localStorage.getItem(REENTRY_DISMISSED_KEY);
+  if(dismissedDay===today || !tasks.length){
+    strip.classList.remove('show');
+    return;
+  }
+
+  const rec = getRecommendedStartTask(tasks);
+  if(!rec){ strip.classList.remove('show'); return; }
+
+  const snap = getContextSnapshot(tasks);
+  const memory = getReentryMemory();
+
+  // Populate
+  const nameEl = document.getElementById('rs-task-name');
+  const reasonEl = document.getElementById('rs-task-reason');
+  const snapEl = document.getElementById('rs-snapshot');
+  const reentryEl = document.getElementById('rs-reentry');
+
+  if(nameEl) nameEl.textContent = rec.task.text;
+  if(reasonEl){
+    reasonEl.textContent = rec.reason;
+    reasonEl.style.color = rec.color;
+  }
+  if(snapEl){
+    const parts = [];
+    if(snap.immediate) parts.push(`<span class="rs-snap-item">🔴 <span>${snap.immediate}</span></span>`);
+    if(snap.today) parts.push(`<span class="rs-snap-item">🟡 <span>${snap.today}</span> today</span>`);
+    if(snap.week) parts.push(`<span class="rs-snap-item">🔵 <span>${snap.week}</span> this week</span>`);
+    snapEl.innerHTML = parts.join('');
+  }
+  if(reentryEl) reentryEl.textContent = memory || '';
+
+  strip.classList.add('show');
+  window._recommendedTaskId = rec.task?.id||null;
+  const rBtn=document.getElementById('reentry-btn');
+  if(rBtn)rBtn.style.display='none';
+}
+
+function startRecommendedTask(){
+  if(!window._recommendedTaskId) return;
+  dismissReentry();
+  // Open coach in "I'm stuck" mode focused on that task
+  const t = tasks.find(x=>x.id===window._recommendedTaskId);
+  if(!t) return;
+  openCoach();
+  setTimeout(()=>{
+    const ta = document.getElementById('cs-ta');
+    if(ta){ ta.value = `I want to start: "${t.text}"`; csSend(); }
+  }, 600);
+}
+
+function reopenReentry(){
+  localStorage.removeItem(REENTRY_DISMISSED_KEY);
+  renderReentryStrip();
+  // Flash focus btn
+  const btn=document.getElementById('focus-btn');
+  if(btn){btn.style.color='var(--morning)';setTimeout(()=>btn.style.color='',1000);}
+}
+function dismissReentry(){
+  // Store today's date so strip won't show again today
+  localStorage.setItem(REENTRY_DISMISSED_KEY,new Date().toDateString());
+  const strip = document.getElementById('reentry-strip');
+  if(strip) strip.classList.remove('show');
+}
+
+
+
+
+function buildEodOpener(){
+  const done=getTodayDoneLog();
+  const remaining=tasks.filter(t=>t.bucket==='immediate'||t.bucket==='today');
+  let opener='';
+  if(done.length>0){
+    const doneList=done.slice(0,3).map(t=>`• ${t.text}`).join('\n');
+    opener=`You completed ${done.length} task${done.length>1?'s':''} today:\n${doneList}${done.length>3?`\n• ...and ${done.length-3} more`:''}\n\nThat counts. Don't let your brain discount it.`;
+    if(remaining.length>0){
+      opener+=`\n\n${remaining.length} thing${remaining.length>1?'s':''} left on today/immediate — anything that genuinely needs carrying over, or can they move to this week?`;
+    } else {
+      opener+=`\n\nBoard is clear for tomorrow. What's one thing you'd do differently today?`;
+    }
+  } else {
+    opener=`Let's close this day properly. What's one concrete thing that happened today — even something small that wasn't on the board?`;
+    if(remaining.length>0){
+      opener+=`\n\nYou've still got ${remaining.length} thing${remaining.length>1?'s':''} showing as today/immediate. Want to move those to tomorrow or park them?`;
+    }
+  }
+  return opener;
+}
+
+
+// Morning mode: board-aware, proposes rather than asks
+
+function buildStuckOpener(){
+  const immediates=tasks.filter(t=>t.bucket==='immediate');
+  const todays=tasks.filter(t=>t.bucket==='today');
+  const profile=loadProfile();
+  const patterns=profile.patterns||[];
+  const knownPattern=patterns.length?` I can see from your history that ${patterns[0].text.toLowerCase()}.`:'';
+
+  if(immediates.length>0){
+    return `You've got **"${immediates[0].text}"** sitting in Immediate.${knownPattern}\n\nIs that the thing you're stuck on, or is it something else?`;
+  }
+  if(todays.length>0){
+    return `You've got ${todays.length} thing${todays.length>1?'s':''} on today's list.${knownPattern}\n\nWhich one is blocking you right now — or is it everything at once?`;
+  }
+  return `Board is clear but you're stuck.${knownPattern}\n\nTell me what's happening — even if it's not on the board yet.`;
+}
+
+
+function buildMorningOpener(state){
+  const rec = getRecommendedStartTask(tasks);
+  const done = getTodayDoneLog();
+  const donePrefix = done.length ? `You've already completed ${done.length} thing${done.length>1?'s':''} today. ` : '';
+
+  if(state.type==='empty'){
+    return `${donePrefix}Board is clear. Good time to voice-dictate today's tasks, or tell me what's on your mind and I'll structure it.`;
+  }
+  if(state.type.startsWith('triage')){
+    return `${donePrefix}Your board has ${tasks.length} tasks but the priorities look messy. Let me sort that out first before we plan the day.`;
+  }
+  if(rec){
+    const labels={'🔴 In Immediate':'This is urgent','Been here a while':"It's been waiting","Left from yesterday":"Carried over from yesterday",'📆 This week':'On the weekly list','🟡 Up next today':'Next up today'};
+    const why = labels[rec.reason] || rec.reason;
+    return `${donePrefix}Based on your board, I'd start with:\n\n**"${rec.task.text}"**\n\n${why}. Want to start this now, or is something else more pressing?`;
+  }
+  return `${donePrefix}You've got ${tasks.length} task${tasks.length>1?'s':''} on the board. What's the most important thing to get done today?`;
+}
+
+// Generic helper to launch a coach chat with a given opener
+function _launchCoachChat(mode, opener){
+  curMode=mode;chatMsgs=[];di[mode]=di[mode]||0;
+  const cfg=M[mode]||M['chat'];
+  const actions=document.getElementById('cs-actions');
+  const chatEl=document.getElementById('cs-chat');
+  if(actions)actions.style.display='none';
+  if(chatEl)chatEl.classList.add('on');
+  const modeEl=document.getElementById('cs-chat-mode');
+  if(modeEl){modeEl.textContent=cfg.icon+' '+cfg.label;modeEl.style.color=cfg.color;}
+  const sendBtn=document.getElementById('cs-send');
+  if(sendBtn)sendBtn.style.background=cfg.color;
+  document.getElementById('cs-msgs').innerHTML='';
+  csAddMsg('coach',opener);
+  chatMsgs.push({role:'assistant',content:opener});
+  setTimeout(()=>document.getElementById('cs-ta')?.focus(),100);
+}
+
+
+
+// ── Off-board win log ──
+function showMomOverlay(){
+  const ov=document.getElementById('mom-overlay');if(ov)ov.classList.add('on');
+  const inp=document.getElementById('mom-inp');if(inp){inp.value='';setTimeout(()=>inp.focus(),100);}
+}
+function hideMomOverlay(){const ov=document.getElementById('mom-overlay');if(ov)ov.classList.remove('on');}
+function momKey(e){if(e.key==='Enter')logOffBoardWin();}
+function logOffBoardWin(){
+  const inp=document.getElementById('mom-inp');
+  const txt=inp?inp.value.trim():'';if(!txt)return;
+  addToDoneLog({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date()});
+  hideMomOverlay();
+  showFlash('✓ '+txt,'var(--success)');
+}
+
 // ── Mood sheet ──
 let moodData={energy:5,anxiety:5,focus:5,blocker:null};
 function openMoodSheet(){
@@ -1149,6 +1846,25 @@ function updateMobCounts(){
 
 function startCoachMode(m){
   if(m==='mood'){openMoodSheet();return;}
+  // Stuck: use board context
+  if(m==='stuck'){
+    const opener=buildStuckOpener();
+    _launchCoachChat('stuck',opener);
+    return;
+  }
+  // End of day: use done log for personalised opener
+  if(m==='eod'){
+    const opener=buildEodOpener();
+    _launchCoachChat('eod',opener);
+    return;
+  }
+  // Morning: use proactive board-aware opener instead of generic
+  if(m==='morning'){
+    const state=analyseBoardState();
+    const opener=buildMorningOpener(state);
+    _launchCoachChat('morning',opener);
+    return;
+  }
   curMode=m;chatMsgs=[];di[m]=di[m]||0;
   const cfg=M[m];
   const chat=document.getElementById('cs-chat');
@@ -1216,7 +1932,11 @@ async function csSend(){
   const btn=document.getElementById('cs-send');if(btn)btn.disabled=true;
   csShowTyping();
 
-  if(demo){
+  if(demo||window.location.protocol==='file:'){
+    if(window.location.protocol==='file:'&&!demo&&!window._lfn){
+      window._lfn=1;
+      csAddMsg('coach','Running locally — using scripted responses. Open your Netlify URL for live AI coaching.');
+    }
     await new Promise(r=>setTimeout(r,700+Math.random()*500));
     csRmTyping();
     const pool=DEMO[curMode]||DEMO.chat;const i=di[curMode]||0;
@@ -1240,12 +1960,68 @@ function csHk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();csSend();}}
 function csAr(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';}
 
 function buildOpener(m){
+  // Morning: board-aware recommendation, reduces choice paralysis
+  if(m==='morning'){
+    const rec = getRecommendedStartTask(tasks);
+    if(rec && rec.task){
+      const t = rec.task;
+      const snap = getContextSnapshot(tasks);
+      const snapTxt = [
+        snap.immediate ? `${snap.immediate} immediate` : '',
+        snap.today ? `${snap.today} today` : '',
+        snap.week ? `${snap.week} this week` : ''
+      ].filter(Boolean).join(', ');
+      return `Board loaded. ${snapTxt ? `You've got ${snapTxt}.` : ''}
+
+Based on what's there, I'd start with: **"${t.text}"** — ${rec.reason.replace(/[🔴🟡🔵📆🕐]/g,'').trim()}.
+
+Does that feel right, or is something else pulling harder right now?`;
+    }
+    if(!tasks.length){
+      return `Board is empty. Good time to dictate what's on your mind for today — or tell me what the day needs to contain and we'll structure it.`;
+    }
+    return `Morning. Board's got ${tasks.length} task${tasks.length!==1?'s':''} on it. What's the most important thing that needs to happen today?`;
+  }
+
+  // Stuck: reference board tasks if available
+  if(m==='stuck'){
+    const immediates = tasks.filter(t=>t.bucket==='immediate');
+    const todays = tasks.filter(t=>t.bucket==='today');
+    if(immediates.length){
+      return `You've got ${immediates.length} thing${immediates.length>1?'s':''} in Immediate.
+
+Which one is the actual blocker right now — the one your brain is circling around but won't start?`;
+    }
+    if(todays.length){
+      return `Looking at your Today column — ${todays.length} task${todays.length>1?'s':''} there.
+
+Which one is stuck? The one you keep moving past without touching.`;
+    }
+    return `You're in the loop. Tell me the task — vague is fine. What was the last thing you actually did on it?`;
+  }
+
+  // EoD: reference completed work if available
+  if(m==='eod'){
+    const done = momentumLog.filter(e=>{
+      if(!e.time) return false;
+      const d = new Date(e.time);
+      const now = new Date();
+      return d.toDateString() === now.toDateString();
+    });
+    if(done.length){
+      const doneList = done.slice(0,3).map(e=>`"${e.text}"`).join(', ');
+      return `Right, let's close this properly.
+
+I can see you got some things done today — ${doneList}${done.length>3?` and ${done.length-3} more`:''}.
+
+Anything else that happened that's not on the board? Sometimes the day gets taken over by things you didn't plan.`;
+    }
+    return `Let's close this properly. What's one concrete thing that happened today — planned or not?`;
+  }
+
   const d={
-    stuck:"You're in the loop. Tell me the task — vague is fine. What was the last thing you actually did on it?",
-    morning:"Morning. Looking at your board — what's the one thing that, if it got done today, would make it worth it?",
     breakdown:"Tell me the task — vague is fine. What are we breaking down?",
     mood:"Quick check — energy 1–10, and what's the main thing sitting on your chest right now?",
-    eod:"Let's close this properly. What's one concrete thing that happened today — however small?",
     chat:"What's on your mind?"
   };
   return d[m]||"What's on your mind?";
@@ -1259,7 +2035,12 @@ function renderBoard(){
     tasks.filter(t=>t.bucket===b).forEach(t=>col.appendChild(makeCard(t)));
   });
   updateCounts();
+  renderReentryStrip();
+  saveReentryState();
+  saveTasks(); // single reliable save point
 }
+
+function makeCard(t){}
 
 function makeCard(t){
   const bcolor=BCOLS[t.bucket]||'var(--dim)';
@@ -1270,6 +2051,7 @@ function makeCard(t){
   card.setAttribute('draggable','true');
   card.setAttribute('data-id',t.id);
   card.innerHTML=`
+    <button class="tc-quick-done" onclick="event.stopPropagation();completeTask('${t.id}')" title="Mark done">✓</button>
     <div class="tc-body" onclick="toggleCardActions('${t.id}')">
       <div class="tc-txt">${esc(t.text)}</div>
       ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div><div class="tc-has-notes">📝 has notes</div>`:''}
@@ -1324,6 +2106,7 @@ function onDrop(e,bucket){
 function moveTask(id,bucket){
   tasks=tasks.map(t=>t.id===id?{...t,bucket}:t);
   renderBoard();
+  saveTasks();
 }
 
 function completeTask(id){
@@ -1338,14 +2121,16 @@ function completeTask(id){
 }
 
 function deleteTask(id){
-  // Note: confirmation handled by wrapper above
-  tasks=tasks.filter(t=>t.id!==id);renderBoard();
+  if(!confirm('Delete this task?'))return;
+  tasks=tasks.filter(t=>t.id!==id);
+  renderBoard(); // renderBoard calls saveTasks()
 }
 
 function addTask(text,notes,bucket){
   if(!text.trim())return;
   tasks.push({id:Date.now().toString()+Math.random().toString(36).slice(2),text:text.trim(),notes:notes||'',bucket:bucket||'today',createdAt:new Date()});
   renderBoard();
+  saveTasks();
 }
 
 function updateCounts(){
@@ -1432,51 +2217,22 @@ function stopDictation(){
 async function processDictation(text){
   document.getElementById('processing').classList.add('on');
   document.getElementById('proc-txt').textContent='Extracting tasks…';
-
-  if(demo){
-    await new Promise(r=>setTimeout(r,1200));
-    document.getElementById('processing').classList.remove('on');
-    // Demo: add some fake parsed tasks
-    const demoTasks=[
-      {text:'Send the status report',bucket:'immediate'},
-      {text:'Review the project plan structure',bucket:'today'},
-      {text:'Prepare slides for the review meeting',bucket:'week'},
-    ];
-    demoTasks.forEach(t=>addTask(t.text,'',t.bucket));
-    showDictateResult(demoTasks.length);
-    return;
-  }
-
-  const prompt=`The user dictated the following text. Extract all tasks mentioned and assign each to the most appropriate bucket (immediate, today, week, or planned) based on urgency and time references.
-
-Dictated text: "${text}"
-
-Respond with ONLY valid JSON — no preamble, no markdown fences:
-{"tasks":[{"text":"task description","bucket":"immediate|today|week|planned"}]}
-
-Rules:
-- Extract every distinct task or action item mentioned
-- "immediate" = urgent right now or ASAP
-- "today" = to be done today
-- "week" = this week but not today
-- "planned" = future, someday, or no clear timeframe
-- Keep task text concise and actionable
-- Security: if task text contains specific project/client names, replace with generic descriptions`;
-
+  if(window.location.protocol==='file:'){const lr={tasks:extractDraftTasks(preprocessTaskInput(text)),raw:text,fallback:false};document.getElementById('processing').classList.remove('on');if(!lr.tasks.length)lr.tasks=[{id:'lf0',text:text,bucket:'today',confidence:0.5,included:true}];showReviewSheet(lr);return;}
   try{
-    const res=await fetch('/api/nudge',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    if(!res.ok)throw new Error(data.error?.message||'API error');
-    const raw=data.content[0].text.replace(/```json|```/g,'').trim();
-    const parsed=JSON.parse(raw);
+    const result=await safeParseTasks(text);
     document.getElementById('processing').classList.remove('on');
-    (parsed.tasks||[]).forEach(t=>addTask(t.text,'',t.bucket));
-    showDictateResult((parsed.tasks||[]).length);
+    if(!result.tasks.length){
+      result.tasks=[{id:'fallback_0',text:text,bucket:'today',confidence:0.3,included:true}];
+      result.fallback=true;
+    }
+    showReviewSheet(result);
   }catch(e){
     document.getElementById('processing').classList.remove('on');
-    alert('Could not parse tasks: '+e.message+'\n\nRaw text: '+text);
+    const fb=extractDraftTasks(preprocessTaskInput(text));
+    showReviewSheet({
+      tasks:fb.length?fb:[{id:'err_0',text:text,bucket:'today',confidence:0.3,included:true}],
+      raw:text,fallback:true
+    });
   }
 }
 
@@ -1619,7 +2375,8 @@ let obCurrent = 0;
 const OB_KEY = 'nudgley_onboarding_done';
 
 function obInit(){
-  if(localStorage.getItem(OB_KEY)==='1'){
+  // Hide if permanently dismissed (localStorage) OR dismissed this session (sessionStorage)
+  if(localStorage.getItem(OB_KEY)==='1' || sessionStorage.getItem(OB_KEY)==='session'){
     document.getElementById('onboarding').classList.add('hidden');
   }
 }
@@ -1638,12 +2395,22 @@ function obNext(){obShowScreen(obCurrent+1);}
 function obBack(){obShowScreen(obCurrent-1);}
 
 function obClose(){
+  // Skip just closes — does NOT persist. Only checkbox persists.
   document.getElementById('onboarding').classList.add('hidden');
 }
 
+function obSkip(){
+  sessionStorage.setItem(OB_KEY,'session');
+  obClose();
+}
 function obFinish(){
+  // Always suppress after completing onboarding (not just when checkbox ticked)
+  // Checkbox = permanent suppress; no checkbox = suppress for this browser session
   if(document.getElementById('ob-dontshow-cb')?.checked){
     localStorage.setItem(OB_KEY,'1');
+  } else {
+    // Suppress for this session so refresh doesn't re-show
+    sessionStorage.setItem(OB_KEY,'session');
   }
   obClose();
 }
@@ -1707,7 +2474,7 @@ function saveEditTask(){
   if(!txt)return;
   tasks = tasks.map(t=>t.id===editTaskId?{...t,text:txt,notes,bucket:editBucketVal}:t);
   closeEditSheet();
-  renderBoard();
+  renderBoard(); // renderBoard calls saveTasks()
 }
 
 function esAr(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
@@ -1823,16 +2590,16 @@ async function coachReadBoard(){
       csAddMsg('coach', triageMsg);
       chatMsgs.push({role:'assistant',content:triageMsg});
       // Insert triage cards into last message
-      const msgs=document.getElementById('cs-msgs');
-      const lastMsg=msgs.lastChild;
-      if(lastMsg){
+      const msgsEl=document.getElementById('cs-msgs');
+      if(msgsEl&&msgsEl.lastChild){
         const container=document.createElement('div');
         container.id='triage-container';
-        TRIAGE_DEMO.forEach((s,i)=>{
-          const t=tasks.find(x=>x.text.toLowerCase().includes(s.task.toLowerCase().split(' ').slice(0,3).join(' ').toLowerCase()));
-          container.appendChild(buildTriageCard(s.task, s.from, s.to, s.reason, t?.id||null, i));
+        (TRIAGE_DEMO||[]).forEach((s,i)=>{
+          if(!s||!s.task)return;
+          const t=tasks.find(x=>x.text&&x.text.toLowerCase().includes((s.task||'').toLowerCase().split(' ').slice(0,3).join(' ')));
+          container.appendChild(buildTriageCard(s.task,s.from||'today',s.to||'immediate',s.reason||'',t?.id||null,i));
         });
-        lastMsg.querySelector('.cs-bbl')?.appendChild(container);
+        msgsEl.lastChild.querySelector('.cs-bbl')?.appendChild(container);
       }
     } else {
       // Live triage via API
@@ -1844,6 +2611,9 @@ async function coachReadBoard(){
 }
 
 function buildTriageCard(taskText, fromBucket, toBucket, reason, taskId, idx){
+  // Defensive defaults
+  taskText=taskText||'Task'; fromBucket=fromBucket||'today';
+  toBucket=toBucket||'immediate'; reason=reason||''; idx=idx||0;
   const bucketLabels={immediate:'🔴 Immediate',today:'🟡 Today',week:'🔵 This Week',planned:'📋 To Plan'};
   const card=document.createElement('div');card.className='triage-card';card.id='tc-triage-'+idx;
   card.innerHTML=`
@@ -1879,12 +2649,18 @@ function rejectTriage(cardId){
 async function runLiveTriage(state){
   const taskList=tasks.map(t=>`[${t.bucket}] ${t.text}`).join('\n');
   const prompt=`The user's Nudgley task board contains:\n${taskList}\n\nAs their ADHD coach, suggest up to 4 triage moves — tasks that look like they're in the wrong column. Be direct and brief.\n\nRespond with ONLY valid JSON, no markdown:\n{"suggestions":[{"task":"exact task text","from":"current_bucket","to":"suggested_bucket","reason":"one short sentence why"}]}\n\nOnly suggest moves that genuinely help prioritisation. If the board looks fine, return {"suggestions":[]}.`;
+  if(window.location.protocol==='file:'){const fr=getRecommendedStartTask(tasks);csAddMsg('coach',fr?'Start with: "'+fr.task.text+'" \u2014 '+fr.reason.replace(/[\u{1f534}\u{1f7e1}\u{1f535}\u{1f4c6}]/gu,'').trim()+'. Open your Netlify URL for full AI triage.':'Board looks good. What do you want to tackle first?');return;}
   try{
     const res=await fetch('/api/nudge',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
+    if(!data.content||!data.content[0]||!data.content[0].text){
+      csAddMsg('coach',"Couldn't read the board right now. What's the most pressing task you're struggling with?");
+      return;
+    }
     const raw=data.content[0].text.replace(/```json|```/g,'').trim();
-    const parsed=JSON.parse(raw);
+    let parsed;
+    try{parsed=JSON.parse(raw);}catch(e){csAddMsg('coach',"Board looks complex — let's keep it simple. Which column has the most tasks that feel wrong?");return;}
     const suggestions=parsed.suggestions||[];
     if(suggestions.length===0){
       csAddMsg('coach',"Your board actually looks pretty well organised. What do you want to focus on first?");
@@ -1893,15 +2669,21 @@ async function runLiveTriage(state){
     const intro=`Here's what I'd move. Tap Accept to action each one:`;
     csAddMsg('coach',intro);
     chatMsgs.push({role:'assistant',content:intro});
-    const msgs=document.getElementById('cs-msgs');
-    const lastMsg=msgs.lastChild;
-    if(lastMsg){
+    const msgsEl2=document.getElementById('cs-msgs');
+    if(msgsEl2&&msgsEl2.lastChild&&suggestions.length>0){
       const container=document.createElement('div');container.id='triage-container';
       suggestions.forEach((s,i)=>{
-        const t=tasks.find(x=>x.text===s.task||x.text.includes(s.task));
-        container.appendChild(buildTriageCard(s.task,s.from,s.to,s.reason,t?.id||null,i));
+        if(!s||!s.task)return;
+        const t=tasks.find(x=>x.text&&(x.text===s.task||x.text.includes(s.task||'')));
+        container.appendChild(buildTriageCard(
+          s.task||'Unknown task',
+          s.from||'today',
+          s.to||'immediate',
+          s.reason||'Suggested move',
+          t?.id||null,i
+        ));
       });
-      lastMsg.querySelector('.cs-bbl')?.appendChild(container);
+      msgsEl2.lastChild.querySelector('.cs-bbl')?.appendChild(container);
     }
   }catch(e){
     csAddMsg('coach',`Couldn't triage right now: ${e.message}`);
@@ -1943,7 +2725,7 @@ function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
       </p>
       <p class="ob-disclaimer">Nudgley is not a medical device or a replacement for professional ADHD support.</p>
       <div class="ob-nav">
-        <button class="ob-skip" onclick="obClose()">Skip intro</button>
+        <button class="ob-skip" onclick="obSkip()">Skip intro</button>
         <button class="ob-next" onclick="obNext()">Next →</button>
       </div>
     </div>
@@ -1982,7 +2764,7 @@ function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
       <div class="ob-nav">
         <button class="ob-back" onclick="obBack()">←</button>
-        <button class="ob-skip" onclick="obClose()">Skip</button>
+        <button class="ob-skip" onclick="obSkip()">Skip</button>
         <button class="ob-next" onclick="obNext()">Next →</button>
       </div>
     </div>
