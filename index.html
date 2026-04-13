@@ -866,7 +866,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 
 <script>
 'use strict';
-const APP_VERSION = '0.5.2';
+const APP_VERSION = '0.5.3';
 let demo=false, chatMsgs=[], curMode='';
 let tasks=[], selBucketVal='immediate';
 let pSecs=25*60, pTotal=25*60, pRun=false, pBreak=false, pSess=1, pTimer=null;
@@ -1238,10 +1238,10 @@ const ACTION_VERBS = [
 ];
 
 const TEMPORAL_MARKERS = {
-  immediate: ['urgent','asap','immediately','right now','now','critical','emergency'],
+  immediate: ['immediate','urgent','asap','immediately','right now','now','critical','emergency','do now','do first'],
   today:     ['today','this morning','this afternoon','this evening','tonight','by eod','by end of day','by close'],
   week:      ['this week','by friday','by thursday','by wednesday','by tuesday','by monday','later this week'],
-  planned:   ['next week','next month','someday','eventually','to plan','in future','later']
+  planned:   ['next week','next month','someday','eventually','to plan','to be planned','to plan','in future','later']
 };
 
 // Step 1: preprocess raw input
@@ -1257,49 +1257,55 @@ function preprocessTaskInput(rawText) {
 
 // Step 2: detect task boundaries — returns array of raw task strings
 function detectTaskBoundaries(text) {
-  // Try explicit delimiters first
   let parts = [];
 
-  // Newline-separated
+  // 1. Newline-separated (typed lists, pasted content)
   if(/\n/.test(text)) {
     parts = text.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>3);
     if(parts.length > 1) return parts;
   }
 
-  // Bullet/number separated
+  // 2. Bullet/number lists
   if(/^[\s]*[-•*\d\.]+\s/m.test(text)) {
     parts = text.split(/\n?[\s]*[-•*][\s]+|\n?[\s]*\d+[.)]\s+/)
       .map(s=>s.trim()).filter(s=>s.length>3);
     if(parts.length > 1) return parts;
   }
 
-  // Semicolon separated
+  // 3. Semicolon separated
   if(/;/.test(text) && text.split(';').length > 2) {
     parts = text.split(';').map(s=>s.trim()).filter(s=>s.length>3);
     if(parts.length > 1) return parts;
   }
 
-  // Action verb detection — split on action verbs mid-sentence
-  const verbPattern = new RegExp(
-    '(?<=[^A-Z])(?=(?:' + ACTION_VERBS.map(v=>
-      v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
-    ).join('|') + ')\\s)',
-    'gi'
-  );
-
-  try {
-    const verbSplit = text.split(verbPattern).map(s=>s.trim()).filter(s=>s.length>3);
-    if(verbSplit.length > 1) return verbSplit;
-  } catch(e) {
-    // lookbehind not supported in this browser — fall through
+  // 4. Natural verbal separators for voice input:
+  //    Split ONLY on: "and then", "also", "next,", "additionally", "plus,"
+  //    combined with a priority word or a fresh sentence start.
+  //    This avoids splitting "draft an email update" at "update".
+  const verbalSep = /\s+(?:and then|after that|additionally|next up)\s+/gi;
+  if(verbalSep.test(text)) {
+    parts = text.split(verbalSep).map(s=>s.trim()).filter(s=>s.length>3);
+    if(parts.length > 1) return parts;
   }
 
-  // Last resort: split on comma+space before known verbs
-  const commaVerbParts = text.split(/,\s+(?=[A-Z]|(?:and\s+)?(?:finalise|finish|send|email|book|schedule|check|update|review|draft|write|prepare|create|chase|call|plan|sort|fix|confirm))/i)
-    .map(s=>s.replace(/^and\s+/i,'').trim()).filter(s=>s.length>3);
-  if(commaVerbParts.length > 1) return commaVerbParts;
+  // 5. Priority-word boundary: split when a priority keyword starts a new task
+  //    e.g. "send the report immediate review the slides this week"
+  //    Only split BEFORE a priority word when preceded by a complete-sounding phrase
+  const priorityBoundary = /(?<=\w{4,})\s+(?=(?:immediate|urgent|today|this week|this morning|next week|to plan|later)\s)/gi;
+  try {
+    parts = text.split(priorityBoundary).map(s=>s.trim()).filter(s=>s.length>3);
+    if(parts.length > 1) return parts;
+  } catch(e) { /* lookbehind not supported */ }
 
-  // Single task or couldn't split — return whole thing
+  // 6. Comma before a new action verb at start of a clause ONLY
+  //    Much stricter than before — require the verb to be the FIRST word after comma
+  //    e.g. "send the report, review the slides" → split
+  //    but "draft an email update, to the team" → do NOT split (next word is "to")
+  const strictCommaVerb = /,\s+(?=(?:finalise|finalize|finish|send|email|book|schedule|check|update|review|draft|write|prepare|create|chase|call|plan|fix|confirm|submit|contact|arrange|discuss|develop|outline|research|document|build|test|deploy)\s)/gi;
+  parts = text.split(strictCommaVerb).map(s=>s.replace(/^and\s+/i,'').trim()).filter(s=>s.length>3);
+  if(parts.length > 1) return parts;
+
+  // No clear boundary found — treat as single task
   return [text];
 }
 
@@ -1344,6 +1350,47 @@ function extractDraftTasks(cleanedText) {
 }
 
 // Step 4: safe parse — never throws, always returns something usable
+// Voice dictation uses API-first parsing — better at natural language than rule-based
+async function parseVoiceDictation(text) {
+  if(demo || window.location.protocol==='file:') {
+    // Client-side only in demo/local mode
+    return { tasks: extractDraftTasks(preprocessTaskInput(text)), raw: text, fallback: false };
+  }
+
+  const prompt = `The user dictated the following text aloud. Extract the individual tasks.
+
+Rules:
+- Each complete action or task = one item. Do NOT split a task mid-sentence.
+- "draft a quick email update to the team" is ONE task, not two.
+- Split tasks ONLY at natural breaks: "and then", "also", "next", a clear pause shown as punctuation, or a new priority word starting a new task.
+- Detect priority from these words in the text:
+  "immediate" or "urgent" → bucket: "immediate"
+  "today" or "this morning/afternoon" → bucket: "today"  
+  "this week" or day names → bucket: "week"
+  "later", "next week", "to plan", "someday" → bucket: "planned"
+  No priority word detected → default to bucket: "today"
+- Keep task text clean and actionable. Remove filler words like "I need to", "can you", "I would like to".
+- Preserve the full meaningful phrase. Never truncate mid-thought.
+
+Dictated text: "${text}"
+
+Respond ONLY with valid JSON, no markdown:
+{"tasks":[{"text":"full task text here","bucket":"immediate|today|week|planned"}]}`;
+
+  try {
+    const apiTasks = await apiExtractTasks(text, prompt);
+    if(apiTasks && apiTasks.length > 0) {
+      return { tasks: apiTasks, raw: text, fallback: false };
+    }
+  } catch(e) {
+    console.warn('Voice API parse failed, using client fallback:', e.message);
+  }
+
+  // Fallback: client-side with improved logic
+  const clientTasks = extractDraftTasks(preprocessTaskInput(text));
+  return { tasks: clientTasks.length ? clientTasks : [{id:'vf0',text:text,bucket:'today',confidence:0.5,included:true}], raw: text, fallback: true };
+}
+
 async function safeParseTasks(rawText) {
   const cleaned = preprocessTaskInput(rawText);
   if(!cleaned) return {tasks:[], raw:rawText, fallback:false};
@@ -1398,8 +1445,8 @@ function chunkText(text, maxWords) {
   return chunks;
 }
 
-async function apiExtractTasks(text) {
-  const prompt = `Extract all tasks from this text. Return ONLY valid JSON, no markdown:\n{"tasks":[{"text":"task description","bucket":"immediate|today|week|planned"}]}\n\nRules: extract every action item, keep text concise, infer bucket from timing words.\n\nText: "${text}"`;
+async function apiExtractTasks(text, customPrompt) {
+  const prompt = customPrompt || `Extract all tasks from this text. Return ONLY valid JSON, no markdown:\n{"tasks":[{"text":"task description","bucket":"immediate|today|week|planned"}]}\n\nRules: extract every action item, keep text concise, infer bucket from timing words.\n\nText: "${text}"`;
 
   const res = await fetch('/api/nudge', {
     method:'POST', headers:{'Content-Type':'application/json'},
@@ -2219,7 +2266,8 @@ async function processDictation(text){
   document.getElementById('proc-txt').textContent='Extracting tasks…';
   if(window.location.protocol==='file:'){const lr={tasks:extractDraftTasks(preprocessTaskInput(text)),raw:text,fallback:false};document.getElementById('processing').classList.remove('on');if(!lr.tasks.length)lr.tasks=[{id:'lf0',text:text,bucket:'today',confidence:0.5,included:true}];showReviewSheet(lr);return;}
   try{
-    const result=await safeParseTasks(text);
+    // Use voice-optimised parser (API-first, preserves full sentences)
+    const result=await parseVoiceDictation(text);
     document.getElementById('processing').classList.remove('on');
     if(!result.tasks.length){
       result.tasks=[{id:'fallback_0',text:text,bucket:'today',confidence:0.3,included:true}];
