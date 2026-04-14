@@ -95,8 +95,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 /* Column move menu */
 .tc-move-wrap{position:relative;}
 .tc-move-btn{background:var(--surface2);color:var(--dim);border:1px solid var(--border);}
-.move-menu{position:absolute;bottom:34px;left:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;z-index:20;display:none;min-width:130px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
-.move-menu.on{display:block;}
+.tc-edit-btn{background:rgba(181,123,238,.1);color:var(--mood);border:1px solid rgba(181,123,238,.25);}
+.move-menu{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;z-index:500;display:none;min-width:145px;box-shadow:0 8px 32px rgba(0,0,0,.6);}
+.move-menu.on{display:block;animation:up .15s ease;}
 .mm-item{padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:7px;transition:background .1s;}
 .mm-item:active{background:var(--surface2);}
 
@@ -532,12 +533,12 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 /* ── COMPLETED HISTORY SHEET ── */
 #history-sheet{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:flex-end;justify-content:center;}
 #history-sheet.on{display:flex;}
-.hs-inner{width:100%;max-width:520px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));max-height:80dvh;display:flex;flex-direction:column;animation:slideUp .25s ease;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
+.hs-inner{width:100%;max-width:520px;background:var(--surface);border-radius:22px 22px 0 0;padding:22px 20px calc(20px + var(--sb));max-height:80dvh;height:80dvh;display:flex;flex-direction:column;animation:slideUp .25s ease;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
 .hs-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px;flex-shrink:0;}
 .hs-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0;}
 .hs-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--bright);}
 .hs-close{background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:16px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
-.hs-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.hs-list{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--border) transparent;min-height:0;}
 .hs-empty{padding:32px 0;text-align:center;font-size:13px;color:var(--dim);}
 .hs-day-label{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;padding:12px 0 6px;font-family:'Syne',sans-serif;font-weight:600;}
 .hs-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
@@ -583,6 +584,15 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 .ms-strip-items::-webkit-scrollbar{display:none;}
 .ms-chip{background:rgba(91,191,122,.1);border:1px solid rgba(91,191,122,.2);border-radius:14px;padding:4px 10px;font-size:11px;color:var(--success);white-space:nowrap;flex-shrink:0;}
 .ms-strip-count{font-size:11px;color:var(--success);font-family:'Syne',sans-serif;font-weight:700;white-space:nowrap;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+
+
+/* Momentum strip inline quick-add */
+.ms-quickadd{display:flex;align-items:center;gap:6px;margin-left:4px;flex-shrink:0;}
+.ms-qa-inp{background:rgba(255,255,255,.06);border:1px solid rgba(91,191,122,.2);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--bright);font-family:'Inter',system-ui,sans-serif;outline:none;width:0;opacity:0;transition:width .2s,opacity .2s;pointer-events:none;}
+.ms-qa-inp.open{width:140px;opacity:1;pointer-events:all;}
+.ms-qa-inp::placeholder{color:var(--dim);}
+.ms-qa-btn{background:rgba(91,191,122,.15);border:1px solid rgba(91,191,122,.25);border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--success);flex-shrink:0;transition:all .15s;}
+.ms-qa-btn:active{background:rgba(91,191,122,.3);}
 
 </style>
 </head>
@@ -633,6 +643,11 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
       <span class="ms-strip-label">Done ✓</span>
       <div class="ms-strip-items" id="ms-strip-items"></div>
       <span class="ms-strip-count" id="ms-strip-count" onclick="openHistorySheet()"></span>
+      <div class="ms-quickadd">
+        <input class="ms-qa-inp" id="ms-qa-inp" placeholder="Quick add done…" maxlength="80"
+          onkeydown="msQaKey(event)" onblur="msQaBlur()">
+        <button class="ms-qa-btn" id="ms-qa-btn" onclick="msQaToggle()" title="Log a win">＋</button>
+      </div>
     </div>
     <!-- Re-entry decision strip -->
     <div id="reentry-strip">
@@ -982,7 +997,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 
 <script>
 'use strict';
-const APP_VERSION = '0.7.0';
+const APP_VERSION = '0.7.1';
 let demo=false, chatMsgs=[], curMode='';
 let tasks=[], selBucketVal='immediate';
 let pSecs=25*60, pTotal=25*60, pRun=false, pBreak=false, pSess=1, pTimer=null;
@@ -1937,6 +1952,7 @@ function logOffBoardWin(){
   addToDoneLog({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date()});
   hideMomOverlay();
   showFlash('✓ '+txt,'var(--success)');
+  renderMomentumStrip();
 }
 
 
@@ -2241,8 +2257,6 @@ function renderBoard(){
   saveTasks(); // single reliable save point
 }
 
-function makeCard(t){}
-
 function makeCard(t){
   const bcolor=BCOLS[t.bucket]||'var(--dim)';
   const card=document.createElement('div');
@@ -2260,10 +2274,11 @@ function makeCard(t){
     </div>
     <div class="tc-acts-row" id="acts-${t.id}">
       <button class="tcbtn tc-done" onclick="completeTask('${t.id}')">✓ Done</button>
+      <button class="tcbtn tc-edit-btn" onclick="event.stopPropagation();openEditSheet('${t.id}')">✎ Open</button>
       <div class="tc-move-wrap">
         <button class="tcbtn tc-move-btn" onclick="toggleMoveMenu('${t.id}')">Move ▾</button>
         <div class="move-menu" id="mm-${t.id}">
-          ${['immediate','today','week','planned'].filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${b.charAt(0).toUpperCase()+b.slice(1)}</div>`).join('')}
+          ${['immediate','today','week','planned'].filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${{'immediate':'🔴 Immediate','today':'🟡 Today','week':'🔵 This Week','planned':'📋 To Plan'}[b]||b}</div>`).join('')}
         </div>
       </div>
       <button class="tcbtn tc-del" onclick="deleteTask('${t.id}')">✕</button>
@@ -2277,6 +2292,37 @@ function makeCard(t){
     card.classList.remove('dragging');
     document.querySelectorAll('.col-cards').forEach(c=>c.classList.remove('drag-over'));
   });
+
+  // Desktop: double-click on card body opens task detail
+  const body = card.querySelector('.tc-body');
+  if(body){
+    body.addEventListener('dblclick', e=>{
+      e.stopPropagation();
+      document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
+      openEditSheet(t.id);
+    });
+  }
+
+  // Mobile: single tap (no drag movement) on card body opens task detail
+  let _touchStartX=0, _touchStartY=0, _touchStartTime=0;
+  card.addEventListener('touchstart', e=>{
+    _touchStartX=e.touches[0].clientX;
+    _touchStartY=e.touches[0].clientY;
+    _touchStartTime=Date.now();
+  },{passive:true});
+  card.addEventListener('touchend', e=>{
+    const dx=Math.abs(e.changedTouches[0].clientX-_touchStartX);
+    const dy=Math.abs(e.changedTouches[0].clientY-_touchStartY);
+    const dt=Date.now()-_touchStartTime;
+    // Tap: short time, no significant movement, not on a button
+    if(dt<300 && dx<10 && dy<10 && !e.target.closest('button') && !e.target.closest('.move-menu')){
+      e.preventDefault();
+      document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
+      document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
+      openEditSheet(t.id);
+    }
+  },{passive:false});
+
   return card;
 }
 
@@ -2292,8 +2338,34 @@ function toggleMoveMenu(id){
   const mm=document.getElementById('mm-'+id);if(!mm)return;
   const wasOn=mm.classList.contains('on');
   document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
-  if(!wasOn)mm.classList.add('on');
+  if(!wasOn){
+    mm.classList.add('on');
+    // Smart positioning: place relative to button, flip if near viewport edges
+    const btn=document.querySelector(`#acts-${id} .tc-move-btn`);
+    if(btn){
+      const br=btn.getBoundingClientRect();
+      const mh=mm.offsetHeight||160;
+      const mw=mm.offsetWidth||150;
+      const spaceBelow=window.innerHeight-br.bottom;
+      const spaceAbove=br.top;
+      // Vertical: prefer below, flip to above if not enough space
+      let top=spaceBelow>=mh+8 ? br.bottom+4 : br.top-mh-4;
+      // Clamp to viewport
+      top=Math.max(8,Math.min(top,window.innerHeight-mh-8));
+      // Horizontal: align left of button, clamp right edge
+      let left=br.left;
+      if(left+mw>window.innerWidth-8) left=window.innerWidth-mw-8;
+      mm.style.top=top+'px';
+      mm.style.left=left+'px';
+    }
+  }
 }
+// Close move menus on outside tap
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.tc-move-wrap')&&!e.target.closest('.move-menu')){
+    document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
+  }
+});
 
 // Drag and drop
 function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
@@ -3154,6 +3226,46 @@ function renderMomentumStrip(){
   itemsEl.innerHTML = done.slice(0,4).map(t=>`<span class="ms-chip">${esc(t.text.slice(0,30)+(t.text.length>30?'…':''))}</span>`).join('');
   countEl.textContent = done.length > 4 ? `+${done.length-4} more` : `${done.length} done`;
   strip.classList.add('show');
+}
+
+
+// ── Momentum strip quick-add ──
+function msQaToggle(){
+  const inp=document.getElementById('ms-qa-inp');
+  const btn=document.getElementById('ms-qa-btn');
+  if(!inp)return;
+  if(inp.classList.contains('open')){
+    msQaSubmit();
+  } else {
+    inp.classList.add('open');
+    if(btn) btn.textContent='→';
+    inp.focus();
+  }
+}
+function msQaKey(e){
+  if(e.key==='Enter'){e.preventDefault();msQaSubmit();}
+  if(e.key==='Escape'){msQaBlur();}
+}
+function msQaBlur(){
+  setTimeout(()=>{
+    const inp=document.getElementById('ms-qa-inp');
+    const btn=document.getElementById('ms-qa-btn');
+    if(inp){inp.classList.remove('open');inp.value='';}
+    if(btn) btn.textContent='＋';
+  },200);
+}
+function msQaSubmit(){
+  const inp=document.getElementById('ms-qa-inp');
+  const txt=inp?inp.value.trim():'';
+  if(txt){
+    addToDoneLog({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date()});
+    archiveCompleted({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date(),completedAt:new Date().toISOString()});
+    showFlash('✓ '+txt,'var(--success)');
+    renderMomentumStrip();
+  }
+  if(inp){inp.value='';inp.classList.remove('open');}
+  const btn=document.getElementById('ms-qa-btn');
+  if(btn) btn.textContent='＋';
 }
 
 function fmt(d){return`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
