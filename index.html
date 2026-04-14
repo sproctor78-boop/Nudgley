@@ -84,18 +84,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .tc-notes{font-size:11px;color:var(--dim);margin-top:4px;font-style:italic;line-height:1.4;}
 .tc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
 .tc-time{font-size:10px;color:var(--dim);}
-.tc-acts-row{display:none;padding:0 8px 8px;gap:5px;}
-.tc-acts-row.on{display:flex;}
+/* tc-acts-row removed */
 .tcbtn{border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-family:'Inter',system-ui,sans-serif;font-weight:500;cursor:pointer;min-height:28px;transition:opacity .15s;}
 .tcbtn:active{opacity:.7;}
-.tc-done{background:rgba(91,191,122,.12);color:var(--success);border:1px solid rgba(91,191,122,.2);}
-.tc-del{background:transparent;color:var(--dim);border:1px solid transparent;margin-left:auto;}
-.tc-del:active{color:var(--stuck);}
 
 /* Column move menu */
 .tc-move-wrap{position:relative;}
-.tc-move-btn{background:var(--surface2);color:var(--dim);border:1px solid var(--border);}
-.tc-edit-btn{background:rgba(181,123,238,.1);color:var(--mood);border:1px solid rgba(181,123,238,.25);}
+.tc-move-btn{background:var(--surface2);color:var(--dim);border:1px solid var(--border);font-size:11px;}
 .move-menu{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;z-index:500;display:none;min-width:145px;box-shadow:0 8px 32px rgba(0,0,0,.6);}
 .move-menu.on{display:block;animation:up .15s ease;}
 .mm-item{padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:7px;transition:background .1s;}
@@ -594,6 +589,29 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 .ms-qa-btn{background:rgba(91,191,122,.15);border:1px solid rgba(91,191,122,.25);border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--success);flex-shrink:0;transition:all .15s;}
 .ms-qa-btn:active{background:rgba(91,191,122,.3);}
 
+/* ── HEADER MENU ── */
+.hdr-menu-wrap{position:relative;}
+.hdr-menu{position:fixed;top:48px;right:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;z-index:400;display:none;min-width:190px;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:up .15s ease;}
+.hdr-menu.on{display:block;}
+.hdr-menu-item{display:block;width:100%;background:none;border:none;padding:10px 14px;font-size:13px;font-family:'Inter',system-ui,sans-serif;color:var(--text);text-align:left;cursor:pointer;border-radius:8px;transition:background .1s;}
+.hdr-menu-item:active,.hdr-menu-item:hover{background:var(--surface2);color:var(--bright);}
+
+/* ── CARD META ROW UPDATE ── */
+.tc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.tc-time{font-size:10px;color:var(--dim);}
+/* Remove old action row styles */
+.tc-acts-row{display:none!important;}
+
+/* ── EDIT SHEET ACTION ROW ── */
+.es-action-row{display:flex;gap:8px;margin-top:10px;}
+.es-done-btn{flex:1;background:rgba(91,191,122,.12);border:1px solid rgba(91,191,122,.25);border-radius:10px;padding:11px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--success);cursor:pointer;transition:all .15s;}
+.es-done-btn:active{background:rgba(91,191,122,.25);}
+.es-del-btn{background:transparent;border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:var(--dim);cursor:pointer;transition:all .15s;}
+.es-del-btn:active{border-color:var(--stuck);color:var(--stuck);}
+
+/* ── FOCUS VISIBLE ── */
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--mood);outline-offset:2px;}
+
 </style>
 </head>
 <body>
@@ -604,16 +622,21 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
   <!-- Header -->
   <div class="hdr">
     <div class="hdr-left">
-      <button class="coach-btn" id="coach-toggle-btn" onclick="toggleCoach()">
+      <button class="coach-btn" id="coach-toggle-btn" onclick="toggleCoach()" aria-label="Open coach">
         <span class="coach-btn-ic">🧠</span><span>Coach</span>
       </button>
     </div>
     <div class="hdr-logo">nudgley</div>
     <div class="hdr-right">
-      <button class="hbtn" onclick="openProfilePanel()" title="Your profile & memory">🧠</button>
-      <button class="hbtn" onclick="openHistorySheet()" title="Completed tasks" id="history-btn">✓</button>
-      <button class="hbtn" onclick="togglePom()" title="Focus timer">⏱</button>
-      <button class="hbtn" id="reentry-btn" onclick="reopenReentry()" title="Reopen daily guidance" style="display:none">🎯</button>
+      <button class="hbtn" onclick="togglePom()" title="Focus timer" aria-label="Focus timer">⏱</button>
+      <div class="hdr-menu-wrap">
+        <button class="hbtn" id="hdr-menu-btn" onclick="toggleHdrMenu()" aria-label="More options" aria-expanded="false" aria-haspopup="true">•••</button>
+        <div class="hdr-menu" id="hdr-menu" role="menu" aria-label="App menu">
+          <button class="hdr-menu-item" role="menuitem" onclick="openHistorySheet();closeHdrMenu()">✓ Completed tasks</button>
+          <button class="hdr-menu-item" role="menuitem" onclick="openProfilePanel();closeHdrMenu()">🧠 Profile &amp; memory</button>
+          <button class="hdr-menu-item" role="menuitem" onclick="reopenReentry();closeHdrMenu()" id="reentry-menu-item" style="display:none">🎯 Re-open daily guidance</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="demo-bar" id="demo-bar">⚡ Demo mode — add an API key for live coaching + smart task parsing</div>
@@ -628,7 +651,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
       </div>
       <div class="pom-btns">
         <button class="pbtn" id="pom-go" onclick="pomToggle()">▶ Start</button>
-        <button class="pbtn" onclick="pomReset()">↺</button>
+        <button class="pbtn" onclick="pomReset()" aria-label="Reset timer">↺</button>
       </div>
     </div>
     <div class="pom-track"><div class="pom-fill" id="pom-fill" style="width:100%"></div></div>
@@ -728,6 +751,158 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
     </div>
   </div>
 
+
+<!-- ── ONBOARDING OVERLAY ── -->
+<div id="onboarding">
+  <div class="ob-sheet">
+
+    <!-- Progress dots -->
+    <div class="ob-progress">
+      <div class="ob-dot active" id="ob-dot-0"></div>
+      <div class="ob-dot" id="ob-dot-1"></div>
+      <div class="ob-dot" id="ob-dot-2"></div>
+    </div>
+
+    <!-- ── SCREEN 1: What is Nudgley ── -->
+    <div id="ob-screen-0">
+      <div class="ob-logo">nudgley</div>
+      <div class="ob-tagline">Your ADHD task board</div>
+      <div class="ob-headline">The hardest part isn't the work.<br>It's starting it.</div>
+      <p class="ob-body">
+        If you have ADHD, your brain doesn't lack ideas — it lacks structure at the moment you need it most.
+        Nudgley gives you that structure: <strong>instantly, without friction, without setup.</strong>
+      </p>
+      <p class="ob-body">
+        Speak your tasks out loud. They land on your board, sorted and ready.
+        When you're stuck or overwhelmed, your Coach reads exactly what's on your board and tells you what to do next.
+      </p>
+      <p class="ob-body">
+        This isn't a wellness app. It's a tool for <strong>high-functioning professionals with ADHD</strong>
+        who need a system that works as fast as they think.
+      </p>
+      <p class="ob-disclaimer">Nudgley is not a medical device or a replacement for professional ADHD support.</p>
+      <div class="ob-nav">
+        <button class="ob-skip" onclick="obSkip()">Skip intro</button>
+        <button class="ob-next" onclick="obNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: The Board ── -->
+    <div id="ob-screen-1" style="display:none">
+      <div class="ob-headline">Your board.<br>Four buckets, zero thinking.</div>
+      <p class="ob-body">Everything goes somewhere. Nothing gets lost. Your brain stops holding on to things it shouldn't have to remember.</p>
+
+      <div class="ob-cols">
+        <div class="ob-col-card" style="border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.05)">
+          <div class="ob-col-label" style="color:var(--immediate)">🔴 Immediate</div>
+          <div class="ob-col-desc">Drop everything. This needs to happen now.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.05)">
+          <div class="ob-col-label" style="color:var(--today)">🟡 Today</div>
+          <div class="ob-col-desc">Committed to today. Not tomorrow.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(74,158,255,.35);background:rgba(74,158,255,.05)">
+          <div class="ob-col-label" style="color:var(--week)">🔵 This Week</div>
+          <div class="ob-col-desc">On the radar. Not urgent yet.</div>
+        </div>
+        <div class="ob-col-card" style="border-color:rgba(107,122,153,.35);background:rgba(107,122,153,.05)">
+          <div class="ob-col-label" style="color:var(--planned)">📋 To Plan</div>
+          <div class="ob-col-desc">Captured so your brain can let go.</div>
+        </div>
+      </div>
+
+      <div class="ob-voice-box">
+        <div class="ob-voice-icon">🎙</div>
+        <div class="ob-voice-text">
+          <div class="ob-voice-title">Speak, don't type</div>
+          <div class="ob-voice-desc">Tap <strong>Dictate Tasks</strong> at the bottom and speak naturally — "send the report today, prep slides this week." Nudgley extracts each task and puts it in the right column automatically.</div>
+        </div>
+      </div>
+
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obBack()">←</button>
+        <button class="ob-skip" onclick="obSkip()">Skip</button>
+        <button class="ob-next" onclick="obNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: The Coach ── -->
+    <div id="ob-screen-2" style="display:none">
+      <div class="ob-headline">Your Coach.<br>Always reading your board.</div>
+      <p class="ob-coach-intro">Tap <strong>🧠 Coach</strong> in the top left whenever you need support. It already knows what's on your board — no context needed. Pick a mode:</p>
+
+      <div class="ob-modes">
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(245,166,35,.1)">🌅</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--morning)">Plan my day</div>
+            <div class="ob-mode-desc">Set one clear intention. Anchor the day before it escapes.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(255,107,107,.1)">🧱</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--stuck)">I'm stuck</div>
+            <div class="ob-mode-desc">Can't start, overthinking, restart loop. This cuts through it.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(74,158,255,.1)">🔧</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--breakdown)">Break it down</div>
+            <div class="ob-mode-desc">Turn a vague task into a first physical action.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(181,123,238,.1)">🧭</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--mood)">Mood check</div>
+            <div class="ob-mode-desc">Quick energy and headspace read before starting work.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(62,207,178,.1)">🌙</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--eod)">End of day</div>
+            <div class="ob-mode-desc">Close off properly. Acknowledge what got done.</div>
+          </div>
+        </div>
+        <div class="ob-mode">
+          <div class="ob-mode-icon" style="background:rgba(91,191,122,.1)">💬</div>
+          <div>
+            <div class="ob-mode-title" style="color:var(--chat)">Open chat</div>
+            <div class="ob-mode-desc">Think something through. No structure needed.</div>
+          </div>
+        </div>
+      </div>
+
+      <label class="ob-dontshow">
+        <input type="checkbox" id="ob-dontshow-cb">
+        <span>Don't show this again</span>
+      </label>
+
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obBack()">←</button>
+        <button class="ob-next" onclick="obFinish()" style="background:linear-gradient(120deg,var(--success),var(--eod))">Let's go →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Completed history sheet -->
+<div id="history-sheet" role="dialog" aria-modal="true" aria-label="Completed tasks">
+  <div class="hs-inner">
+    <div class="hs-handle"></div>
+    <div class="hs-top">
+      <span class="hs-title">✓ Completed</span>
+      <button class="hs-close" onclick="closeHistorySheet()" aria-label="Close">✕</button>
+    </div>
+    <div class="hs-list" id="hs-list"></div>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- Coach sidebar -->
@@ -735,7 +910,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 <div id="coach-sidebar">
   <div class="cs-hdr">
     <span class="cs-title">🧠 Coach</span>
-    <div style="display:flex;align-items:center;gap:8px;"><span id="version-badge" style="font-size:10px;color:var(--dim);letter-spacing:1px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 7px;"></span><button class="cs-close" onclick="closeCoach()">✕</button></div>
+    <div style="display:flex;align-items:center;gap:8px;"><span id="version-badge" style="font-size:10px;color:var(--dim);letter-spacing:1px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:2px 7px;"></span><button class="cs-close" onclick="closeCoach()" aria-label="Close coach">✕</button></div>
   </div>
 
   <!-- Default: action list -->
@@ -783,7 +958,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 
 
 <!-- Mood intake sheet -->
-<div id="mood-sheet">
+<div id="mood-sheet" role="dialog" aria-modal="true" aria-label="Mood check">
   <div class="ms-inner">
     <div class="ms-handle"></div>
     <div class="ms-title">🧭 Quick state check</div>
@@ -839,7 +1014,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 
 
 <!-- Momentum / off-board win log -->
-<div id="mom-overlay">
+<div id="mom-overlay" role="dialog" aria-modal="true" aria-label="Log a win">
   <div class="mo-sheet">
     <div class="mo-handle"></div>
     <div class="mo-title">Log a win ✓</div>
@@ -853,14 +1028,14 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 </div>
 
 <!-- Task review sheet -->
-<div id="review-sheet">
+<div id="review-sheet" role="dialog" aria-modal="true" aria-label="Review tasks">
   <div class="rv-inner">
     <div class="rv-handle"></div>
     <div class="rv-top">
       <div>
         <div class="rv-title">Review your tasks</div>
       </div>
-      <button class="rv-close" onclick="closeReviewSheet()">✕</button>
+      <button class="rv-close" onclick="closeReviewSheet()" aria-label="Close">✕</button>
     </div>
     <p class="rv-sub" id="rv-sub">Edit, remove or re-bucket before saving. Tick to include.</p>
     <div class="rv-raw" id="rv-raw"></div>
@@ -873,16 +1048,31 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 </div>
 
 <!-- Task edit sheet -->
-<div id="edit-sheet">
+<div id="edit-sheet" role="dialog" aria-modal="true" aria-label="Task detail">
   <div class="es-inner">
     <div class="es-handle"></div>
     <div class="es-top">
       <span class="es-title" id="es-sheet-title">Task detail</span>
-      <button class="es-close" onclick="closeEditSheet()">✕</button>
+      <button class="es-close" onclick="closeEditSheet()" aria-label="Close">✕</button>
     </div>
 
-    <!-- Enhancement display (shown when enhancement exists) -->
+    <!-- Task and Notes — always visible -->
+    <div id="es-edit-fields">
+      <div class="es-section">
+        <div class="es-section-title">Task <div class="es-section-line"></div></div>
+        <textarea class="es-ta" id="es-task-inp" placeholder="What's the outcome?" oninput="esAr(this)" aria-label="Task text"></textarea>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Notes <div class="es-section-line"></div></div>
+        <textarea class="es-ta es-notes" id="es-notes-inp" placeholder="Add context, links, dependencies…" oninput="esAr(this)" aria-label="Notes"></textarea>
+      </div>
+      <button class="es-enhance-btn" id="es-enhance-btn" onclick="enhanceTask()">✦ Enhance with AI</button>
+      <div class="es-enhanced-result" id="es-enhanced-result"></div>
+    </div>
+
+    <!-- Enhancement display (shown below edit when enhancement exists) -->
     <div id="es-enh-display" style="display:none">
+      <div class="es-divider"></div>
       <div class="es-start-here" id="es-start-here-row" style="margin-bottom:14px;">
         <span class="es-start-here-label">▶ Start here</span>
         <span class="es-start-here-text" id="es-start-here-text"></span>
@@ -898,40 +1088,29 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
           <span class="es-effort-badge" id="es-effort-badge"></span>
-          <button class="es-enh-edit-toggle" onclick="toggleEditMode()">Edit original task</button>
         </div>
       </div>
-      <div class="es-divider"></div>
-    </div>
-
-    <!-- Edit fields (always present, shown/hidden based on mode) -->
-    <div id="es-edit-fields">
-      <div class="es-section">
-        <div class="es-section-title">Task <div class="es-section-line"></div></div>
-        <textarea class="es-ta" id="es-task-inp" placeholder="What's the outcome?" oninput="esAr(this)"></textarea>
-      </div>
-      <div class="es-section">
-        <div class="es-section-title">Notes <div class="es-section-line"></div></div>
-        <textarea class="es-ta es-notes" id="es-notes-inp" placeholder="Add context, links, dependencies…" oninput="esAr(this)"></textarea>
-      </div>
-      <button class="es-enhance-btn" id="es-enhance-btn" onclick="enhanceTask()">✦ Enhance with AI</button>
-      <div class="es-enhanced-result" id="es-enhanced-result"></div>
     </div>
 
     <div class="es-bucket-label">Bucket</div>
     <div class="es-buckets" id="es-buckets"></div>
+
     <button class="es-save" onclick="saveEditTask()">Save changes</button>
+    <div class="es-action-row">
+      <button class="es-done-btn" onclick="editTaskDone()">✓ Mark done</button>
+      <button class="es-del-btn" onclick="editTaskDelete()">Delete task</button>
+    </div>
   </div>
 </div>
 
 
 <!-- Profile / Memory panel -->
-<div id="profile-panel">
+<div id="profile-panel" role="dialog" aria-modal="true" aria-label="Profile and memory">
   <div class="pp-sheet">
     <div class="pp-handle"></div>
     <div class="pp-top">
       <span class="pp-title">🧠 What Nudgley knows about you</span>
-      <button class="pp-close" onclick="closeProfilePanel()">✕</button>
+      <button class="pp-close" onclick="closeProfilePanel()" aria-label="Close">✕</button>
     </div>
     <p class="pp-subtitle">Built automatically from your coaching sessions. Gets more accurate over time.</p>
 
@@ -961,7 +1140,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 </button>
 
 <!-- Manual add FAB -->
-<button id="add-fab" onclick="openAddSheet(null)" title="Add task manually">＋</button>
+<button id="add-fab" onclick="openAddSheet(null)" title="Add task manually" aria-label="Add task manually">＋</button>
 
 <!-- Dictate overlay -->
 <div id="dictate-overlay">
@@ -979,9 +1158,9 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 </div>
 
 <!-- Add task sheet -->
-<div id="add-sheet" id="add-sheet">
+<div id="add-sheet" role="dialog" aria-modal="true" aria-label="Add task">
   <div class="as-inner">
-    <div class="as-top-row"><div class="as-title">Add a task</div><button class="as-close" onclick="closeAddSheet()">✕</button></div>
+    <div class="as-top-row"><div class="as-title">Add a task</div><button class="as-close" onclick="closeAddSheet()" aria-label="Close">✕</button></div>
     <textarea class="as-input" id="as-inp" placeholder="What's the outcome?" rows="1" oninput="asAr(this)"></textarea>
     <textarea class="as-notes" id="as-notes" placeholder="Notes (optional)…" rows="1" oninput="asAr(this)"></textarea>
     <div class="as-blabel">Bucket</div>
@@ -997,7 +1176,7 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 
 <script>
 'use strict';
-const APP_VERSION = '0.7.1';
+const APP_VERSION = '0.8.0';
 
 // ── User configuration ───────────────────────────────────────────────────────
 // All personal context lives here. Change this block to use the app
@@ -1060,6 +1239,35 @@ function getTaskContext(){
   return Object.entries(byBucket).filter(([,v])=>v.length).map(([k,v])=>`${k.toUpperCase()}: ${v.join(', ')}`).join(' | ');
 }
 
+// ── App state — replaces all window._ globals ───────────────────────────────
+const AppState = {
+  reviewTasks: null,
+  pendingEnhancement: null,
+  lastEnhancement: null,
+  recommendedTaskId: null,
+  editShowingEnhancement: false,
+};
+
+// ── Storage — single interface for all persistence ────────────────────────────
+const Storage = {
+  get(key){
+    try{ const r=localStorage.getItem(key); return r?JSON.parse(r):null; }
+    catch(e){ return null; }
+  },
+  set(key,val){
+    try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+  },
+  remove(key){
+    try{ localStorage.removeItem(key); }catch(e){}
+  },
+  getRaw(key){
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
+  },
+  setRaw(key,val){
+    try{ localStorage.setItem(key,val); }catch(e){}
+  }
+};
+
 // ── System prompt (rebuilt fresh on each call so board state is current) ─────
 const SYS=()=>`You are Nudgley, a direct no-nonsense ADHD coach for ${USER_CONFIG.name}.
 ABOUT ${USER_CONFIG.name.toUpperCase()}: ${USER_CONFIG.role}. ${USER_CONFIG.context} ADHD: ${USER_CONFIG.adhdProfile} What works: ${USER_CONFIG.whatWorks}
@@ -1085,6 +1293,30 @@ function launch(d){
 }
 // Auto-launch on page load
 
+
+// ── Header ••• menu ──
+function toggleHdrMenu(){
+  const menu=document.getElementById('hdr-menu');
+  const btn=document.getElementById('hdr-menu-btn');
+  const isOpen=menu.classList.contains('on');
+  menu.classList.toggle('on');
+  if(btn) btn.setAttribute('aria-expanded', !isOpen);
+}
+function closeHdrMenu(){
+  const menu=document.getElementById('hdr-menu');
+  const btn=document.getElementById('hdr-menu-btn');
+  if(menu) menu.classList.remove('on');
+  if(btn) btn.setAttribute('aria-expanded','false');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.hdr-menu-wrap')) closeHdrMenu();
+});
+
+// Keep reentry menu item visible in sync with reentry-btn (now removed from header)
+function syncReentryMenuItem(){
+  const item=document.getElementById('reentry-menu-item');
+  if(item) item.style.display='';
+}
 
 // ── Coach sidebar ──
 let coachOpen=false;
@@ -1135,6 +1367,10 @@ const STORAGE_KEYS = {
   profile:     'nudgley_profile',
   stats:       'nudgley_stats',
   completed:   'nudgley_completed',
+  reentry:     'nudgley_reentry',
+  reentryDismissed: 'nudgley_reentry_dismissed',
+  doneLog:     'nudgley_done_log',
+  onboarding:  'nudgley_onboarding_done',
 };
 
 // ── Profile structure ──
@@ -1146,38 +1382,36 @@ const STORAGE_KEYS = {
 
 function loadProfile(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEYS.profile);
-    return raw ? JSON.parse(raw) : {insights:[], patterns:[], lastUpdated:null};
+    return Storage.get(STORAGE_KEYS.profile) || {insights:[], patterns:[], lastUpdated:null};
   }catch(e){ return {insights:[], patterns:[], lastUpdated:null}; }
 }
 
 function saveProfile(profile){
   profile.lastUpdated = new Date().toISOString();
-  localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
+  Storage.set(STORAGE_KEYS.profile, profile);
 }
 
 function loadStats(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEYS.stats);
-    return raw ? JSON.parse(raw) : {tasksDone:0, sessions:0};
+    return Storage.get(STORAGE_KEYS.stats) || {tasksDone:0, sessions:0};
   }catch(e){ return {tasksDone:0, sessions:0}; }
 }
 
 function saveStats(stats){
-  localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(stats));
+  Storage.set(STORAGE_KEYS.stats, stats);
 }
 
 // ── Done log: completed tasks persist for EOD + momentum ──
-const DONE_KEY = 'nudgley_done_log';
+// DONE_KEY merged into STORAGE_KEYS
 function loadDoneLog(){
   try{
-    const raw=localStorage.getItem(DONE_KEY);
+    const raw=Storage.get(STORAGE_KEYS.doneLog);
     if(!raw)return[];
-    return JSON.parse(raw).map(t=>({...t,completedAt:new Date(t.completedAt)}));
+    return raw.map(t=>({...t,completedAt:new Date(t.completedAt)}));
   }catch(e){return[];}
 }
 function saveDoneLog(log){
-  try{localStorage.setItem(DONE_KEY,JSON.stringify(log.slice(0,50)));}catch(e){}
+  Storage.set(STORAGE_KEYS.doneLog, log.slice(0,50));
 }
 function addToDoneLog(task){
   const log=loadDoneLog();
@@ -1195,17 +1429,15 @@ function getTodayDoneLog(){
 // ── Task persistence ──
 function saveTasks(){
   try{
-    localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(
-      tasks.map(t=>({...t, createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString() : t.createdAt}))
-    ));
+    Storage.set(STORAGE_KEYS.tasks, tasks.map(t=>({...t, createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString() : t.createdAt})));
   }catch(e){ console.warn('Could not save tasks:', e); }
 }
 
 function loadTasks(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEYS.tasks);
+    const raw = Storage.get(STORAGE_KEYS.tasks);
     if(!raw) return [];
-    return JSON.parse(raw).map(t=>({...t, createdAt: new Date(t.createdAt)}));
+    return raw.map(t=>({...t, createdAt: new Date(t.createdAt)}));
   }catch(e){ return []; }
 }
 
@@ -1360,8 +1592,8 @@ document.addEventListener('click',e=>{
 
 function clearProfile(){
   if(!confirm('Reset all coaching memory? This cannot be undone.'))return;
-  localStorage.removeItem(STORAGE_KEYS.profile);
-  localStorage.removeItem(STORAGE_KEYS.stats);
+  Storage.remove(STORAGE_KEYS.profile);
+  Storage.remove(STORAGE_KEYS.stats);
   closeProfilePanel();
   showFlash('Memory cleared','var(--dim)');
 }
@@ -1666,7 +1898,7 @@ function showReviewSheet(parseResult) {
 
   renderReviewList(tasks);
   document.getElementById('review-sheet').classList.add('on');
-  window._reviewTasks = tasks;
+  AppState.reviewTasks = tasks;
 }
 
 function renderReviewList(tasks) {
@@ -1701,23 +1933,23 @@ function renderReviewList(tasks) {
 
 function rvAutoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 function rvToggle(idx){
-  window._reviewTasks[idx].included = window._reviewTasks[idx].included===false ? true : false;
-  renderReviewList(window._reviewTasks);
+  AppState.reviewTasks[idx].included = AppState.reviewTasks[idx].included===false ? true : false;
+  renderReviewList(AppState.reviewTasks);
 }
-function rvUpdateText(idx,val){ if(window._reviewTasks[idx]) window._reviewTasks[idx].text=val; }
+function rvUpdateText(idx,val){ if(AppState.reviewTasks[idx]) AppState.reviewTasks[idx].text=val; }
 function rvSetBucket(idx,el){
-  if(window._reviewTasks[idx]) window._reviewTasks[idx].bucket=el.dataset.b;
-  renderReviewList(window._reviewTasks);
+  if(AppState.reviewTasks[idx]) AppState.reviewTasks[idx].bucket=el.dataset.b;
+  renderReviewList(AppState.reviewTasks);
 }
 function rvDelete(idx){
-  window._reviewTasks.splice(idx,1);
-  renderReviewList(window._reviewTasks);
+  AppState.reviewTasks.splice(idx,1);
+  renderReviewList(AppState.reviewTasks);
 }
 function closeReviewSheet(){ document.getElementById('review-sheet').classList.remove('on'); }
 document.addEventListener('click',e=>{if(e.target===document.getElementById('review-sheet'))closeReviewSheet();});
 
 function saveReviewTasks(){
-  const toSave = (window._reviewTasks||[]).filter(t=>t.included!==false && t.text.trim().length>0);
+  const toSave = (AppState.reviewTasks||[]).filter(t=>t.included!==false && t.text.trim().length>0);
   toSave.forEach(t => addTask(t.text.trim(),'',t.bucket));
   closeReviewSheet();
   showFlash(`✓ ${toSave.length} task${toSave.length!==1?'s':''} added to board`,'var(--success)');
@@ -1728,8 +1960,8 @@ function saveReviewTasks(){
 // CR2: HOME SCREEN RE-ENTRY DECISION LAYER
 // ══════════════════════════════════════════
 
-const REENTRY_KEY = 'nudgley_reentry';
-const REENTRY_DISMISSED_KEY = 'nudgley_reentry_dismissed';
+// REENTRY_KEY merged into STORAGE_KEYS
+// REENTRY_DISMISSED_KEY merged into STORAGE_KEYS
 
 function saveReentryState(){
   const state = {
@@ -1738,13 +1970,12 @@ function saveReentryState(){
     immediateTask: tasks.find(t=>t.bucket==='immediate')?.text || null,
     allTaskIds: tasks.map(t=>t.id)
   };
-  localStorage.setItem(REENTRY_KEY, JSON.stringify(state));
+  Storage.set(STORAGE_KEYS.reentry, state);
 }
 
 function loadReentryState(){
   try{
-    const raw = localStorage.getItem(REENTRY_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return Storage.get(STORAGE_KEYS.reentry);
   }catch(e){ return null; }
 }
 
@@ -1823,7 +2054,7 @@ function renderReentryStrip(){
 
   // Show once per day — dismiss persists until next calendar day
   const today=new Date().toDateString();
-  const dismissedDay=localStorage.getItem(REENTRY_DISMISSED_KEY);
+  const dismissedDay=Storage.getRaw(STORAGE_KEYS.reentryDismissed);
   if(dismissedDay===today || !tasks.length){
     strip.classList.remove('show');
     return;
@@ -1856,22 +2087,21 @@ function renderReentryStrip(){
   if(reentryEl) reentryEl.textContent = memory || '';
 
   strip.classList.add('show');
-  window._recommendedTaskId = rec.task?.id||null;
-  const rBtn=document.getElementById('reentry-btn');
-  if(rBtn)rBtn.style.display='none';
+  AppState.recommendedTaskId = rec.task?.id||null;
+  // reentry guidance now accessible via ••• menu always
 }
 
 function startRecommendedTask(){
-  if(!window._recommendedTaskId) return;
+  if(!AppState.recommendedTaskId) return;
   dismissReentry();
-  const t = tasks.find(x=>x.id===window._recommendedTaskId);
+  const t = tasks.find(x=>x.id===AppState.recommendedTaskId);
   if(!t) return;
   // Open task detail directly — show start-here if enhanced, edit otherwise
   openEditSheet(t.id);
 }
 
 function reopenReentry(){
-  localStorage.removeItem(REENTRY_DISMISSED_KEY);
+  Storage.remove(STORAGE_KEYS.reentryDismissed);
   renderReentryStrip();
   // Flash focus btn
   const btn=document.getElementById('focus-btn');
@@ -1879,7 +2109,7 @@ function reopenReentry(){
 }
 function dismissReentry(){
   // Store today's date so strip won't show again today
-  localStorage.setItem(REENTRY_DISMISSED_KEY,new Date().toDateString());
+  Storage.setRaw(STORAGE_KEYS.reentryDismissed, new Date().toDateString());
   const strip = document.getElementById('reentry-strip');
   if(strip) strip.classList.remove('show');
 }
@@ -1977,7 +2207,10 @@ function momKey(e){if(e.key==='Enter')logOffBoardWin();}
 function logOffBoardWin(){
   const inp=document.getElementById('mom-inp');
   const txt=inp?inp.value.trim():'';if(!txt)return;
-  addToDoneLog({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date()});
+  const _e={id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date().toISOString(),completedAt:new Date().toISOString()};
+  addToDoneLog(_e);
+  archiveCompleted(_e);
+  // (archiveCompleted already called above)
   hideMomOverlay();
   showFlash('✓ '+txt,'var(--success)');
   renderMomentumStrip();
@@ -1986,11 +2219,11 @@ function logOffBoardWin(){
 
 // ── Completed task history (all-time, capped at 100) ──
 function loadCompleted(){
-  try{const r=localStorage.getItem(STORAGE_KEYS.completed);return r?JSON.parse(r).map(t=>({...t,completedAt:new Date(t.completedAt),createdAt:new Date(t.createdAt)})):[];}
+  try{const r=Storage.get(STORAGE_KEYS.completed);return r?r.map(t=>({...t,completedAt:new Date(t.completedAt),createdAt:new Date(t.createdAt)})):[];}
   catch(e){return[];}
 }
 function saveCompleted(list){
-  try{localStorage.setItem(STORAGE_KEYS.completed,JSON.stringify(list.slice(0,100)));}catch(e){}
+  Storage.set(STORAGE_KEYS.completed, list.slice(0,100));
 }
 function archiveCompleted(task){
   const list=loadCompleted();
@@ -2294,22 +2527,19 @@ function makeCard(t){
   card.setAttribute('draggable','true');
   card.setAttribute('data-id',t.id);
   card.innerHTML=`
-    <button class="tc-quick-done" onclick="event.stopPropagation();completeTask('${t.id}')" title="Mark done">✓</button>
-    <div class="tc-body" onclick="toggleCardActions('${t.id}')">
+    <button class="tc-quick-done" onclick="event.stopPropagation();completeTask('${t.id}')" title="Mark done" aria-label="Mark done">✓</button>
+    <div class="tc-body">
       <div class="tc-txt">${esc(t.text)}${t.enhancement?'<span style="margin-left:6px;font-size:10px;color:var(--mood);opacity:.7;vertical-align:middle;">✦</span>':''}</div>
-      ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div><div class="tc-has-notes">📝 has notes</div>`:''}
-      <div class="tc-meta"><span class="tc-time">${fmt(t.createdAt)}</span></div>
-    </div>
-    <div class="tc-acts-row" id="acts-${t.id}">
-      <button class="tcbtn tc-done" onclick="completeTask('${t.id}')">✓ Done</button>
-      <button class="tcbtn tc-edit-btn" onclick="event.stopPropagation();openEditSheet('${t.id}')">✎ Open</button>
-      <div class="tc-move-wrap">
-        <button class="tcbtn tc-move-btn" onclick="toggleMoveMenu('${t.id}')">Move ▾</button>
-        <div class="move-menu" id="mm-${t.id}">
-          ${['immediate','today','week','planned'].filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${{'immediate':'🔴 Immediate','today':'🟡 Today','week':'🔵 This Week','planned':'📋 To Plan'}[b]||b}</div>`).join('')}
+      ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div>`:''}
+      <div class="tc-meta">
+        <span class="tc-time">${fmt(t.createdAt)}</span>
+        <div class="tc-move-wrap">
+          <button class="tcbtn tc-move-btn" onclick="event.stopPropagation();toggleMoveMenu('${t.id}')" aria-label="Move task">Move ▾</button>
+          <div class="move-menu" id="mm-${t.id}" role="menu" aria-label="Move to bucket">
+            ${['immediate','today','week','planned'].filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" role="menuitem" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${{'immediate':'🔴 Immediate','today':'🟡 Today','week':'🔵 This Week','planned':'📋 To Plan'}[b]||b}</div>`).join('')}
+          </div>
         </div>
       </div>
-      <button class="tcbtn tc-del" onclick="deleteTask('${t.id}')">✕</button>
     </div>`;
 
   card.addEventListener('dragstart',e=>{
@@ -2324,9 +2554,9 @@ function makeCard(t){
   // Desktop: double-click on card body opens task detail
   const body = card.querySelector('.tc-body');
   if(body){
-    body.addEventListener('dblclick', e=>{
-      e.stopPropagation();
-      document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
+    body.addEventListener('click', e=>{
+      if(e.target.closest('.tc-move-wrap')) return;
+      if(e.target.closest('.tc-quick-done')) return;
       openEditSheet(t.id);
     });
   }
@@ -2343,9 +2573,8 @@ function makeCard(t){
     const dy=Math.abs(e.changedTouches[0].clientY-_touchStartY);
     const dt=Date.now()-_touchStartTime;
     // Tap: short time, no significant movement, not on a button
-    if(dt<300 && dx<10 && dy<10 && !e.target.closest('button') && !e.target.closest('.move-menu')){
+    if(dt<300 && dx<10 && dy<10 && !e.target.closest('.tc-quick-done') && !e.target.closest('.tc-move-wrap') && !e.target.closest('.move-menu')){
       e.preventDefault();
-      document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
       document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
       openEditSheet(t.id);
     }
@@ -2354,13 +2583,7 @@ function makeCard(t){
   return card;
 }
 
-function toggleCardActions(id){
-  const row=document.getElementById('acts-'+id);if(!row)return;
-  const wasOn=row.classList.contains('on');
-  document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
-  document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
-  if(!wasOn)row.classList.add('on');
-}
+// toggleCardActions removed — single tap now opens edit sheet directly
 
 function toggleMoveMenu(id){
   const mm=document.getElementById('mm-'+id);if(!mm)return;
@@ -2559,7 +2782,6 @@ function updPom(){const m=String(Math.floor(pSecs/60)).padStart(2,'0'),s=String(
 // Close menus on outside click
 document.addEventListener('click',e=>{
   if(!e.target.closest('.tc-move-wrap'))document.querySelectorAll('.move-menu').forEach(m=>m.classList.remove('on'));
-  if(!e.target.closest('.tc'))document.querySelectorAll('.tc-acts-row').forEach(r=>r.classList.remove('on'));
 });
 
 // ── Coach Voice Mode ──
@@ -2676,11 +2898,11 @@ function toggleDemo(){
 
 // ── Onboarding ──
 let obCurrent = 0;
-const OB_KEY = 'nudgley_onboarding_done';
+// OB_KEY merged into STORAGE_KEYS
 
 function obInit(){
   // Hide if permanently dismissed (localStorage) OR dismissed this session (sessionStorage)
-  if(localStorage.getItem(OB_KEY)==='1' || sessionStorage.getItem(OB_KEY)==='session'){
+  if(Storage.getRaw(STORAGE_KEYS.onboarding)==='1' || sessionStorage.getItem(STORAGE_KEYS.onboarding)==='session'){
     document.getElementById('onboarding').classList.add('hidden');
   }
 }
@@ -2704,17 +2926,17 @@ function obClose(){
 }
 
 function obSkip(){
-  sessionStorage.setItem(OB_KEY,'session');
+  sessionStorage.setItem(STORAGE_KEYS.onboarding,'session');
   obClose();
 }
 function obFinish(){
   // Always suppress after completing onboarding (not just when checkbox ticked)
   // Checkbox = permanent suppress; no checkbox = suppress for this browser session
   if(document.getElementById('ob-dontshow-cb')?.checked){
-    localStorage.setItem(OB_KEY,'1');
+    Storage.setRaw(STORAGE_KEYS.onboarding,'1');
   } else {
     // Suppress for this session so refresh doesn't re-show
-    sessionStorage.setItem(OB_KEY,'session');
+    sessionStorage.setItem(STORAGE_KEYS.onboarding,'session');
   }
   obClose();
 }
@@ -2750,31 +2972,28 @@ function openEditSheet(id){
       return `<button class="es-bb${isSel?' sel':''}" data-b="${b}" style="${style}" onclick="esSelBucket(this)">${labels[b]}</button>`;
     }).join('');
   }
-  window._pendingEnhancement = null;
-  window._editShowingEnhancement = false;
+  AppState.pendingEnhancement = null;
+  AppState.editShowingEnhancement = false;
 
   const enh = t.enhancement;
   const enhDisplay = document.getElementById('es-enh-display');
-  const editFields = document.getElementById('es-edit-fields');
   const sheetTitle = document.getElementById('es-sheet-title');
+  const resultEl = document.getElementById('es-enhanced-result');
+
+  // Edit fields always visible
+  if(sheetTitle) sheetTitle.textContent = enh ? 'Task detail' : 'Edit task';
+  if(resultEl) resultEl.classList.remove('show');
 
   if(enh){
-    // Show structured enhancement view
-    window._lastEnhancement = enh;
-    window._editShowingEnhancement = true;
-    if(sheetTitle) sheetTitle.textContent = 'Task detail';
-
-    // Populate start here
+    // Populate enhancement section below edit fields
+    AppState.lastEnhancement = enh;
+    AppState.editShowingEnhancement = true;
     const startEl = document.getElementById('es-start-here-text');
     if(startEl) startEl.textContent = enh.startHere || '';
     const startRow = document.getElementById('es-start-here-row');
     if(startRow) startRow.style.display = enh.startHere ? 'flex' : 'none';
-
-    // Refined text
     const refinedEl = document.getElementById('es-enh-refined-text');
     if(refinedEl) refinedEl.textContent = enh.refined || t.text;
-
-    // Steps as checkable list
     const stepsEl = document.getElementById('es-enh-steps-list');
     const stepsSection = document.getElementById('es-enh-steps-section');
     if(stepsEl && (enh.steps||[]).length){
@@ -2787,20 +3006,11 @@ function openEditSheet(id){
     } else {
       if(stepsSection) stepsSection.style.display = 'none';
     }
-
-    // Effort badge
     const effortEl = document.getElementById('es-effort-badge');
     if(effortEl) effortEl.textContent = enh.effort ? '⏱ ' + enh.effort : '';
-
     if(enhDisplay) enhDisplay.style.display = 'block';
-    if(editFields) editFields.style.display = 'none';
   } else {
-    // No enhancement — show edit fields directly
     if(enhDisplay) enhDisplay.style.display = 'none';
-    if(editFields) editFields.style.display = 'block';
-    if(sheetTitle) sheetTitle.textContent = 'Edit task';
-    const resultEl = document.getElementById('es-enhanced-result');
-    if(resultEl) resultEl.classList.remove('show');
   }
 
   document.getElementById('edit-sheet').classList.add('on');
@@ -2832,10 +3042,10 @@ function saveEditTask(){
   const notes = document.getElementById('es-notes-inp')?.value.trim();
   if(!txt)return;
   // Attach AI enhancement as a separate layer if one was applied this session
-  const enhancement = window._pendingEnhancement
-    ? { ...window._pendingEnhancement, storedAt: new Date().toISOString() }
+  const enhancement = AppState.pendingEnhancement
+    ? { ...AppState.pendingEnhancement, storedAt: new Date().toISOString() }
     : undefined;
-  window._pendingEnhancement = null;
+  AppState.pendingEnhancement = null;
   tasks = tasks.map(t => {
     if(t.id !== editTaskId) return t;
     const updated = { ...t, text: txt, notes, bucket: editBucketVal };
@@ -2850,6 +3060,19 @@ function saveEditTask(){
 }
 
 function esAr(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+
+function editTaskDone(){
+  if(!editTaskId)return;
+  completeTask(editTaskId);
+  closeEditSheet();
+}
+function editTaskDelete(){
+  if(!editTaskId)return;
+  if(!confirm('Delete this task?'))return;
+  tasks=tasks.filter(t=>t.id!==editTaskId);
+  closeEditSheet();
+  renderBoard();
+}
 
 
 // ── Proactive Coach: reads board on open ──
@@ -2932,20 +3155,13 @@ async function coachReadBoard(){
   const state = analyseBoardState();
   const opener = buildProactiveOpener(state);
 
-  // Show chat immediately with opener
-  curMode='chat';chatMsgs=[];di['chat']=di['chat']||0;
-  const cfg=M['chat'];
-  const actions=document.getElementById('cs-actions');
-  const chatEl=document.getElementById('cs-chat');
-  if(actions)actions.style.display='none';
-  if(chatEl)chatEl.classList.add('on');
+  // Use shared launch helper — no more duplicated chat-open logic
+  _launchCoachChat('chat', opener);
+  // Override the mode label to show 🧠 Coach
   const modeEl=document.getElementById('cs-chat-mode');
   if(modeEl){modeEl.textContent='🧠 Coach';modeEl.style.color='var(--mood)';}
   const sendBtn=document.getElementById('cs-send');
   if(sendBtn)sendBtn.style.background='var(--mood)';
-  document.getElementById('cs-msgs').innerHTML='';
-  csAddMsg('coach',opener);
-  chatMsgs.push({role:'assistant',content:opener});
 
   // If triage state, follow up with triage suggestions after short delay
   const isTriageState = state.type.startsWith('triage');
@@ -3131,7 +3347,7 @@ Rules:
 }
 
 function renderEnhancedResult(data) {
-  window._lastEnhancement = data; // store for applyEnhancement
+  AppState.lastEnhancement = data; // store for applyEnhancement
   const result = document.getElementById('es-enhanced-result');
   if(!result) return;
 
@@ -3154,7 +3370,7 @@ function renderEnhancedResult(data) {
       <div class="es-er-label">Effort</div>
       <span class="es-er-effort">${esc(data.effort||'')}</span>
     </div>
-    <button class="es-er-apply" onclick="applyEnhancement('${esc(data.refined||'').replace(/'/g,"\\'")}', '${esc(data.startHere||'').replace(/'/g,"\\'")}', window._lastEnhancement?.steps, window._lastEnhancement?.effort)">Apply to task →</button>
+    <button class="es-er-apply" onclick="applyEnhancement('${esc(data.refined||'').replace(/'/g,"\\'")}', '${esc(data.startHere||'').replace(/'/g,"\\'")}', AppState.lastEnhancement?.steps, AppState.lastEnhancement?.effort)">Apply to task →</button>
   `;
   result.classList.add('show');
 }
@@ -3163,7 +3379,7 @@ function applyEnhancement(refined, startHere, steps, effort) {
   showFlash('✦ Enhancement applied','var(--mood)');
   // Store enhancement on the task — do NOT overwrite original task text
   // The enhancement is saved as a separate layer when the user hits Save
-  window._pendingEnhancement = { refined, startHere, steps: steps||[], effort: effort||'' };
+  AppState.pendingEnhancement = { refined, startHere, steps: steps||[], effort: effort||'' };
 
   // Show confirmation inside the result panel
   const result = document.getElementById('es-enhanced-result');
@@ -3228,17 +3444,7 @@ function toggleStep(idx){
   const li = document.getElementById('step-'+idx);
   if(li) li.classList.toggle('done-step');
 }
-function toggleEditMode(){
-  const enhDisplay = document.getElementById('es-enh-display');
-  const editFields = document.getElementById('es-edit-fields');
-  const sheetTitle = document.getElementById('es-sheet-title');
-  if(enhDisplay) enhDisplay.style.display='none';
-  if(editFields) editFields.style.display='block';
-  if(sheetTitle) sheetTitle.textContent='Edit task';
-  window._editShowingEnhancement = false;
-  const inp = document.getElementById('es-task-inp');
-  if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
-}
+// toggleEditMode removed — edit fields always visible
 
 
 // ── Today's momentum strip ──
@@ -3252,7 +3458,7 @@ function renderMomentumStrip(){
   if(!done.length){ strip.classList.remove('show'); return; }
 
   itemsEl.innerHTML = done.slice(0,4).map(t=>`<span class="ms-chip">${esc(t.text.slice(0,30)+(t.text.length>30?'…':''))}</span>`).join('');
-  countEl.textContent = done.length > 4 ? `+${done.length-4} more` : `${done.length} done`;
+  countEl.textContent = `${done.length} done today →`;
   strip.classList.add('show');
 }
 
@@ -3286,8 +3492,9 @@ function msQaSubmit(){
   const inp=document.getElementById('ms-qa-inp');
   const txt=inp?inp.value.trim():'';
   if(txt){
-    addToDoneLog({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date()});
-    archiveCompleted({id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date(),completedAt:new Date().toISOString()});
+    const entry={id:'offboard_'+Date.now(),text:txt,bucket:'offboard',createdAt:new Date().toISOString(),completedAt:new Date().toISOString()};
+    addToDoneLog(entry);
+    archiveCompleted(entry);
     showFlash('✓ '+txt,'var(--success)');
     renderMomentumStrip();
   }
@@ -3296,160 +3503,22 @@ function msQaSubmit(){
   if(btn) btn.textContent='＋';
 }
 
+// ── Global keyboard handler ──
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  if(document.getElementById('edit-sheet')?.classList.contains('on')){ closeEditSheet(); return; }
+  if(document.getElementById('add-sheet')?.classList.contains('on')){ closeAddSheet(); return; }
+  if(document.getElementById('review-sheet')?.classList.contains('on')){ closeReviewSheet(); return; }
+  if(document.getElementById('history-sheet')?.classList.contains('on')){ closeHistorySheet(); return; }
+  if(document.getElementById('profile-panel')?.classList.contains('on')){ closeProfilePanel(); return; }
+  if(document.getElementById('mood-sheet')?.classList.contains('on')){ closeMoodSheet(); return; }
+  if(document.getElementById('mom-overlay')?.classList.contains('on')){ hideMomOverlay(); return; }
+  if(document.getElementById('cs-chat')?.classList.contains('on') && document.getElementById('coach-sidebar')?.classList.contains('open')){ closeCoach(); return; }
+});
+
 function fmt(d){return`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;}
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
-
-<!-- ── ONBOARDING OVERLAY ── -->
-<div id="onboarding">
-  <div class="ob-sheet">
-
-    <!-- Progress dots -->
-    <div class="ob-progress">
-      <div class="ob-dot active" id="ob-dot-0"></div>
-      <div class="ob-dot" id="ob-dot-1"></div>
-      <div class="ob-dot" id="ob-dot-2"></div>
-    </div>
-
-    <!-- ── SCREEN 1: What is Nudgley ── -->
-    <div id="ob-screen-0">
-      <div class="ob-logo">nudgley</div>
-      <div class="ob-tagline">Your ADHD task board</div>
-      <div class="ob-headline">The hardest part isn't the work.<br>It's starting it.</div>
-      <p class="ob-body">
-        If you have ADHD, your brain doesn't lack ideas — it lacks structure at the moment you need it most.
-        Nudgley gives you that structure: <strong>instantly, without friction, without setup.</strong>
-      </p>
-      <p class="ob-body">
-        Speak your tasks out loud. They land on your board, sorted and ready.
-        When you're stuck or overwhelmed, your Coach reads exactly what's on your board and tells you what to do next.
-      </p>
-      <p class="ob-body">
-        This isn't a wellness app. It's a tool for <strong>high-functioning professionals with ADHD</strong>
-        who need a system that works as fast as they think.
-      </p>
-      <p class="ob-disclaimer">Nudgley is not a medical device or a replacement for professional ADHD support.</p>
-      <div class="ob-nav">
-        <button class="ob-skip" onclick="obSkip()">Skip intro</button>
-        <button class="ob-next" onclick="obNext()">Next →</button>
-      </div>
-    </div>
-
-    <!-- ── SCREEN 2: The Board ── -->
-    <div id="ob-screen-1" style="display:none">
-      <div class="ob-headline">Your board.<br>Four buckets, zero thinking.</div>
-      <p class="ob-body">Everything goes somewhere. Nothing gets lost. Your brain stops holding on to things it shouldn't have to remember.</p>
-
-      <div class="ob-cols">
-        <div class="ob-col-card" style="border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.05)">
-          <div class="ob-col-label" style="color:var(--immediate)">🔴 Immediate</div>
-          <div class="ob-col-desc">Drop everything. This needs to happen now.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.05)">
-          <div class="ob-col-label" style="color:var(--today)">🟡 Today</div>
-          <div class="ob-col-desc">Committed to today. Not tomorrow.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(74,158,255,.35);background:rgba(74,158,255,.05)">
-          <div class="ob-col-label" style="color:var(--week)">🔵 This Week</div>
-          <div class="ob-col-desc">On the radar. Not urgent yet.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(107,122,153,.35);background:rgba(107,122,153,.05)">
-          <div class="ob-col-label" style="color:var(--planned)">📋 To Plan</div>
-          <div class="ob-col-desc">Captured so your brain can let go.</div>
-        </div>
-      </div>
-
-      <div class="ob-voice-box">
-        <div class="ob-voice-icon">🎙</div>
-        <div class="ob-voice-text">
-          <div class="ob-voice-title">Speak, don't type</div>
-          <div class="ob-voice-desc">Tap <strong>Dictate Tasks</strong> at the bottom and speak naturally — "send the report today, prep slides this week." Nudgley extracts each task and puts it in the right column automatically.</div>
-        </div>
-      </div>
-
-      <div class="ob-nav">
-        <button class="ob-back" onclick="obBack()">←</button>
-        <button class="ob-skip" onclick="obSkip()">Skip</button>
-        <button class="ob-next" onclick="obNext()">Next →</button>
-      </div>
-    </div>
-
-    <!-- ── SCREEN 3: The Coach ── -->
-    <div id="ob-screen-2" style="display:none">
-      <div class="ob-headline">Your Coach.<br>Always reading your board.</div>
-      <p class="ob-coach-intro">Tap <strong>🧠 Coach</strong> in the top left whenever you need support. It already knows what's on your board — no context needed. Pick a mode:</p>
-
-      <div class="ob-modes">
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(245,166,35,.1)">🌅</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--morning)">Plan my day</div>
-            <div class="ob-mode-desc">Set one clear intention. Anchor the day before it escapes.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(255,107,107,.1)">🧱</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--stuck)">I'm stuck</div>
-            <div class="ob-mode-desc">Can't start, overthinking, restart loop. This cuts through it.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(74,158,255,.1)">🔧</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--breakdown)">Break it down</div>
-            <div class="ob-mode-desc">Turn a vague task into a first physical action.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(181,123,238,.1)">🧭</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--mood)">Mood check</div>
-            <div class="ob-mode-desc">Quick energy and headspace read before starting work.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(62,207,178,.1)">🌙</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--eod)">End of day</div>
-            <div class="ob-mode-desc">Close off properly. Acknowledge what got done.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(91,191,122,.1)">💬</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--chat)">Open chat</div>
-            <div class="ob-mode-desc">Think something through. No structure needed.</div>
-          </div>
-        </div>
-      </div>
-
-      <label class="ob-dontshow">
-        <input type="checkbox" id="ob-dontshow-cb">
-        <span>Don't show this again</span>
-      </label>
-
-      <div class="ob-nav">
-        <button class="ob-back" onclick="obBack()">←</button>
-        <button class="ob-next" onclick="obFinish()" style="background:linear-gradient(120deg,var(--success),var(--eod))">Let's go →</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- Completed history sheet -->
-<div id="history-sheet">
-  <div class="hs-inner">
-    <div class="hs-handle"></div>
-    <div class="hs-top">
-      <span class="hs-title">✓ Completed</span>
-      <button class="hs-close" onclick="closeHistorySheet()">✕</button>
-    </div>
-    <div class="hs-list" id="hs-list"></div>
-  </div>
-</div>
 
 </body>
 </html>
