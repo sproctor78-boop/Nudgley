@@ -612,6 +612,41 @@ input[type=range].ms-range{-webkit-appearance:none;appearance:none;display:block
 /* ── FOCUS VISIBLE ── */
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--mood);outline-offset:2px;}
 
+/* ── TOMORROW BUCKET ── */
+:root{ --tomorrow:#9b7fea; }
+.mob-tab.active-tomorrow{border-bottom-color:var(--tomorrow);}.mob-tab.active-tomorrow .mob-tab-name{color:var(--tomorrow);}.mob-tab.active-tomorrow .mob-tab-count{background:rgba(155,127,234,.15);color:var(--tomorrow);}
+
+/* ── TASK STATUS BADGES ── */
+.tc-status{display:inline-flex;align-items:center;gap:4px;border-radius:10px;padding:2px 8px;font-size:10px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.2px;margin-top:5px;}
+.tc-status.due-soon{background:rgba(245,166,35,.12);color:#e8961f;border:1px solid rgba(245,166,35,.2);}
+.tc-status.overdue{background:rgba(255,107,107,.1);color:#e05555;border:1px solid rgba(255,107,107,.18);}
+.tc-status.stuck{background:rgba(181,123,238,.1);color:var(--mood);border:1px solid rgba(181,123,238,.18);}
+.tc-status.needs-breakdown{background:rgba(74,158,255,.1);color:#3a8fd4;border:1px solid rgba(74,158,255,.18);}
+.tc-status.repeatedly-moved{background:rgba(107,122,153,.15);color:#8090a8;border:1px solid rgba(107,122,153,.2);}
+.tc-status.on-track{display:none;}
+
+/* ── TASK AGE CHIP ── */
+.tc-age{font-size:10px;color:var(--dim);margin-left:4px;opacity:.8;}
+.tc-age.stale{color:#8090a8;}
+.tc-age.overdue-age{color:#e05555;}
+
+/* ── CARD HIGHLIGHT STATES ── */
+.tc.is-overdue{border-left-color:#e05555!important;background:rgba(255,107,107,.04);}
+.tc.is-due-soon{border-left-color:#e8961f!important;}
+.tc.is-stale{opacity:.9;}
+.tc.is-week-urgent .tc-txt{color:var(--bright);}
+
+/* ── DATE PICKER IN SHEETS ── */
+.as-date-row{display:flex;gap:8px;margin-bottom:12px;}
+.as-date-field{flex:1;}
+.as-date-label{font-size:10px;color:var(--dim);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px;}
+.as-date-inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--bright);font-family:'Inter',system-ui,sans-serif;font-size:13px;outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;color-scheme:dark;}
+.as-date-inp:focus{border-color:var(--breakdown);}
+.as-date-inp::-webkit-calendar-picker-indicator{filter:invert(.5);cursor:pointer;}
+
+/* ── ROLLOVER TOAST ── */
+.rollover-toast{position:fixed;top:calc(var(--hdr) + var(--st) + 10px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--tomorrow);border-radius:12px;padding:10px 18px;font-size:12px;color:var(--tomorrow);z-index:200;white-space:nowrap;animation:up .2s ease;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+
 </style>
 </head>
 <body>
@@ -696,6 +731,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
       <div class="mob-tab" id="mtab-today" onclick="mobSwitchCol('today')">
         <span class="mob-tab-name">🟡 Today</span><span class="mob-tab-count" id="mcnt-today">0</span>
       </div>
+      <div class="mob-tab" id="mtab-tomorrow" onclick="mobSwitchCol('tomorrow')">
+        <span class="mob-tab-name">🟣 Tomorrow</span><span class="mob-tab-count" id="mcnt-tomorrow">0</span>
+      </div>
       <div class="mob-tab" id="mtab-week" onclick="mobSwitchCol('week')">
         <span class="mob-tab-name">🔵 Week</span><span class="mob-tab-count" id="mcnt-week">0</span>
       </div>
@@ -725,6 +763,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
         </div>
         <div class="col-cards" id="cards-today" ondragover="onDragOver(event)" ondrop="onDrop(event,'today')" ondragleave="onDragLeave(event)"></div>
         <button class="col-add" onclick="openAddSheet('today')">＋ Add task</button>
+      </div>
+      <div class="col" id="col-tomorrow" data-bucket="tomorrow">
+        <div class="col-hdr">
+          <div class="col-title-wrap">
+            <div class="col-dot" style="background:var(--tomorrow)"></div>
+            <span class="col-title">Tomorrow</span>
+          </div>
+          <span class="col-count" id="cnt-tomorrow">0</span>
+        </div>
+        <div class="col-cards" id="cards-tomorrow" ondragover="onDragOver(event)" ondrop="onDrop(event,'tomorrow')" ondragleave="onDragLeave(event)"></div>
+        <button class="col-add" onclick="openAddSheet('tomorrow')">＋ Add task</button>
       </div>
       <div class="col" id="col-week" data-bucket="week">
         <div class="col-hdr">
@@ -1066,6 +1115,16 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
         <div class="es-section-title">Notes <div class="es-section-line"></div></div>
         <textarea class="es-ta es-notes" id="es-notes-inp" placeholder="Add context, links, dependencies…" oninput="esAr(this)" aria-label="Notes"></textarea>
       </div>
+      <div class="as-date-row" style="margin-bottom:14px;">
+        <div class="as-date-field">
+          <div class="as-date-label">Due date</div>
+          <input type="date" class="as-date-inp" id="es-due-date" aria-label="Due date">
+        </div>
+        <div class="as-date-field">
+          <div class="as-date-label">Scheduled for</div>
+          <input type="date" class="as-date-inp" id="es-scheduled-date" aria-label="Scheduled date">
+        </div>
+      </div>
       <button class="es-enhance-btn" id="es-enhance-btn" onclick="enhanceTask()">✦ Enhance with AI</button>
       <div class="es-enhanced-result" id="es-enhanced-result"></div>
     </div>
@@ -1163,10 +1222,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
     <div class="as-top-row"><div class="as-title">Add a task</div><button class="as-close" onclick="closeAddSheet()" aria-label="Close">✕</button></div>
     <textarea class="as-input" id="as-inp" placeholder="What's the outcome?" rows="1" oninput="asAr(this)"></textarea>
     <textarea class="as-notes" id="as-notes" placeholder="Notes (optional)…" rows="1" oninput="asAr(this)"></textarea>
+    <div class="as-date-row">
+      <div class="as-date-field">
+        <div class="as-date-label">Due date</div>
+        <input type="date" class="as-date-inp" id="as-due-date" aria-label="Due date">
+      </div>
+      <div class="as-date-field">
+        <div class="as-date-label">Scheduled for</div>
+        <input type="date" class="as-date-inp" id="as-scheduled-date" aria-label="Scheduled date">
+      </div>
+    </div>
     <div class="as-blabel">Bucket</div>
     <div class="as-buckets">
       <button class="as-bb sel" data-b="immediate" onclick="selBucket(this)">🔴 Immediate</button>
       <button class="as-bb" data-b="today" onclick="selBucket(this)">🟡 Today</button>
+      <button class="as-bb" data-b="tomorrow" onclick="selBucket(this)">🟣 Tomorrow</button>
       <button class="as-bb" data-b="week" onclick="selBucket(this)">🔵 This Week</button>
       <button class="as-bb" data-b="planned" onclick="selBucket(this)">📋 To Plan</button>
     </div>
@@ -1176,7 +1246,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 
 <script>
 'use strict';
-const APP_VERSION = '0.8.0';
+const APP_VERSION = '0.9.0';
 
 // ── User configuration ───────────────────────────────────────────────────────
 // All personal context lives here. Change this block to use the app
@@ -1211,8 +1281,8 @@ let dictRec=null, dictTranscript='', dictActive=false;
 let voiceOn=false, vRec=null;
 const di={};
 
-const BCOLS={'immediate':'var(--immediate)','today':'var(--today)','week':'var(--week)','planned':'var(--planned)'};
-const BCOLS_RAW={'immediate':'#ff6b6b','today':'#f5a623','week':'#4a9eff','planned':'#6b7a99'};
+const BCOLS={'immediate':'var(--immediate)','today':'var(--today)','tomorrow':'var(--tomorrow)','week':'var(--week)','planned':'var(--planned)'};
+const BCOLS_RAW={'immediate':'#ff6b6b','today':'#f5a623','tomorrow':'#9b7fea','week':'#4a9eff','planned':'#6b7a99'};
 
 const M={
   stuck:{label:"I'm stuck",icon:"🧱",color:"var(--stuck)",chips:["Haven't started at all","Keep starting and stopping","Structure feels wrong","Don't know the right approach"]},
@@ -1234,7 +1304,7 @@ const DEMO={
 
 function getTaskContext(){
   if(!tasks.length)return'[Board is currently empty]';
-  const byBucket={immediate:[],today:[],week:[],planned:[]};
+  const byBucket={immediate:[],today:[],tomorrow:[],week:[],planned:[]};
   tasks.forEach(t=>byBucket[t.bucket]?.push(t.text));
   return Object.entries(byBucket).filter(([,v])=>v.length).map(([k,v])=>`${k.toUpperCase()}: ${v.join(', ')}`).join(' | ');
 }
@@ -1290,6 +1360,7 @@ function launch(d){
   document.getElementById('add-fab').classList.add('on');
   if(d)document.getElementById('demo-bar').style.display='block';
   renderBoard();
+  runDailyRollover();
 }
 // Auto-launch on page load
 
@@ -1371,6 +1442,7 @@ const STORAGE_KEYS = {
   reentryDismissed: 'nudgley_reentry_dismissed',
   doneLog:     'nudgley_done_log',
   onboarding:  'nudgley_onboarding_done',
+  rollover:    'nudgley_last_rollover',
 };
 
 // ── Profile structure ──
@@ -1429,7 +1501,7 @@ function getTodayDoneLog(){
 // ── Task persistence ──
 function saveTasks(){
   try{
-    Storage.set(STORAGE_KEYS.tasks, tasks.map(t=>({...t, createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString() : t.createdAt})));
+    Storage.set(STORAGE_KEYS.tasks, tasks);
   }catch(e){ console.warn('Could not save tasks:', e); }
 }
 
@@ -1437,7 +1509,15 @@ function loadTasks(){
   try{
     const raw = Storage.get(STORAGE_KEYS.tasks);
     if(!raw) return [];
-    return raw.map(t=>({...t, createdAt: new Date(t.createdAt)}));
+    return raw.map(t=>({
+      ...t,
+      createdAt: t.createdAt instanceof Date ? t.createdAt.toISOString().slice(0,10) : (typeof t.createdAt==='string' && t.createdAt.length>10 ? t.createdAt.slice(0,10) : t.createdAt||todayStr()),
+      dueDate: t.dueDate||null,
+      scheduledDate: t.scheduledDate||null,
+      lastMovedAt: t.lastMovedAt||t.createdAt||todayStr(),
+      moveCount: t.moveCount||0,
+      status: t.status||'on-track'
+    }));
   }catch(e){ return []; }
 }
 
@@ -1632,6 +1712,7 @@ const ACTION_VERBS = [
 const TEMPORAL_MARKERS = {
   immediate: ['immediate','urgent','asap','immediately','right now','now','critical','emergency','do now','do first'],
   today:     ['today','this morning','this afternoon','this evening','tonight','by eod','by end of day','by close'],
+  tomorrow:  ['tomorrow','next day','by tomorrow'],
   week:      ['this week','week','by friday','by thursday','by wednesday','by tuesday','by monday','later this week','next few days'],
   planned:   ['next week','next month','someday','eventually','to plan','to be planned','in future','later','plan later','backlog']
 };
@@ -1762,7 +1843,8 @@ Rules:
 - Split tasks ONLY at natural breaks: "and then", "also", "next", a clear pause shown as punctuation, or a new priority word starting a new task.
 - Detect priority from these words in the text:
   "immediate" or "urgent" → bucket: "immediate"
-  "today" or "this morning/afternoon" → bucket: "today"  
+  "today" or "this morning/afternoon" → bucket: "today"
+  "tomorrow" or "next day" → bucket: "tomorrow"
   "this week" or day names → bucket: "week"
   "later", "next week", "to plan", "someday" → bucket: "planned"
   No priority word detected → default to bucket: "today"
@@ -1772,7 +1854,7 @@ Rules:
 Dictated text: "${text}"
 
 Respond ONLY with valid JSON, no markdown:
-{"tasks":[{"text":"full task text here","bucket":"immediate|today|week|planned"}]}`;
+{"tasks":[{"text":"full task text here","bucket":"immediate|today|tomorrow|week|planned"}]}`;
 
   try {
     const apiTasks = await apiExtractTasks(text, prompt);
@@ -1868,6 +1950,7 @@ async function apiExtractTasks(text, customPrompt) {
     if(raw === 'immediate' || raw === 'now' || raw === 'urgent') return 'immediate';
     if(raw === 'today' || raw === 'this morning' || raw === 'this afternoon') return 'today';
     if(raw === 'week' || raw === 'this week' || raw === 'thisweek') return 'week';
+    if(raw === 'tomorrow' || raw === 'next day') return 'tomorrow';
     if(raw === 'planned' || raw === 'plan' || raw === 'to plan' || raw === 'later' || raw === 'someday') return 'planned';
     return 'today'; // default
   };
@@ -1915,8 +1998,8 @@ function renderReviewList(tasks) {
           onfocus="rvAutoResize(this)"
         >${esc(t.text)}</textarea>
         <div class="rv-task-bucket">
-          ${['immediate','today','week','planned'].map(b=>{
-            const labels={immediate:'🔴 Now',today:'🟡 Today',week:'🔵 Week',planned:'📋 Plan'};
+          ${['immediate','today','tomorrow','week','planned'].map(b=>{
+            const labels={immediate:'🔴 Now',today:'🟡 Today',tomorrow:'🟣 Tomorrow',week:'🔵 Week',planned:'📋 Plan'};
             const isSel = t.bucket===b;
             const raw_colors={immediate:'#ff6b6b',today:'#f5a623',week:'#4a9eff',planned:'#6b7a99'};
             const style = isSel ? `background:${raw_colors[b]};border-color:${raw_colors[b]};color:${b==='planned'?'#e6ecf6':'#0d0f14'}` : '';
@@ -1950,7 +2033,7 @@ document.addEventListener('click',e=>{if(e.target===document.getElementById('rev
 
 function saveReviewTasks(){
   const toSave = (AppState.reviewTasks||[]).filter(t=>t.included!==false && t.text.trim().length>0);
-  toSave.forEach(t => addTask(t.text.trim(),'',t.bucket));
+  toSave.forEach(t => addTask(t.text.trim(),'',t.bucket,null,null));
   closeReviewSheet();
   showFlash(`✓ ${toSave.length} task${toSave.length!==1?'s':''} added to board`,'var(--success)');
 }
@@ -2119,7 +2202,7 @@ function dismissReentry(){
 
 function buildEodOpener(){
   const done=getTodayDoneLog();
-  const remaining=tasks.filter(t=>t.bucket==='immediate'||t.bucket==='today');
+  const remaining=tasks.filter(t=>['immediate','today','tomorrow'].includes(t.bucket));
   let opener='';
   if(done.length>0){
     const doneList=done.slice(0,3).map(t=>`• ${t.text}`).join('\n');
@@ -2316,7 +2399,7 @@ function mobSwitchCol(bucket){
   mobActiveCol=bucket;
 }
 function updateMobCounts(){
-  ['immediate','today','week','planned'].forEach(b=>{
+  ['immediate','today','tomorrow','week','planned'].forEach(b=>{
     const n=tasks.filter(t=>t.bucket===b).length;
     const el=document.getElementById('mcnt-'+b);if(el)el.textContent=n;
   });
@@ -2506,8 +2589,119 @@ Anything else that happened that's not on the board? Sometimes the day gets take
 }
 
 // ── Kanban Board ──
+
+// ══════════════════════════════════════════
+// TIME-AWARE BOARD ENGINE
+// ══════════════════════════════════════════
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function tomorrowStr(){ const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().slice(0,10); }
+function daysDiff(dateStr){
+  if(!dateStr) return null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const d=new Date(dateStr+'T00:00:00');
+  return Math.round((d-today)/(1000*60*60*24));
+}
+function isLateWeek(){
+  const d=new Date().getDay(); // 0=Sun,4=Thu,5=Fri,6=Sat
+  return d>=4;
+}
+
+// Compute status for a task — returns {cls, label, stale}
+function computeTaskStatus(t){
+  const today=todayStr();
+  const createdDiff = daysDiff(t.createdAt||today); // negative = in the past
+  const daysOld = createdDiff!==null ? -createdDiff : 0;
+  const dueDiff = t.dueDate ? daysDiff(t.dueDate) : null;
+  const moveCount = t.moveCount||0;
+
+  // Overdue — has a due date in the past
+  if(dueDiff!==null && dueDiff<0){
+    return {cls:'overdue', label:'Overdue', stale:true};
+  }
+  // Due soon — due within 2 days
+  if(dueDiff!==null && dueDiff<=2 && dueDiff>=0){
+    return {cls:'due-soon', label:'Due soon', stale:false};
+  }
+  // Repeatedly moved — moved 3+ times
+  if(moveCount>=3){
+    return {cls:'repeatedly-moved', label:'This has moved a few times', stale:true};
+  }
+  // Stuck in today for 3+ days
+  if(t.bucket==='today' && daysOld>=3){
+    if(daysOld>=5){
+      return {cls:'needs-breakdown', label:'Could be worth breaking down', stale:true};
+    }
+    return {cls:'stuck', label:'Still hanging around', stale:true};
+  }
+  // Stale in planned for 7+ days
+  if(t.bucket==='planned' && daysOld>=7){
+    return {cls:'repeatedly-moved', label:'Might need attention', stale:true};
+  }
+  // Week tasks getting urgent late in week
+  if(t.bucket==='week' && isLateWeek() && daysOld>=2){
+    return {cls:'due-soon', label:'Due this week', stale:false};
+  }
+  return {cls:'on-track', label:'', stale:false};
+}
+
+// Human-readable age text for card
+function taskAgeText(t){
+  const today=todayStr();
+  const createdDiff = daysDiff(t.createdAt||today);
+  const daysOld = createdDiff!==null ? -createdDiff : 0;
+  const dueDiff = t.dueDate ? daysDiff(t.dueDate) : null;
+
+  if(dueDiff!==null && dueDiff<0) return `${Math.abs(dueDiff)}d overdue`;
+  if(dueDiff!==null && dueDiff===0) return 'Due today';
+  if(dueDiff!==null && dueDiff===1) return 'Due tomorrow';
+  if(dueDiff!==null && dueDiff<=7) return `Due in ${dueDiff}d`;
+  if(daysOld===0) return 'Added today';
+  if(daysOld===1) return '1 day old';
+  if(daysOld<7) return `${daysOld} days old`;
+  if(daysOld<14) return '1 week old';
+  return `${Math.floor(daysOld/7)}w old`;
+}
+
+// ── Daily rollover: Tomorrow → Today ──────────────────────────────────────────
+// ROLLOVER_KEY defined in STORAGE_KEYS
+
+function runDailyRollover(){
+  const today=todayStr();
+  const lastRollover=Storage.getRaw(STORAGE_KEYS.rollover);
+  if(lastRollover===today) return; // already ran today
+
+  let rolled=0;
+  tasks=tasks.map(t=>{
+    if(t.bucket==='tomorrow'){
+      // Move to today if scheduled for today or earlier, or if no scheduled date
+      const sch=t.scheduledDate;
+      if(!sch || sch<=today){
+        rolled++;
+        return {...t, bucket:'today', lastMovedAt:today, scheduledDate:sch||today};
+      }
+    }
+    return t;
+  });
+
+  Storage.setRaw(STORAGE_KEYS.rollover, today);
+  if(rolled>0){
+    saveTasks();
+    renderBoard();
+    showRolloverToast(rolled);
+  }
+}
+
+function showRolloverToast(count){
+  const t=document.createElement('div');
+  t.className='rollover-toast';
+  t.innerHTML=`🟣 ${count} task${count>1?'s':''} moved from Tomorrow → Today`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},3500);
+}
+
 function renderBoard(){
-  ['immediate','today','week','planned'].forEach(b=>{
+  ['immediate','today','tomorrow','week','planned'].forEach(b=>{
     const col=document.getElementById('cards-'+b);if(!col)return;
     col.innerHTML='';
     tasks.filter(t=>t.bucket===b).forEach(t=>col.appendChild(makeCard(t)));
@@ -2526,21 +2720,32 @@ function makeCard(t){
   card.style.borderLeftColor=BCOLS_RAW[t.bucket]||'#888';
   card.setAttribute('draggable','true');
   card.setAttribute('data-id',t.id);
+  const st=computeTaskStatus(t);
+  const ageTxt=taskAgeText(t);
+  const allBuckets=['immediate','today','tomorrow','week','planned'];
+  const bucketLabels={'immediate':'🔴 Immediate','today':'🟡 Today','tomorrow':'🟣 Tomorrow','week':'🔵 This Week','planned':'📋 To Plan'};
   card.innerHTML=`
     <button class="tc-quick-done" onclick="event.stopPropagation();completeTask('${t.id}')" title="Mark done" aria-label="Mark done">✓</button>
     <div class="tc-body">
       <div class="tc-txt">${esc(t.text)}${t.enhancement?'<span style="margin-left:6px;font-size:10px;color:var(--mood);opacity:.7;vertical-align:middle;">✦</span>':''}</div>
       ${t.notes?`<div class="tc-notes">${esc(t.notes)}</div>`:''}
+      ${st.label?`<div class="tc-status ${st.cls}">${st.label}</div>`:''}
       <div class="tc-meta">
-        <span class="tc-time">${fmt(t.createdAt)}</span>
+        <span class="tc-time">${ageTxt?`<span class="tc-age ${st.cls||''}">${ageTxt}</span>`:''}</span>
         <div class="tc-move-wrap">
           <button class="tcbtn tc-move-btn" onclick="event.stopPropagation();toggleMoveMenu('${t.id}')" aria-label="Move task">Move ▾</button>
           <div class="move-menu" id="mm-${t.id}" role="menu" aria-label="Move to bucket">
-            ${['immediate','today','week','planned'].filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" role="menuitem" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${{'immediate':'🔴 Immediate','today':'🟡 Today','week':'🔵 This Week','planned':'📋 To Plan'}[b]||b}</div>`).join('')}
+            ${allBuckets.filter(b=>b!==t.bucket).map(b=>`<div class="mm-item" role="menuitem" onclick="moveTask('${t.id}','${b}')"><span style="color:${BCOLS_RAW[b]}">●</span>${bucketLabels[b]||b}</div>`).join('')}
           </div>
         </div>
       </div>
     </div>`;
+
+  // Apply card-level highlight classes
+  if(st.cls==='overdue') card.classList.add('is-overdue');
+  else if(st.cls==='due-soon') card.classList.add('is-due-soon');
+  if(st.stale) card.classList.add('is-stale');
+  if(t.bucket==='week' && isLateWeek()) card.classList.add('is-week-urgent');
 
   card.addEventListener('dragstart',e=>{
     e.dataTransfer.setData('text/plain',t.id);
@@ -2592,7 +2797,7 @@ function toggleMoveMenu(id){
   if(!wasOn){
     mm.classList.add('on');
     // Smart positioning: place relative to button, flip if near viewport edges
-    const btn=document.querySelector(`#acts-${id} .tc-move-btn`);
+    const btn=document.querySelector(`#tc-${id} .tc-move-btn`);
     if(btn){
       const br=btn.getBoundingClientRect();
       const mh=mm.offsetHeight||160;
@@ -2628,7 +2833,8 @@ function onDrop(e,bucket){
 }
 
 function moveTask(id,bucket){
-  tasks=tasks.map(t=>t.id===id?{...t,bucket}:t);
+  const today=todayStr();
+  tasks=tasks.map(t=>t.id===id?{...t,bucket,lastMovedAt:today,moveCount:(t.moveCount||0)+1}:t);
   renderBoard();
   saveTasks();
 }
@@ -2652,16 +2858,29 @@ function deleteTask(id){
   renderBoard(); // renderBoard calls saveTasks()
 }
 
-function addTask(text,notes,bucket){
+function addTask(text, notes, bucket, dueDate, scheduledDate){
   if(!text.trim())return;
-  tasks.push({id:Date.now().toString()+Math.random().toString(36).slice(2),text:text.trim(),notes:notes||'',bucket:bucket||'today',createdAt:new Date()});
+  const today = todayStr();
+  tasks.push({
+    id: Date.now().toString()+Math.random().toString(36).slice(2),
+    text: text.trim(),
+    notes: notes||'',
+    bucket: bucket||'today',
+    createdAt: today,
+    dueDate: dueDate||null,
+    scheduledDate: scheduledDate||null,
+    lastMovedAt: today,
+    completedAt: null,
+    moveCount: 0,
+    status: 'on-track'
+  });
   renderBoard();
   saveTasks();
 }
 
 function updateCounts(){
   updateMobCounts();
-  ['immediate','today','week','planned'].forEach(b=>{
+  ['immediate','today','tomorrow','week','planned'].forEach(b=>{
     const n=tasks.filter(t=>t.bucket===b).length;
     const el=document.getElementById('cnt-'+b);if(el)el.textContent=n;
   });
@@ -2671,11 +2890,17 @@ function updateCounts(){
 function openAddSheet(bucket){
   const inp=document.getElementById('as-inp'),notes=document.getElementById('as-notes');
   if(inp)inp.value='';if(notes)notes.value='';
+  const dueFld=document.getElementById('as-due-date');
+  const schFld=document.getElementById('as-scheduled-date');
+  if(dueFld)dueFld.value='';
+  if(schFld)schFld.value='';
   document.querySelectorAll('.as-bb').forEach(b=>{b.classList.remove('sel');b.style.cssText='';});
   const target=bucket||'immediate';
   selBucketVal=target;
+  // Auto-set scheduled date for tomorrow bucket
+  if(target==='tomorrow' && schFld) schFld.value=tomorrowStr();
   const def=document.querySelector(`.as-bb[data-b="${target}"]`);
-  if(def){def.classList.add('sel');def.style.background=BCOLS_RAW[target];def.style.borderColor=BCOLS_RAW[target];def.style.color=target==='planned'?'var(--bright)':'#0d0f14';}
+  if(def){def.classList.add('sel');def.style.background=BCOLS_RAW[target];def.style.borderColor=BCOLS_RAW[target];def.style.color=(target==='planned'||target==='tomorrow')?'var(--bright)':'#0d0f14';}
   document.getElementById('add-sheet').classList.add('on');
   setTimeout(()=>{if(inp)inp.focus();},150);
 }
@@ -2688,12 +2913,17 @@ function selBucket(el){
   document.querySelectorAll('.as-bb').forEach(b=>{b.classList.remove('sel');b.style.cssText='';});
   el.classList.add('sel');selBucketVal=el.dataset.b;
   el.style.background=BCOLS_RAW[selBucketVal];el.style.borderColor=BCOLS_RAW[selBucketVal];
-  el.style.color=selBucketVal==='planned'?'var(--bright)':'#0d0f14';
+  el.style.color=(selBucketVal==='planned'||selBucketVal==='tomorrow')?'var(--bright)':'#0d0f14';
+  // Auto-fill scheduled date for tomorrow
+  const schFld=document.getElementById('as-scheduled-date');
+  if(selBucketVal==='tomorrow'&&schFld&&!schFld.value) schFld.value=tomorrowStr();
 }
 function saveTask(){
   const inp=document.getElementById('as-inp');const notes=document.getElementById('as-notes');
   const txt=inp?inp.value.trim():'';if(!txt)return;
-  addTask(txt,notes?notes.value.trim():'',selBucketVal);
+  const dueDate=document.getElementById('as-due-date')?.value||null;
+  const scheduledDate=document.getElementById('as-scheduled-date')?.value||null;
+  addTask(txt,notes?notes.value.trim():'',selBucketVal,dueDate,scheduledDate);
   closeAddSheet();
 }
 function asAr(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';}
@@ -2945,6 +3175,8 @@ function obFinish(){
 window.addEventListener('DOMContentLoaded',()=>{
   obInit();
   launch(false);
+  // Check for day change every minute (catches midnight crossover in long sessions)
+  setInterval(()=>{ runDailyRollover(); }, 60000);
 });
 
 
@@ -2964,14 +3196,20 @@ function openEditSheet(id){
   // Set bucket buttons
   const buckets = document.getElementById('es-buckets');
   if(buckets){
-    buckets.innerHTML = ['immediate','today','week','planned'].map(b=>{
-      const labels={immediate:'🔴 Immediate',today:'🟡 Today',week:'🔵 This Week',planned:'📋 To Plan'};
+    buckets.innerHTML = ['immediate','today','tomorrow','week','planned'].map(b=>{
+      const labels={immediate:'🔴 Immediate',today:'🟡 Today',tomorrow:'🟣 Tomorrow',week:'🔵 This Week',planned:'📋 To Plan'};
       const isSel = b===t.bucket;
       const color = BCOLS_RAW[b];
-      const style = isSel ? `background:${color};border-color:${color};color:${b==='planned'?'var(--bright)':'#0d0f14'}` : '';
+      const style = isSel ? `background:${color};border-color:${color};color:${(b==='planned'||b==='tomorrow')?'var(--bright)':'#0d0f14'}` : '';
       return `<button class="es-bb${isSel?' sel':''}" data-b="${b}" style="${style}" onclick="esSelBucket(this)">${labels[b]}</button>`;
     }).join('');
   }
+  // Populate date fields
+  const dueFld=document.getElementById('es-due-date');
+  const schFld=document.getElementById('es-scheduled-date');
+  if(dueFld)dueFld.value=t.dueDate||'';
+  if(schFld)schFld.value=t.scheduledDate||'';
+
   AppState.pendingEnhancement = null;
   AppState.editShowingEnhancement = false;
 
@@ -3046,9 +3284,11 @@ function saveEditTask(){
     ? { ...AppState.pendingEnhancement, storedAt: new Date().toISOString() }
     : undefined;
   AppState.pendingEnhancement = null;
+  const dueDate=document.getElementById('es-due-date')?.value||null;
+  const scheduledDate=document.getElementById('es-scheduled-date')?.value||null;
   tasks = tasks.map(t => {
     if(t.id !== editTaskId) return t;
-    const updated = { ...t, text: txt, notes, bucket: editBucketVal };
+    const updated = { ...t, text: txt, notes, bucket: editBucketVal, dueDate, scheduledDate };
     if(enhancement) updated.enhancement = enhancement;
     // Preserve existing enhancement if no new one applied
     else if(t.enhancement) updated.enhancement = t.enhancement;
