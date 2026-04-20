@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d0f14">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nudgley">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<meta name="description" content="ADHD task board and coach for high-functioning professionals">
 <title>Nudgley</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -647,6 +652,56 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 /* ── ROLLOVER TOAST ── */
 .rollover-toast{position:fixed;top:calc(var(--hdr) + var(--st) + 10px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--tomorrow);border-radius:12px;padding:10px 18px;font-size:12px;color:var(--tomorrow);z-index:200;white-space:nowrap;animation:up .2s ease;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 
+/* ── SETTINGS PANEL TABS ── */
+.pp-tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--surface2);border-radius:10px;padding:3px;}
+.pp-tab{flex:1;background:none;border:none;padding:7px 6px;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;color:var(--dim);cursor:pointer;border-radius:8px;transition:all .15s;white-space:nowrap;}
+.pp-tab.active{background:var(--surface);color:var(--bright);}
+.pp-tab-body{animation:up .15s ease;}
+.pp-inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--bright);font-family:'Inter',system-ui,sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.pp-inp:focus{border-color:var(--breakdown);}
+
+/* Profile choice buttons */
+.pp-choice-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+.pp-choice{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:'Inter',system-ui,sans-serif;font-size:12px;color:var(--dim);cursor:pointer;transition:all .15s;}
+.pp-choice.active{background:var(--breakdown);border-color:var(--breakdown);color:#fff;}
+.pp-choice:active{opacity:.8;}
+.pp-choice-desc{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5;}
+
+/* Privacy blocks */
+.pp-privacy-block{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.pp-privacy-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--bright);margin-bottom:5px;}
+.pp-privacy-body{font-size:12px;color:var(--dim);line-height:1.6;}
+.pp-backend-note{display:block;margin-top:6px;font-size:10px;color:var(--dim);background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.12);border-radius:6px;padding:3px 8px;letter-spacing:.3px;}
+
+/* ── TRIAGE MODE CHIPS ── */
+.rs-triage-modes{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.rs-tmode{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:4px 11px;font-size:11px;font-family:'Inter',system-ui,sans-serif;color:var(--dim);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.rs-tmode.active{background:rgba(74,158,255,.12);border-color:var(--breakdown);color:var(--breakdown);}
+.rs-tmode:active{opacity:.8;}
+
+/* ── CONVERSATIONAL ONBOARDING ── */
+.ob-q{margin-bottom:20px;}
+.ob-q-text{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--bright);margin-bottom:14px;line-height:1.35;}
+.ob-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.ob-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:9px 16px;font-size:13px;font-family:'Inter',system-ui,sans-serif;color:var(--text);cursor:pointer;transition:all .15s;}
+.ob-chip.sel{background:var(--breakdown);border-color:var(--breakdown);color:#fff;}
+.ob-chip:active{opacity:.85;}
+.ob-name-inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--bright);font-family:'Inter',system-ui,sans-serif;font-size:16px;outline:none;margin-bottom:4px;transition:border-color .2s;}
+.ob-name-inp:focus{border-color:var(--breakdown);}
+.ob-progress-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:22px;overflow:hidden;}
+.ob-progress-fill{height:100%;background:linear-gradient(90deg,var(--stuck),var(--morning));border-radius:2px;transition:width .3s ease;}
+.ob-conv-msg{background:var(--surface2);border:1px solid var(--border);border-radius:12px;border-top-left-radius:3px;padding:10px 13px;font-size:13px;color:var(--bright);line-height:1.6;margin-bottom:16px;}
+
+/* ── NOTIFICATION TOAST ── */
+.notif-banner{position:fixed;top:calc(var(--hdr) + var(--st) + 8px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 18px;font-size:13px;color:var(--bright);z-index:250;max-width:340px;text-align:center;animation:up .2s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);cursor:pointer;display:flex;align-items:center;gap:10px;}
+.notif-banner-ic{font-size:18px;flex-shrink:0;}
+.notif-banner-body{flex:1;text-align:left;}
+.notif-banner-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--bright);}
+.notif-banner-sub{font-size:11px;color:var(--dim);margin-top:2px;}
+
+/* ── WEEKLY REVIEW ENTRY in coach ── */
+#cs-weekly-action{border-top:1px solid var(--border);margin-top:8px;padding-top:8px;}
+
 </style>
 </head>
 <body>
@@ -716,6 +771,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
           <div class="rs-reason" id="rs-task-reason"></div>
         </div>
         <button class="rs-start-btn" onclick="startRecommendedTask()">▶ Start</button>
+      </div>
+      <div class="rs-triage-modes" id="rs-triage-modes">
+        <button class="rs-tmode" data-mode="quickwins" onclick="setTriageMode('quickwins')" title="Quick wins — fast, easy tasks">⚡ Quick wins</button>
+        <button class="rs-tmode active" data-mode="balanced" onclick="setTriageMode('balanced')" title="One meaningful + one quick win">⚖ Balanced</button>
+        <button class="rs-tmode" data-mode="frog" onclick="setTriageMode('frog')" title="Most important avoided task">🐸 Eat the frog</button>
       </div>
       <div class="rs-meta">
         <div class="rs-snapshot" id="rs-snapshot"></div>
@@ -804,153 +864,98 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 <!-- ── ONBOARDING OVERLAY ── -->
 <div id="onboarding">
   <div class="ob-sheet">
+    <div class="ob-progress-bar"><div class="ob-progress-fill" id="ob-fill" style="width:0%"></div></div>
 
-    <!-- Progress dots -->
-    <div class="ob-progress">
-      <div class="ob-dot active" id="ob-dot-0"></div>
-      <div class="ob-dot" id="ob-dot-1"></div>
-      <div class="ob-dot" id="ob-dot-2"></div>
-    </div>
-
-    <!-- ── SCREEN 1: What is Nudgley ── -->
-    <div id="ob-screen-0">
+    <!-- Step 0: Welcome -->
+    <div id="ob-step-0">
       <div class="ob-logo">nudgley</div>
       <div class="ob-tagline">Your ADHD task board</div>
-      <div class="ob-headline">The hardest part isn't the work.<br>It's starting it.</div>
-      <p class="ob-body">
-        If you have ADHD, your brain doesn't lack ideas — it lacks structure at the moment you need it most.
-        Nudgley gives you that structure: <strong>instantly, without friction, without setup.</strong>
-      </p>
-      <p class="ob-body">
-        Speak your tasks out loud. They land on your board, sorted and ready.
-        When you're stuck or overwhelmed, your Coach reads exactly what's on your board and tells you what to do next.
-      </p>
-      <p class="ob-body">
-        This isn't a wellness app. It's a tool for <strong>high-functioning professionals with ADHD</strong>
-        who need a system that works as fast as they think.
-      </p>
+      <div class="ob-headline" style="margin-top:8px;">Before we start —<br>a quick question.</div>
+      <div class="ob-q" style="margin-top:20px;">
+        <div class="ob-q-text">What's your name?</div>
+        <input class="ob-name-inp" id="ob-name-inp" placeholder="First name…" maxlength="30" autocomplete="off"
+          oninput="obNameInput(this)" onkeydown="if(event.key==='Enter')obStepNext()">
+      </div>
       <p class="ob-disclaimer">Nudgley is not a medical device or a replacement for professional ADHD support.</p>
       <div class="ob-nav">
-        <button class="ob-skip" onclick="obSkip()">Skip intro</button>
-        <button class="ob-next" onclick="obNext()">Next →</button>
+        <button class="ob-skip" onclick="obSkipAll()">Skip setup</button>
+        <button class="ob-next" id="ob-next-0" onclick="obStepNext()" disabled style="opacity:.4">Next →</button>
       </div>
     </div>
 
-    <!-- ── SCREEN 2: The Board ── -->
-    <div id="ob-screen-1" style="display:none">
-      <div class="ob-headline">Your board.<br>Four buckets, zero thinking.</div>
-      <p class="ob-body">Everything goes somewhere. Nothing gets lost. Your brain stops holding on to things it shouldn't have to remember.</p>
-
-      <div class="ob-cols">
-        <div class="ob-col-card" style="border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.05)">
-          <div class="ob-col-label" style="color:var(--immediate)">🔴 Immediate</div>
-          <div class="ob-col-desc">Drop everything. This needs to happen now.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.05)">
-          <div class="ob-col-label" style="color:var(--today)">🟡 Today</div>
-          <div class="ob-col-desc">Committed to today. Not tomorrow.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(74,158,255,.35);background:rgba(74,158,255,.05)">
-          <div class="ob-col-label" style="color:var(--week)">🔵 This Week</div>
-          <div class="ob-col-desc">On the radar. Not urgent yet.</div>
-        </div>
-        <div class="ob-col-card" style="border-color:rgba(107,122,153,.35);background:rgba(107,122,153,.05)">
-          <div class="ob-col-label" style="color:var(--planned)">📋 To Plan</div>
-          <div class="ob-col-desc">Captured so your brain can let go.</div>
+    <!-- Step 1: Friction -->
+    <div id="ob-step-1" style="display:none">
+      <div class="ob-conv-msg" id="ob-msg-1"></div>
+      <div class="ob-q">
+        <div class="ob-q-text">When you get stuck, what usually happens?</div>
+        <div class="ob-chips">
+          <button class="ob-chip" data-val="starting" onclick="obChip(this,'friction')">I can't start at all</button>
+          <button class="ob-chip" data-val="overthinking" onclick="obChip(this,'friction')">I keep overthinking it</button>
+          <button class="ob-chip" data-val="overwhelm" onclick="obChip(this,'friction')">I get overwhelmed</button>
+          <button class="ob-chip" data-val="losing-track" onclick="obChip(this,'friction')">I lose track of things</button>
         </div>
       </div>
-
-      <div class="ob-voice-box">
-        <div class="ob-voice-icon">🎙</div>
-        <div class="ob-voice-text">
-          <div class="ob-voice-title">Speak, don't type</div>
-          <div class="ob-voice-desc">Tap <strong>Dictate Tasks</strong> at the bottom and speak naturally — "send the report today, prep slides this week." Nudgley extracts each task and puts it in the right column automatically.</div>
-        </div>
-      </div>
-
       <div class="ob-nav">
-        <button class="ob-back" onclick="obBack()">←</button>
-        <button class="ob-skip" onclick="obSkip()">Skip</button>
-        <button class="ob-next" onclick="obNext()">Next →</button>
+        <button class="ob-back" onclick="obStepBack()">←</button>
+        <button class="ob-next" id="ob-next-1" onclick="obStepNext()" disabled style="opacity:.4">Next →</button>
       </div>
     </div>
 
-    <!-- ── SCREEN 3: The Coach ── -->
-    <div id="ob-screen-2" style="display:none">
-      <div class="ob-headline">Your Coach.<br>Always reading your board.</div>
-      <p class="ob-coach-intro">Tap <strong>🧠 Coach</strong> in the top left whenever you need support. It already knows what's on your board — no context needed. Pick a mode:</p>
-
-      <div class="ob-modes">
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(245,166,35,.1)">🌅</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--morning)">Plan my day</div>
-            <div class="ob-mode-desc">Set one clear intention. Anchor the day before it escapes.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(255,107,107,.1)">🧱</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--stuck)">I'm stuck</div>
-            <div class="ob-mode-desc">Can't start, overthinking, restart loop. This cuts through it.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(74,158,255,.1)">🔧</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--breakdown)">Break it down</div>
-            <div class="ob-mode-desc">Turn a vague task into a first physical action.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(181,123,238,.1)">🧭</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--mood)">Mood check</div>
-            <div class="ob-mode-desc">Quick energy and headspace read before starting work.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(62,207,178,.1)">🌙</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--eod)">End of day</div>
-            <div class="ob-mode-desc">Close off properly. Acknowledge what got done.</div>
-          </div>
-        </div>
-        <div class="ob-mode">
-          <div class="ob-mode-icon" style="background:rgba(91,191,122,.1)">💬</div>
-          <div>
-            <div class="ob-mode-title" style="color:var(--chat)">Open chat</div>
-            <div class="ob-mode-desc">Think something through. No structure needed.</div>
-          </div>
+    <!-- Step 2: Energy -->
+    <div id="ob-step-2" style="display:none">
+      <div class="ob-conv-msg" id="ob-msg-2"></div>
+      <div class="ob-q">
+        <div class="ob-q-text">When do you work best?</div>
+        <div class="ob-chips">
+          <button class="ob-chip" data-val="morning" onclick="obChip(this,'energy')">Morning — before 12</button>
+          <button class="ob-chip" data-val="afternoon" onclick="obChip(this,'energy')">Afternoon</button>
+          <button class="ob-chip" data-val="evening" onclick="obChip(this,'energy')">Evening</button>
+          <button class="ob-chip" data-val="varies" onclick="obChip(this,'energy')">It varies</button>
         </div>
       </div>
-
-      <label class="ob-dontshow">
-        <input type="checkbox" id="ob-dontshow-cb">
-        <span>Don't show this again</span>
-      </label>
-
       <div class="ob-nav">
-        <button class="ob-back" onclick="obBack()">←</button>
-        <button class="ob-next" onclick="obFinish()" style="background:linear-gradient(120deg,var(--success),var(--eod))">Let's go →</button>
+        <button class="ob-back" onclick="obStepBack()">←</button>
+        <button class="ob-next" id="ob-next-2" onclick="obStepNext()" disabled style="opacity:.4">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Tone -->
+    <div id="ob-step-3" style="display:none">
+      <div class="ob-conv-msg" id="ob-msg-3"></div>
+      <div class="ob-q">
+        <div class="ob-q-text">How do you want the coach to talk to you?</div>
+        <div class="ob-chips">
+          <button class="ob-chip" data-val="direct" onclick="obChip(this,'tone')">Direct and blunt — don't soften it</button>
+          <button class="ob-chip" data-val="balanced" onclick="obChip(this,'tone')">Somewhere in between</button>
+          <button class="ob-chip" data-val="supportive" onclick="obChip(this,'tone')">Encouraging — I need the support</button>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obStepBack()">←</button>
+        <button class="ob-next" id="ob-next-3" onclick="obStepNext()" disabled style="opacity:.4">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Notifications -->
+    <div id="ob-step-4" style="display:none">
+      <div class="ob-conv-msg" id="ob-msg-4"></div>
+      <div class="ob-q">
+        <div class="ob-q-text">Do reminders help, or do they stress you out?</div>
+        <div class="ob-chips">
+          <button class="ob-chip" data-val="high" onclick="obChip(this,'notifications')">Yes — nudge me regularly</button>
+          <button class="ob-chip" data-val="low" onclick="obChip(this,'notifications')">Keep them minimal</button>
+          <button class="ob-chip" data-val="off" onclick="obChip(this,'notifications')">No reminders please</button>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <button class="ob-back" onclick="obStepBack()">←</button>
+        <button class="ob-next" id="ob-next-4" onclick="obStepFinish()" disabled style="opacity:.4">Let's go →</button>
       </div>
     </div>
 
   </div>
 </div>
 
-
-<!-- Completed history sheet -->
-<div id="history-sheet" role="dialog" aria-modal="true" aria-label="Completed tasks">
-  <div class="hs-inner">
-    <div class="hs-handle"></div>
-    <div class="hs-top">
-      <span class="hs-title">✓ Completed</span>
-      <button class="hs-close" onclick="closeHistorySheet()" aria-label="Close">✕</button>
-    </div>
-    <div class="hs-list" id="hs-list"></div>
-  </div>
-</div>
 
 </div><!-- /app -->
 
@@ -972,6 +977,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
     <div class="cs-action" onclick="startCoachMode('mood')"><div class="ca-icon" style="background:rgba(181,123,238,.1)">🧭</div><div><div class="ca-title" style="color:var(--mood)">Mood check</div><div class="ca-desc">Energy & headspace read</div></div></div>
     <div class="cs-action" onclick="startCoachMode('eod')"><div class="ca-icon" style="background:rgba(62,207,178,.1)">🌙</div><div><div class="ca-title" style="color:var(--eod)">End of day</div><div class="ca-desc">Close off & reset</div></div></div>
     <div class="cs-action" onclick="startCoachMode('chat')"><div class="ca-icon" style="background:rgba(91,191,122,.1)">💬</div><div><div class="ca-title" style="color:var(--chat)">Open chat</div><div class="ca-desc">Think something through</div></div></div>
+    <div class="cs-action" id="cs-weekly-action" onclick="startCoachMode('weekly')" style="display:none"><div class="ca-icon" style="background:rgba(62,207,178,.1)">📊</div><div><div class="ca-title" style="color:var(--eod)">Weekly review</div><div class="ca-desc">Reflect on the week</div></div></div>
   </div>
 
   <!-- Chat state -->
@@ -1164,32 +1170,119 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 
 
 <!-- Profile / Memory panel -->
-<div id="profile-panel" role="dialog" aria-modal="true" aria-label="Profile and memory">
+<div id="profile-panel" role="dialog" aria-modal="true" aria-label="Profile and settings">
   <div class="pp-sheet">
     <div class="pp-handle"></div>
     <div class="pp-top">
-      <span class="pp-title">🧠 What Nudgley knows about you</span>
+      <span class="pp-title">Settings &amp; profile</span>
       <button class="pp-close" onclick="closeProfilePanel()" aria-label="Close">✕</button>
     </div>
-    <p class="pp-subtitle">Built automatically from your coaching sessions. Gets more accurate over time.</p>
 
-    <div class="pp-stats">
-      <div class="pp-stat"><div class="pp-stat-val" id="pp-tasks-done">0</div><div class="pp-stat-lbl">Tasks done</div></div>
-      <div class="pp-stat"><div class="pp-stat-val" id="pp-sessions">0</div><div class="pp-stat-lbl">Sessions</div></div>
-      <div class="pp-stat"><div class="pp-stat-val" id="pp-insights">0</div><div class="pp-stat-lbl">Insights</div></div>
+    <!-- Tab bar -->
+    <div class="pp-tabs">
+      <button class="pp-tab active" data-tab="memory" onclick="ppSwitchTab('memory')">🧠 Memory</button>
+      <button class="pp-tab" data-tab="profile" onclick="ppSwitchTab('profile')">👤 Profile</button>
+      <button class="pp-tab" data-tab="notifs" onclick="ppSwitchTab('notifs')">🔔 Nudges</button>
+      <button class="pp-tab" data-tab="privacy" onclick="ppSwitchTab('privacy')">🔒 Privacy</button>
     </div>
 
-    <div class="pp-section">
-      <div class="pp-section-label">Coaching insights</div>
-      <div id="pp-insights-list"><p class="pp-empty">No insights yet — start a coaching session.</p></div>
+    <!-- Memory tab -->
+    <div class="pp-tab-body" id="pp-tab-memory">
+      <div class="pp-stats">
+        <div class="pp-stat"><div class="pp-stat-val" id="pp-tasks-done">0</div><div class="pp-stat-lbl">Tasks done</div></div>
+        <div class="pp-stat"><div class="pp-stat-val" id="pp-sessions">0</div><div class="pp-stat-lbl">Sessions</div></div>
+        <div class="pp-stat"><div class="pp-stat-val" id="pp-insights">0</div><div class="pp-stat-lbl">Insights</div></div>
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-label">Coaching insights</div>
+        <div id="pp-insights-list"><p class="pp-empty">No insights yet — start a coaching session.</p></div>
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-label">Patterns noticed</div>
+        <div id="pp-patterns-list"><p class="pp-empty">Patterns emerge after a few sessions.</p></div>
+      </div>
+      <button class="pp-clear-btn" onclick="clearProfile()">Reset coaching memory</button>
+      <button class="pp-clear-btn" onclick="redoOnboarding()" style="margin-top:8px;border-color:rgba(74,158,255,.3);color:var(--breakdown);">Redo setup conversation</button>
     </div>
 
-    <div class="pp-section">
-      <div class="pp-section-label">Patterns noticed</div>
-      <div id="pp-patterns-list"><p class="pp-empty">Patterns emerge after a few sessions.</p></div>
+    <!-- Profile tab -->
+    <div class="pp-tab-body" id="pp-tab-profile" style="display:none">
+      <div class="pp-section">
+        <div class="pp-section-label">Your name</div>
+        <input class="pp-inp" id="pp-name" placeholder="Your first name" value="" oninput="ppProfileChange()">
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-label">Coaching tone</div>
+        <div class="pp-choice-row" id="pp-tone">
+          <button class="pp-choice" data-val="direct" onclick="ppChoice('tone',this)">Direct &amp; blunt</button>
+          <button class="pp-choice" data-val="balanced" onclick="ppChoice('tone',this)">Balanced</button>
+          <button class="pp-choice" data-val="supportive" onclick="ppChoice('tone',this)">Supportive</button>
+        </div>
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-label">When you get stuck</div>
+        <div class="pp-choice-row" id="pp-friction">
+          <button class="pp-choice" data-val="starting" onclick="ppChoice('friction',this)">Can't start</button>
+          <button class="pp-choice" data-val="overthinking" onclick="ppChoice('friction',this)">Overthinking</button>
+          <button class="pp-choice" data-val="overwhelm" onclick="ppChoice('friction',this)">Overwhelmed</button>
+          <button class="pp-choice" data-val="losing-track" onclick="ppChoice('friction',this)">Losing track</button>
+        </div>
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-label">Best time of day</div>
+        <div class="pp-choice-row" id="pp-energy">
+          <button class="pp-choice" data-val="morning" onclick="ppChoice('energy',this)">Morning</button>
+          <button class="pp-choice" data-val="afternoon" onclick="ppChoice('energy',this)">Afternoon</button>
+          <button class="pp-choice" data-val="evening" onclick="ppChoice('energy',this)">Evening</button>
+          <button class="pp-choice" data-val="varies" onclick="ppChoice('energy',this)">Varies</button>
+        </div>
+      </div>
+      <button class="es-save" onclick="saveProfileSettings()" style="margin-top:8px;">Save profile</button>
     </div>
 
-    <button class="pp-clear-btn" onclick="clearProfile()">Reset all memory</button>
+    <!-- Notifications tab -->
+    <div class="pp-tab-body" id="pp-tab-notifs" style="display:none">
+      <p class="pp-subtitle" style="margin-bottom:16px;">In-app nudges only for now. Background notifications require the app to be open.<span class="pp-backend-note">⬡ Background push needs server infrastructure</span></p>
+      <div class="pp-section">
+        <div class="pp-section-label">Nudge frequency</div>
+        <div class="pp-choice-row" id="pp-notif-freq">
+          <button class="pp-choice" data-val="off" onclick="ppChoice('notifFreq',this)">Off</button>
+          <button class="pp-choice active" data-val="low" onclick="ppChoice('notifFreq',this)">Low</button>
+          <button class="pp-choice" data-val="medium" onclick="ppChoice('notifFreq',this)">Medium</button>
+          <button class="pp-choice" data-val="high" onclick="ppChoice('notifFreq',this)">High</button>
+        </div>
+        <p class="pp-choice-desc" id="pp-notif-desc">End-of-day reminder only.</p>
+      </div>
+      <div class="pp-section" id="pp-notif-times">
+        <div class="pp-section-label">Morning check-in</div>
+        <input type="time" class="as-date-inp" id="pp-morning-time" value="09:00" style="width:120px;margin-bottom:12px;">
+        <div class="pp-section-label">End of day</div>
+        <input type="time" class="as-date-inp" id="pp-eod-time" value="17:30" style="width:120px;">
+      </div>
+      <button class="es-save" onclick="saveNotifSettingsUI()" style="margin-top:16px;">Save nudge settings</button>
+    </div>
+
+    <!-- Privacy tab -->
+    <div class="pp-tab-body" id="pp-tab-privacy" style="display:none">
+      <div class="pp-privacy-block">
+        <div class="pp-privacy-title">What's stored on this device</div>
+        <p class="pp-privacy-body">Your tasks, notes, coaching history, momentum log and profile are saved in your browser's local storage. Nothing is sent to any server except the messages you send to the Coach.</p>
+      </div>
+      <div class="pp-privacy-block">
+        <div class="pp-privacy-title">What's sent to AI</div>
+        <p class="pp-privacy-body">When you use the Coach, your board contents and conversation are sent to Anthropic's API to generate responses. Anthropic's standard data handling applies. Your data is not used to train models by default.</p>
+      </div>
+      <div class="pp-privacy-block">
+        <div class="pp-privacy-title">Coach memory</div>
+        <p class="pp-privacy-body">After each coaching session, Nudgley extracts a few insights about how you work. These stay on your device and are included in future coaching prompts to make them more relevant. You can clear this at any time.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+        <button class="pp-clear-btn" onclick="clearProfile()">Clear coaching memory</button>
+        <button class="pp-clear-btn" onclick="clearAllData()" style="border-color:rgba(255,107,107,.4);color:var(--stuck);">Delete all my data</button>
+      </div>
+      <p style="font-size:11px;color:var(--dim);margin-top:16px;line-height:1.6;">Nudgley is not a medical device, diagnostic tool, or replacement for professional support. AI-generated insights may be incomplete or inaccurate.</p>
+    </div>
+
   </div>
 </div>
 
@@ -1246,7 +1339,29 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 
 <script>
 'use strict';
-const APP_VERSION = '0.9.0';
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BACKEND REQUIREMENTS — tracked here as features accumulate
+// ══════════════════════════════════════════════════════════════════════════════
+// [AUTH]   Authentication (Clerk/Auth0) — needed before sync, subscriptions,
+//          per-user API keys, or scheduled server jobs.
+// [SYNC]   Cross-device sync (Supabase/Postgres) — mirrors localStorage schema.
+//          localStorage remains offline-first cache; DB syncs on login.
+// [API]    Per-user API key management — currently one shared Netlify function.
+//          At scale: rate limiting, cost attribution, per-user keys.
+// [PUSH]   Push notifications — Web Push requires server to hold subscription
+//          objects and dispatch at scheduled times via VAPID + cron jobs.
+//          Current in-app notification (Web Notifications API) works on-screen
+//          only; background delivery needs [AUTH] + server infrastructure.
+// [JOBS]   Scheduled server jobs — weekly review trigger, daily rollover guard,
+//          notification dispatch. Netlify Functions are stateless; need Vercel
+//          Cron, Railway, or similar for persistent scheduled logic.
+// [BILL]   Billing (Stripe) — free tier / paid tier split. Needs [AUTH].
+//          Free: full board + basic coach. Paid: memory, weekly review,
+//          notifications, sync. Suggested £6–8/month.
+// ══════════════════════════════════════════════════════════════════════════════
+
+const APP_VERSION = '1.0.0';
 
 // ── User configuration ───────────────────────────────────────────────────────
 // All personal context lives here. Change this block to use the app
@@ -1290,7 +1405,8 @@ const M={
   breakdown:{label:"Break it down",icon:"🔧",color:"var(--breakdown)",chips:["Document to write","Plan to structure","Decision to make"]},
   mood:{label:"Mood check",icon:"🧭",color:"var(--mood)",chips:["Flat, can't engage","Anxious and scattered","Overwhelmed","Actually okay"]},
   eod:{label:"End of day",icon:"🌙",color:"var(--eod)",chips:["Solid day","Write-off","Mixed"]},
-  chat:{label:"Open chat",icon:"💬",color:"var(--chat)",chips:["Think something through","Talk about the bid","Just checking in"]}
+  chat:{label:"Open chat",icon:"💬",color:"var(--chat)",chips:["Think something through","Talk about the bid","Just checking in"]},
+  weekly:{label:"Weekly review",icon:"📊",color:"var(--eod)",chips:["Solid week","Mixed","Tough week"]}
 };
 
 const DEMO={
@@ -1443,7 +1559,43 @@ const STORAGE_KEYS = {
   doneLog:     'nudgley_done_log',
   onboarding:  'nudgley_onboarding_done',
   rollover:    'nudgley_last_rollover',
+  userProfile: 'nudgley_user_profile',
+  triageMode:  'nudgley_triage_mode',
+  notifSettings: 'nudgley_notif_settings',
+  weeklyData:  'nudgley_weekly_data',
+  lastNotif:   'nudgley_last_notif',
 };
+
+
+// ── USER_PROFILE — written by conversational onboarding ──────────────────────
+// {name, tone, friction, energyPattern, notifications, setupComplete, setupDate}
+function loadUserProfile(){
+  return Storage.get(STORAGE_KEYS.userProfile) || null;
+}
+function saveUserProfile(p){
+  Storage.set(STORAGE_KEYS.userProfile, p);
+  // Push key fields back into USER_CONFIG so SYS() picks them up immediately
+  if(p.name) USER_CONFIG.name = p.name;
+  if(p.tone === 'direct')    USER_CONFIG.coachingStyle = 'DIRECT and FIRM. ONE clear action at a time. NAME the pattern. Under 100 words unless complex. ONE question max. Smallest possible first action.';
+  if(p.tone === 'supportive') USER_CONFIG.coachingStyle = 'Warm and encouraging. Acknowledge effort before pushing forward. ONE clear action at a time. Under 120 words. ONE question max.';
+  if(p.tone === 'balanced')  USER_CONFIG.coachingStyle = 'Balanced — firm when needed, supportive when struggling. ONE clear action at a time. Under 100 words. ONE question max.';
+  if(p.energyPattern) USER_CONFIG.adhdProfile = USER_CONFIG.adhdProfile + ` Energy pattern: ${p.energyPattern}.`;
+}
+
+// Triage mode preference
+function loadTriageMode(){ return Storage.getRaw(STORAGE_KEYS.triageMode) || 'balanced'; }
+function saveTriageMode(m){ Storage.setRaw(STORAGE_KEYS.triageMode, m); }
+
+// Notification settings
+function loadNotifSettings(){ return Storage.get(STORAGE_KEYS.notifSettings) || {frequency:'low',morning:'09:00',eod:'17:30',enabled:false}; }
+function saveNotifSettings(s){ Storage.set(STORAGE_KEYS.notifSettings, s); }
+
+// Weekly data — extends done log retention to 7 days
+function getWeekDoneLog(){
+  const raw = Storage.get(STORAGE_KEYS.doneLog) || [];
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-7); cutoff.setHours(0,0,0,0);
+  return raw.filter(t=>new Date(t.completedAt)>=cutoff);
+}
 
 // ── Profile structure ──
 // {
@@ -1488,8 +1640,9 @@ function saveDoneLog(log){
 function addToDoneLog(task){
   const log=loadDoneLog();
   // Only keep today's entries
-  const today=new Date().toDateString();
-  const filtered=log.filter(t=>new Date(t.completedAt).toDateString()===today);
+  // Keep 7 days of done log for weekly review
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-7); cutoff.setHours(0,0,0,0);
+  const filtered=log.filter(t=>new Date(t.completedAt)>=cutoff);
   filtered.unshift({...task,completedAt:new Date().toISOString()});
   saveDoneLog(filtered);
 }
@@ -1624,10 +1777,34 @@ function getProfileContext(){
 }
 
 // ── Profile panel ──
+// openProfilePanel replaced by settings version above
+
+
+// ── Settings panel ────────────────────────────────────────────────────────────
+function ppSwitchTab(tab){
+  document.querySelectorAll('.pp-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.pp-tab-body').forEach(el=>el.style.display='none');
+  const body=document.getElementById('pp-tab-'+tab);
+  if(body)body.style.display='block';
+}
+
+function ppChoice(group, el){
+  const rowId={'tone':'pp-tone','friction':'pp-friction','energy':'pp-energy','notifFreq':'pp-notif-freq'}[group];
+  const row=document.getElementById(rowId);
+  if(row)row.querySelectorAll('.pp-choice').forEach(b=>b.classList.toggle('active',b===el));
+  if(group==='notifFreq'){
+    const descs={off:'No nudges.',low:'End-of-day reminder only.',medium:'Morning check-in and end of day.',high:'Morning, midday and end of day.'};
+    const desc=document.getElementById('pp-notif-desc');
+    if(desc)desc.textContent=descs[el.dataset.val]||'';
+  }
+}
+
 function openProfilePanel(){
   const profile = loadProfile();
   const stats = loadStats();
+  const userProfile = loadUserProfile();
 
+  // Memory tab
   document.getElementById('pp-tasks-done').textContent = stats.tasksDone||0;
   document.getElementById('pp-sessions').textContent = stats.sessions||0;
   document.getElementById('pp-insights').textContent =
@@ -1645,7 +1822,6 @@ function openProfilePanel(){
         </div>`).join('');
     }
   }
-
   const patternsList = document.getElementById('pp-patterns-list');
   if(patternsList){
     if(!profile.patterns?.length){
@@ -1659,8 +1835,63 @@ function openProfilePanel(){
     }
   }
 
+  // Profile tab
+  if(userProfile){
+    const nameInp=document.getElementById('pp-name');
+    if(nameInp)nameInp.value=userProfile.name||'';
+    ['tone','friction','energy'].forEach(g=>{
+      const rowId={tone:'pp-tone',friction:'pp-friction',energy:'pp-energy'}[g];
+      const val=userProfile[{tone:'tone',friction:'friction',energy:'energyPattern'}[g]]||'';
+      const row=document.getElementById(rowId);
+      if(row)row.querySelectorAll('.pp-choice').forEach(b=>b.classList.toggle('active',b.dataset.val===val));
+    });
+  }
+
+  // Notifs tab
+  const ns=loadNotifSettings();
+  const freqRow=document.getElementById('pp-notif-freq');
+  if(freqRow)freqRow.querySelectorAll('.pp-choice').forEach(b=>b.classList.toggle('active',b.dataset.val===(ns.frequency||'low')));
+  const morn=document.getElementById('pp-morning-time');if(morn)morn.value=ns.morning||'09:00';
+  const eodT=document.getElementById('pp-eod-time');if(eodT)eodT.value=ns.eod||'17:30';
+  const desc=document.getElementById('pp-notif-desc');
+  const descs={off:'No nudges.',low:'End-of-day reminder only.',medium:'Morning check-in and end of day.',high:'Morning, midday and end of day.'};
+  if(desc)desc.textContent=descs[ns.frequency||'low']||'';
+
+  // Always start on memory tab
+  ppSwitchTab('memory');
   document.getElementById('profile-panel').classList.add('on');
 }
+
+function saveProfileSettings(){
+  const name=document.getElementById('pp-name')?.value.trim()||'';
+  const tone=document.querySelector('#pp-tone .pp-choice.active')?.dataset.val||'direct';
+  const friction=document.querySelector('#pp-friction .pp-choice.active')?.dataset.val||'overthinking';
+  const energy=document.querySelector('#pp-energy .pp-choice.active')?.dataset.val||'morning';
+  const existing=loadUserProfile()||{};
+  saveUserProfile({...existing,name:name||existing.name,tone,friction,energyPattern:energy,setupComplete:true});
+  showFlash('Profile saved','var(--success)');
+}
+
+function saveNotifSettingsUI(){
+  const freq=document.querySelector('#pp-notif-freq .pp-choice.active')?.dataset.val||'low';
+  const morning=document.getElementById('pp-morning-time')?.value||'09:00';
+  const eod=document.getElementById('pp-eod-time')?.value||'17:30';
+  saveNotifSettings({frequency:freq,morning,eod,enabled:freq!=='off'});
+  initNotifications(freq);
+  showFlash('Nudge settings saved','var(--success)');
+}
+
+function clearAllData(){
+  if(!confirm('Delete all Nudgley data? This cannot be undone.'))return;
+  Object.values(STORAGE_KEYS).forEach(k=>{ try{localStorage.removeItem(k);}catch(e){} });
+  sessionStorage.clear();
+  tasks=[];
+  closeProfilePanel();
+  renderBoard();
+  showFlash('All data cleared','var(--dim)');
+}
+
+function ppProfileChange(){} // placeholder — live update on save only
 
 function closeProfilePanel(){
   document.getElementById('profile-panel').classList.remove('on');
@@ -2143,7 +2374,7 @@ function renderReentryStrip(){
     return;
   }
 
-  const rec = getRecommendedStartTask(tasks);
+  const rec = getTriageRecommendation(tasks);
   if(!rec){ strip.classList.remove('show'); return; }
 
   const snap = getContextSnapshot(tasks);
@@ -2279,6 +2510,120 @@ function _launchCoachChat(mode, opener){
 }
 
 
+
+
+// ── Weekly review ─────────────────────────────────────────────────────────────
+function showWeeklyActionIfRelevant(){
+  const d=new Date().getDay(); // 4=Thu,5=Fri,6=Sat
+  const el=document.getElementById('cs-weekly-action');
+  if(el)el.style.display=(d>=4)?'flex':'none';
+}
+
+function buildWeeklyOpener(){
+  const done=getWeekDoneLog();
+  const todayDone=getTodayDoneLog();
+  const totalDone=done.length;
+  const profile=loadProfile();
+  const stats=loadStats();
+  const sessions=stats.sessions||0;
+
+  if(totalDone===0){
+    return `Let's take a moment to close out the week.
+
+The board shows ${tasks.length} task${tasks.length!==1?'s':''} still open. Before we look at what's left — what's one thing that actually happened this week, even if it didn't make it onto the board?`;
+  }
+  const taskWord=totalDone===1?'task':'tasks';
+  return `Right. ${totalDone} ${taskWord} completed this week${sessions>0?`, ${sessions} coaching session${sessions!==1?'s':''}`:''} — let's close it properly.
+
+First: what's one thing from this week you'd want to acknowledge — something that felt like genuine progress, even if it was messy?`;
+}
+
+// ── Triage mode selector ──────────────────────────────────────────────────────
+function setTriageMode(mode){
+  saveTriageMode(mode);
+  document.querySelectorAll('.rs-tmode').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mode===mode);
+  });
+  renderReentryStrip();
+}
+
+function initTriageMode(){
+  const saved=loadTriageMode();
+  document.querySelectorAll('.rs-tmode').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mode===saved);
+  });
+}
+
+function getTriageRecommendation(taskList){
+  const mode=loadTriageMode();
+  if(mode==='quickwins'){
+    const candidates=[...taskList].filter(t=>['immediate','today'].includes(t.bucket));
+    if(!candidates.length) return getRecommendedStartTask(taskList);
+    const quick=candidates.sort((a,b)=>a.text.length-b.text.length)[0];
+    return {task:quick, reason:'⚡ Quick win', color:'var(--morning)'};
+  }
+  if(mode==='frog'){
+    const candidates=[...taskList].filter(t=>['immediate','today'].includes(t.bucket));
+    if(!candidates.length) return getRecommendedStartTask(taskList);
+    const frog=candidates.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))[0];
+    const age=Math.round((new Date()-new Date(frog.createdAt))/(1000*60*60*24));
+    return {task:frog, reason:`🐸 Been waiting${age>1?' '+age+' days':''}`, color:'var(--stuck)'};
+  }
+  return getRecommendedStartTask(taskList);
+}
+
+// ── In-app notifications ──────────────────────────────────────────────────────
+// NOTE [PUSH]: Background delivery requires service worker + server. This shows
+// banners while the app is open only.
+let _notifTimer=null;
+
+function initNotifications(freq){
+  if(_notifTimer){clearTimeout(_notifTimer);_notifTimer=null;}
+  if(!freq||freq==='off') return;
+  const ns=loadNotifSettings();
+  const now=new Date();
+  const schedule=[];
+  if(['low','medium','high'].includes(freq)){
+    const [eh,em]=(ns.eod||'17:30').split(':').map(Number);
+    const eodToday=new Date(); eodToday.setHours(eh,em,0,0);
+    if(eodToday>now) schedule.push({time:eodToday,type:'eod'});
+  }
+  if(['medium','high'].includes(freq)){
+    const [mh,mm]=(ns.morning||'09:00').split(':').map(Number);
+    const mornToday=new Date(); mornToday.setHours(mh,mm,0,0);
+    if(mornToday>now) schedule.push({time:mornToday,type:'morning'});
+  }
+  schedule.forEach(s=>{
+    const delay=s.time-now;
+    if(delay>0) setTimeout(()=>showNotifBanner(s.type),delay);
+  });
+  if(freq==='high'){
+    _notifTimer=setInterval(()=>checkInactivityNudge(),30*60*1000);
+  }
+}
+
+function showNotifBanner(type){
+  const configs={
+    morning:{icon:'🌅',title:'Morning check-in',sub:'Your board is ready. How are you starting today?',action:()=>{openCoach();startCoachMode('morning');}},
+    eod:{icon:'🌙',title:'End of day',sub:"Before you close up — anything worth acknowledging?",action:()=>{openCoach();startCoachMode('eod');}},
+    inactivity:{icon:'🎯',title:"Still there when you're ready",sub:"Your board hasn't changed in a while.",action:()=>openCoach()}
+  };
+  const cfg=configs[type]||configs.morning;
+  const banner=document.createElement('div');
+  banner.className='notif-banner';
+  banner.innerHTML=`<span class="notif-banner-ic">${cfg.icon}</span><div class="notif-banner-body"><div class="notif-banner-title">${cfg.title}</div><div class="notif-banner-sub">${cfg.sub}</div></div>`;
+  banner.onclick=()=>{banner.remove();cfg.action();};
+  document.body.appendChild(banner);
+  setTimeout(()=>{if(banner.parentNode){banner.style.opacity='0';banner.style.transition='opacity .4s';setTimeout(()=>banner.remove(),400);}},8000);
+}
+
+function checkInactivityNudge(){
+  const lastRollover=Storage.getRaw(STORAGE_KEYS.rollover);
+  if(!lastRollover) return;
+  const lastDate=new Date(lastRollover+'T00:00:00');
+  const todayDate=new Date(); todayDate.setHours(0,0,0,0);
+  if(lastDate<todayDate) showNotifBanner('inactivity');
+}
 
 // ── Off-board win log ──
 function showMomOverlay(){
@@ -2424,6 +2769,11 @@ function startCoachMode(m){
     const state=analyseBoardState();
     const opener=buildMorningOpener(state);
     _launchCoachChat('morning',opener);
+    return;
+  }
+  if(m==='weekly'){
+    const opener=buildWeeklyOpener();
+    _launchCoachChat('weekly',opener);
     return;
   }
   curMode=m;chatMsgs=[];di[m]=di[m]||0;
@@ -3130,53 +3480,134 @@ function toggleDemo(){
 let obCurrent = 0;
 // OB_KEY merged into STORAGE_KEYS
 
-function obInit(){
-  // Hide if permanently dismissed (localStorage) OR dismissed this session (sessionStorage)
-  if(Storage.getRaw(STORAGE_KEYS.onboarding)==='1' || sessionStorage.getItem(STORAGE_KEYS.onboarding)==='session'){
-    document.getElementById('onboarding').classList.add('hidden');
+// ── Conversational onboarding ─────────────────────────────────────────────────
+let obStep = 0;
+const obAnswers = {name:'', friction:'', energy:'', tone:'', notifications:''};
+const OB_STEPS = 5;
+
+const OB_MESSAGES = {
+  1: name => `Nice to meet you, ${name}. A quick question to help the coach understand you better.`,
+  2: (name, friction) => {
+    const map = {starting:`Got it — the starting is the hard part. That's very common with ADHD.`, overthinking:`Overthinking as avoidance — the coach knows this pattern well.`, overwhelm:`Overwhelm is real. The coach will keep things small and concrete.`, 'losing-track':`Losing track is exhausting. The board will help with that.`};
+    return map[friction] || 'Understood.';
+  },
+  3: (name, energy) => {
+    const map = {morning:`Morning person — good to know. The coach will take that into account.`, afternoon:`Afternoon. The board will still push you to capture things early, even if you tackle them later.`, evening:`Evening. Noted — not everyone peaks at 9am.`, varies:`Fair enough. The coach won't assume.`};
+    return map[energy] || '';
+  },
+  4: (name, tone) => {
+    const map = {direct:`Direct it is. No softening, no padding.`, balanced:`Balanced — clear but not harsh.`, supportive:`Supportive. The coach will acknowledge effort first.`};
+    return map[tone] || '';
   }
+};
+
+function obInit(){
+  const profile = loadUserProfile();
+  // Skip if already set up
+  if(profile && profile.setupComplete){
+    document.getElementById('onboarding').classList.add('hidden');
+    return;
+  }
+  // Also skip if legacy flag set
+  if(Storage.getRaw(STORAGE_KEYS.onboarding)==='1'){
+    document.getElementById('onboarding').classList.add('hidden');
+    return;
+  }
+  obShowStep(0);
 }
 
-function obShowScreen(n){
-  [0,1,2].forEach(i=>{
-    const s=document.getElementById('ob-screen-'+i);
-    if(s)s.style.display=i===n?'block':'none';
-    const dot=document.getElementById('ob-dot-'+i);
-    if(dot)dot.className='ob-dot'+(i<n?' done':i===n?' active':'');
-  });
-  obCurrent=n;
+function obShowStep(n){
+  for(let i=0;i<OB_STEPS;i++){
+    const el=document.getElementById('ob-step-'+i);
+    if(el)el.style.display=i===n?'block':'none';
+  }
+  const fill=document.getElementById('ob-fill');
+  if(fill)fill.style.width=(n/(OB_STEPS-1)*100)+'%';
+  obStep=n;
 }
 
-function obNext(){obShowScreen(obCurrent+1);}
-function obBack(){obShowScreen(obCurrent-1);}
+function obNameInput(el){
+  const btn=document.getElementById('ob-next-0');
+  if(btn){btn.disabled=el.value.trim().length<1;btn.style.opacity=el.value.trim().length<1?'.4':'1';}
+  obAnswers.name=el.value.trim();
+}
 
-function obClose(){
-  // Skip just closes — does NOT persist. Only checkbox persists.
+function obChip(el, field){
+  const parent=el.closest('.ob-chips');
+  parent.querySelectorAll('.ob-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  obAnswers[field]=el.dataset.val;
+  const btn=document.getElementById('ob-next-'+obStep);
+  if(btn){btn.disabled=false;btn.style.opacity='1';}
+}
+
+function obStepNext(){
+  if(obStep===0){
+    obAnswers.name=document.getElementById('ob-name-inp')?.value.trim()||'';
+    if(!obAnswers.name) return;
+  }
+  const nextStep=obStep+1;
+  const msgEl=document.getElementById('ob-msg-'+nextStep);
+  if(msgEl&&OB_MESSAGES[nextStep]){
+    const msg=OB_MESSAGES[nextStep](obAnswers.name,obAnswers.friction,obAnswers.energy,obAnswers.tone);
+    if(msg)msgEl.textContent=msg;
+    else msgEl.style.display='none';
+  }
+  obShowStep(nextStep);
+}
+
+function obStepBack(){
+  if(obStep>0)obShowStep(obStep-1);
+}
+
+function obStepFinish(){
+  const profile={
+    name: obAnswers.name||USER_CONFIG.name,
+    tone: obAnswers.tone||'direct',
+    friction: obAnswers.friction||'overthinking',
+    energyPattern: obAnswers.energy||'morning',
+    notifications: obAnswers.notifications||'low',
+    setupComplete: true,
+    setupDate: todayStr()
+  };
+  saveUserProfile(profile);
+  Storage.setRaw(STORAGE_KEYS.onboarding,'1');
+  document.getElementById('onboarding').classList.add('hidden');
+  // Update coach name display
+  showFlash('Welcome, '+profile.name+' 👋','var(--success)');
+  // Schedule in-app nudges based on preference
+  initNotifications(profile.notifications);
+}
+
+function obSkipAll(){
+  sessionStorage.setItem(STORAGE_KEYS.onboarding,'session');
   document.getElementById('onboarding').classList.add('hidden');
 }
 
-function obSkip(){
-  sessionStorage.setItem(STORAGE_KEYS.onboarding,'session');
-  obClose();
-}
-function obFinish(){
-  // Always suppress after completing onboarding (not just when checkbox ticked)
-  // Checkbox = permanent suppress; no checkbox = suppress for this browser session
-  if(document.getElementById('ob-dontshow-cb')?.checked){
-    Storage.setRaw(STORAGE_KEYS.onboarding,'1');
-  } else {
-    // Suppress for this session so refresh doesn't re-show
-    sessionStorage.setItem(STORAGE_KEYS.onboarding,'session');
-  }
-  obClose();
+function redoOnboarding(){
+  Storage.remove(STORAGE_KEYS.userProfile);
+  Storage.remove(STORAGE_KEYS.onboarding);
+  sessionStorage.removeItem(STORAGE_KEYS.onboarding);
+  closeProfilePanel();
+  obAnswers.name='';obAnswers.friction='';obAnswers.energy='';obAnswers.tone='';obAnswers.notifications='';
+  obShowStep(0);
+  document.getElementById('onboarding').classList.remove('hidden');
+  const inp=document.getElementById('ob-name-inp');
+  if(inp){inp.value='';const btn=document.getElementById('ob-next-0');if(btn){btn.disabled=true;btn.style.opacity='.4';}}
 }
 
 // Run on load
 window.addEventListener('DOMContentLoaded',()=>{
   obInit();
   launch(false);
+  initTriageMode();
+  showWeeklyActionIfRelevant();
+  const _savedNs=loadNotifSettings();
+  if(_savedNs.enabled) initNotifications(_savedNs.frequency);
   // Check for day change every minute (catches midnight crossover in long sessions)
   setInterval(()=>{ runDailyRollover(); }, 60000);
+  // Refresh weekly action visibility daily
+  setInterval(()=>{ showWeeklyActionIfRelevant(); }, 60*60*1000);
 });
 
 
