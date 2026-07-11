@@ -1,0 +1,11 @@
+{
+  "name": "nudgley",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Voice-first ADHD task board with embedded coaching.",
+  "scripts": {
+    "test": "node --test",
+    "check:syntax": "node --check test/current-behaviour.test.js"
+  },
+  "devDependencies": {}
+}
