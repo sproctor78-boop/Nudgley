@@ -11,7 +11,7 @@ export interface AppState {
   settings: Settings;
   metadata: AppMetadata;
   carryOver: CarryOverItem[];
-  ui: { coachOpen: boolean; timerOpen: boolean; settingsOpen: boolean; changeSuggestionOpen: boolean; captureListening: boolean; announcement: string; activeTaskId: string | null; };
+  ui: { coachOpen: boolean; timerOpen: boolean; settingsOpen: boolean; changeSuggestionOpen: boolean; captureOpen: boolean; captureListening: boolean; announcement: string; activeTaskId: string | null; };
 }
 
 export type AppAction =
@@ -31,7 +31,7 @@ export type AppAction =
   | { type: 'saveMetadata'; metadata: AppMetadata }
   | { type: 'toggleUi'; key: keyof AppState['ui']; value?: boolean | string | null };
 
-export const emptyUi: AppState['ui'] = { coachOpen: false, timerOpen: false, settingsOpen: false, changeSuggestionOpen: false, captureListening: false, announcement: '', activeTaskId: null };
+export const emptyUi: AppState['ui'] = { coachOpen: false, timerOpen: false, settingsOpen: false, changeSuggestionOpen: false, captureOpen: false, captureListening: false, announcement: '', activeTaskId: null };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {

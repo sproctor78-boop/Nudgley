@@ -3,6 +3,7 @@ import { createTask } from '../domain/tasks/taskFactory';
 import { completeTask, deadlineState, resumeTask, startTask } from '../domain/tasks/taskRules';
 import { runRollover } from '../domain/scheduling/rollover';
 import { recommendTask } from '../domain/recommendations/recommendTasks';
+import { computeStaleTasks } from '../domain/scheduling/staleReview';
 
 const now = new Date('2026-07-11T09:00:00');
 
@@ -46,5 +47,24 @@ describe('time and status rules', () => {
   it('does not recommend completed tasks', () => {
     const task = completeTask(createTask({ title: 'Done thing', bucket: 'now' }, now), now);
     expect(recommendTask([task])).toBeNull();
+  });
+
+  it('moves a This Week task into Today once its scheduled date arrives', () => {
+    const task = createTask({ title: 'Draft section', bucket: 'week', scheduledDate: '2026-07-11' }, now);
+    const result = runRollover([task], { lastRolloverDate: '2026-07-10', lastRolloverWeek: '2026-07-06' }, now);
+    expect(result.tasks[0].bucket).toBe('today');
+  });
+
+  it('moves a This Week task into Tomorrow the day before it is scheduled', () => {
+    const task = createTask({ title: 'Draft section', bucket: 'week', scheduledDate: '2026-07-12' }, now);
+    const result = runRollover([task], { lastRolloverDate: '2026-07-10', lastRolloverWeek: '2026-07-06' }, now);
+    expect(result.tasks[0].bucket).toBe('tomorrow');
+  });
+
+  it('flags a task as stale once its due date is several days past, but not a task overdue by one day', () => {
+    const fresh = createTask({ title: 'Just missed it', bucket: 'planned', dueDate: '2026-07-10' }, now);
+    const stale = createTask({ title: 'Forgotten task', bucket: 'planned', dueDate: '2026-07-05' }, now);
+    const results = computeStaleTasks([fresh, stale], '2026-07-11');
+    expect(results.map(task => task.id)).toEqual([stale.id]);
   });
 });
