@@ -3,7 +3,7 @@
 // a 'push' event listener and register VAPID keys from the server.
 // That requires [AUTH] + [JOBS] backend infrastructure.
 
-const CACHE = 'nudgley-react-v2';
+const CACHE = 'nudgley-v1';
 const SHELL = [
   '/',
   '/index.html',
