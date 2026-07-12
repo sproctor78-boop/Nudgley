@@ -4,6 +4,8 @@ import { LocalStorageClient } from '../../infrastructure/browser-storage/localSt
 import { createBrowserRepositories } from '../../infrastructure/browser-storage/browserRepositories';
 import type { Repositories } from '../../services/persistence/repositories';
 import { runRollover } from '../../domain/scheduling/rollover';
+import { buildSeedCompleted, buildSeedTasks } from '../../domain/seed/seedData';
+import { startOfWeek, toLocalDate } from '../../domain/dates/localDate';
 
 const AppStateContext = createContext<AppState | null>(null);
 const AppDispatchContext = createContext<Dispatch<AppAction> | null>(null);
@@ -18,13 +20,24 @@ export function AppProviders({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     async function hydrate() {
-      const [tasks, completed, profile, memory, settings, metadata] = await Promise.all([repositories.tasks.list(), repositories.completed.list(), repositories.profile.get(), repositories.memory.get(), repositories.settings.get(), repositories.metadata.get()]);
-      const rollover = runRollover(tasks, metadata);
+      const [storedTasks, storedCompleted, profile, memory, settings, metadata] = await Promise.all([repositories.tasks.list(), repositories.completed.list(), repositories.profile.get(), repositories.memory.get(), repositories.settings.get(), repositories.metadata.get()]);
+      const isFreshInstall = !profile.setupComplete && !storedTasks.length && !storedCompleted.length;
+      const nextProfile = isFreshInstall ? { ...profile, setupComplete: true } : profile;
+
+      // Freshly seeded tasks were just created "today" — they are not leftover work from a
+      // previous day, so they must not be run through rollover's carry-over detection.
+      const today = toLocalDate();
+      const { tasks, completed, carryOver, rolloverMetadata } = isFreshInstall
+        ? { tasks: buildSeedTasks(), completed: buildSeedCompleted(), carryOver: [], rolloverMetadata: { lastRolloverDate: today, lastRolloverWeek: startOfWeek(today) } }
+        : (() => { const rollover = runRollover(storedTasks, metadata); return { tasks: rollover.tasks, completed: storedCompleted, carryOver: rollover.carryOver, rolloverMetadata: rollover.metadata }; })();
+
       if (!cancelled) {
-        dispatch({ type: 'hydrate', state: { tasks: rollover.tasks, completed, profile, memory, settings, metadata: { ...metadata, ...rollover.metadata }, carryOver: rollover.carryOver } });
+        dispatch({ type: 'hydrate', state: { tasks, completed, profile: nextProfile, memory, settings, metadata: { ...metadata, ...rolloverMetadata }, carryOver } });
       }
-      await repositories.tasks.save(rollover.tasks);
-      await repositories.metadata.save({ ...metadata, ...rollover.metadata });
+      await repositories.tasks.save(tasks);
+      await repositories.completed.save(completed);
+      await repositories.profile.save(nextProfile);
+      await repositories.metadata.save({ ...metadata, ...rolloverMetadata });
     }
     hydrate().catch(console.error);
     return () => { cancelled = true; };

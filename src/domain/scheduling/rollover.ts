@@ -1,4 +1,4 @@
-import { compareLocalDates, startOfWeek, toLocalDate } from '../dates/localDate';
+import { addDays, compareLocalDates, startOfWeek, toLocalDate } from '../dates/localDate';
 import type { Task } from '../tasks/taskTypes';
 import { isTaskDueForTomorrowRollover } from '../tasks/taskRules';
 
@@ -8,6 +8,7 @@ export interface RolloverMetadata { lastRolloverDate?: string | null; lastRollov
 
 export function runRollover(tasks: Task[], metadata: RolloverMetadata, now = new Date()): RolloverResult {
   const today = toLocalDate(now);
+  const tomorrow = addDays(today, 1);
   const thisWeek = startOfWeek(today);
   const shouldRunDay = metadata.lastRolloverDate !== today;
   const shouldRunWeek = metadata.lastRolloverWeek !== thisWeek;
@@ -18,6 +19,14 @@ export function runRollover(tasks: Task[], metadata: RolloverMetadata, now = new
     if (shouldRunDay && isTaskDueForTomorrowRollover(task, today)) {
       movedTomorrowCount += 1;
       return { ...task, bucket: 'today' as const, scheduledDate: today, lastMovedAt: today, updatedAt: now.toISOString() };
+    }
+    if (shouldRunDay && task.bucket === 'week' && task.status !== 'completed' && task.scheduledDate) {
+      if (compareLocalDates(task.scheduledDate, today) <= 0) {
+        return { ...task, bucket: 'today' as const, lastMovedAt: today, updatedAt: now.toISOString() };
+      }
+      if (compareLocalDates(task.scheduledDate, tomorrow) === 0) {
+        return { ...task, bucket: 'tomorrow' as const, lastMovedAt: today, updatedAt: now.toISOString() };
+      }
     }
     if (shouldRunDay && task.bucket === 'today' && task.status !== 'completed') {
       carryOver.push({ taskId: task.id, reason: 'unfinished-today' });

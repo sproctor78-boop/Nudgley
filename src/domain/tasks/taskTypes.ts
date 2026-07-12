@@ -30,6 +30,8 @@ export const TaskSchema = z.object({
   completedAt: z.string().nullable().optional(),
   moveCount: z.number().int().nonnegative(),
   carryOverCount: z.number().int().nonnegative(),
+  estimateMinutes: z.number().int().positive().nullable().optional(),
+  effort: z.enum(['low', 'medium', 'high']).nullable().optional(),
   enhancement: TaskEnhancementSchema.optional(),
   schemaVersion: z.number().int().positive()
 });

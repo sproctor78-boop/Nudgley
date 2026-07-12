@@ -7,6 +7,8 @@ export interface CreateTaskInput {
   bucket?: TaskBucket;
   dueDate?: string | null;
   scheduledDate?: string | null;
+  estimateMinutes?: number | null;
+  effort?: 'low' | 'medium' | 'high' | null;
   enhancement?: TaskEnhancement;
 }
 
@@ -28,6 +30,8 @@ export function createTask(input: CreateTaskInput, now = new Date()): Task {
     completedAt: null,
     moveCount: 0,
     carryOverCount: 0,
+    estimateMinutes: input.estimateMinutes ?? null,
+    effort: input.effort ?? null,
     enhancement: input.enhancement,
     schemaVersion: 1
   };

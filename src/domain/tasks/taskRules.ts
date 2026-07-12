@@ -46,3 +46,18 @@ export function completeTask(task: Task, now = new Date()): Task {
 export function isTaskDueForTomorrowRollover(task: Task, today = toLocalDate()): boolean {
   return task.bucket === 'tomorrow' && (!task.scheduledDate || compareLocalDates(task.scheduledDate, today) <= 0);
 }
+
+const effortLabels: Record<'low' | 'medium' | 'high', string> = { low: 'Low effort', medium: 'Medium effort', high: 'High effort' };
+
+export function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes} minutes`;
+  const hours = minutes / 60;
+  return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} hour${hours === 1 ? '' : 's'}`;
+}
+
+export function taskMeta(task: Task): string | null {
+  const parts: string[] = [];
+  if (task.estimateMinutes) parts.push(formatDuration(task.estimateMinutes));
+  if (task.effort) parts.push(effortLabels[task.effort]);
+  return parts.length ? parts.join(' · ') : null;
+}
