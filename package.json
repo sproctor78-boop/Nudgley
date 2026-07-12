@@ -1,25 +1,11 @@
 {
   "name": "nudgley",
-  "version": "2.0.0-migration.1",
+  "version": "1.0.0",
   "private": true,
   "description": "Voice-first ADHD task board with embedded coaching.",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "check:syntax": "tsc -b --pretty false"
+    "test": "node --test",
+    "check:syntax": "node --check test/current-behaviour.test.js"
   },
-  "dependencies": {
-    "vite": "latest",
-    "typescript": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "zod": "latest"
-  },
-  "devDependencies": {
-    "vitest": "latest"
-  }
+  "devDependencies": {}
 }
