@@ -2,22 +2,45 @@
 
 Voice-first ADHD task board with embedded coaching.
 
+## Current app architecture
+
+The production app is now a React + TypeScript + Vite application under `src/`.
+The original single-file prototype is retained at `legacy/index.html` as a rollback reference only.
+
 ## Deploy to Netlify
 
-1. Push this folder to a GitHub repo
-2. Connect the repo to Netlify (netlify.com → New site from Git)
-3. In Netlify → Site settings → Environment variables, add:
-   - Key: `ANTHROPIC_API_KEY`
-   - Value: your Anthropic API key (from console.anthropic.com)
-4. Deploy
+Netlify must build the Vite app and publish the generated `dist` directory.
 
-That's it. Share the Netlify URL with anyone — no API key needed on their end.
+Expected settings are in `netlify.toml`:
+
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+```
+
+Set `ANTHROPIC_API_KEY` in Netlify environment variables for live AI operations.
 
 ## Local development
 
-Open `index.html` directly in Chrome — it will run in demo mode (no real AI responses).
-To test with live AI locally, you'll need the Netlify CLI:
+```bash
+npm install
+npm run dev
 ```
-npm install -g netlify-cli
-ANTHROPIC_API_KEY=your-key netlify dev
+
+Build and checks:
+
+```bash
+npm run build
+npm test
 ```
+
+## If deployed changes are not visible
+
+1. Confirm Netlify ran `npm run build` successfully.
+2. Confirm Netlify is publishing `dist`, not the repository root.
+3. Hard refresh the site or open it in a private window to bypass the previous PWA service-worker cache.
+4. If the page says "Nudgley is loading…" permanently, the Vite bundle was not built/deployed.
+
+The service-worker cache name was changed for the React migration so browsers are prompted to replace the old prototype shell.
