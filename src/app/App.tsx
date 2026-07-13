@@ -1,6 +1,7 @@
 import { AppHeader } from '../components/layout/AppHeader';
 import { LiveRegion } from '../components/feedback/LiveRegion';
 import { Board } from '../features/board/Board';
+import { EditTaskModal } from '../features/board/EditTaskModal';
 import { TaskCapture } from '../features/capture/TaskCapture';
 import { CoachPanel } from '../features/coaching/CoachPanel';
 import { CarryOverReview } from '../features/carry-over/CarryOverReview';
@@ -18,6 +19,7 @@ export function App() {
       <Board />
     </div>
     <TaskCapture />
+    <EditTaskModal />
     <CoachPanel />
     <FocusTimer />
     <CarryOverReview />

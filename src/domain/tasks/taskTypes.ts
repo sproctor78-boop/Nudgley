@@ -1,9 +1,14 @@
 import { z } from 'zod';
+import type { ColumnDef } from '../columns/columnTypes';
 
 export const taskBuckets = ['now', 'today', 'tomorrow', 'week', 'planned'] as const;
 export type TaskBucket = (typeof taskBuckets)[number];
 export type LegacyTaskBucket = TaskBucket | 'immediate';
 export type TaskStatus = 'not-started' | 'in-progress' | 'completed';
+
+export function isSystemBucket(bucket: string): bucket is TaskBucket {
+  return (taskBuckets as readonly string[]).includes(bucket);
+}
 
 export const TaskEnhancementSchema = z.object({
   refined: z.string().optional(),
@@ -18,7 +23,7 @@ export const TaskSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
   notes: z.string().optional(),
-  bucket: z.enum(taskBuckets),
+  bucket: z.string().min(1),
   status: z.enum(['not-started', 'in-progress', 'completed']),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -61,4 +66,9 @@ export const bucketStorageAliases: Record<string, TaskBucket> = {
 
 export function normaliseBucket(bucket: unknown): TaskBucket {
   return bucketStorageAliases[String(bucket ?? '').toLowerCase()] ?? 'today';
+}
+
+export function resolveColumnLabel(bucket: string, customColumns: ColumnDef[] = []): string {
+  if (isSystemBucket(bucket)) return bucketLabels[bucket];
+  return customColumns.find(column => column.id === bucket)?.label ?? bucket;
 }

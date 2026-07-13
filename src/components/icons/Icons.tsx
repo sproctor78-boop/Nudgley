@@ -61,3 +61,40 @@ export function AlertIcon(props: IconProps) {
     <circle cx="12" cy="16.7" r=".6" fill="currentColor" stroke="none" />
   </svg>;
 }
+
+export function SunIcon(props: IconProps) {
+  return <svg {...base(props)}>
+    <circle cx="12" cy="12" r="4.5" />
+    <path d="M12 2.5v2.5M12 19v2.5M4.5 12H2M22 12h-2.5M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8" />
+  </svg>;
+}
+
+export function WrenchIcon(props: IconProps) {
+  return <svg {...base(props)}>
+    <path d="M14.7 6.3a4 4 0 0 1-5.1 5.1L4 17l3 3 5.6-5.6a4 4 0 0 1 5.1-5.1l-2.6 2.6-2-2 2.6-2.6z" />
+  </svg>;
+}
+
+export function BlockedIcon(props: IconProps) {
+  return <svg {...base(props)}>
+    <rect x="4" y="5" width="16" height="14" rx="2" />
+    <path d="M4 12h16M12 5v14" />
+  </svg>;
+}
+
+export function CompassIcon(props: IconProps) {
+  return <svg {...base(props)}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M14.8 9.2l-2 4.6-4.6 2 2-4.6z" />
+  </svg>;
+}
+
+export function MoonIcon(props: IconProps) {
+  return <svg {...base(props)}><path d="M19 13.5A8 8 0 1 1 10.5 5a6.3 6.3 0 0 0 8.5 8.5z" /></svg>;
+}
+
+export function ChatIcon(props: IconProps) {
+  return <svg {...base(props)}>
+    <path d="M4 12a8 5.5 0 1 1 3.2 4.4L4 18l1.1-3.2A5.4 5.4 0 0 1 4 12z" />
+  </svg>;
+}

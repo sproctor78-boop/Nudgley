@@ -1,7 +1,8 @@
 import { completeTask as completeTaskRule, moveTask as moveTaskRule, resumeTask, startTask as startTaskRule } from '../../domain/tasks/taskRules';
-import type { CompletedTask, Task, TaskBucket } from '../../domain/tasks/taskTypes';
+import type { CompletedTask, Task } from '../../domain/tasks/taskTypes';
 import type { AppMetadata, CoachingMemory, Settings, UserProfile } from '../../services/persistence/repositories';
 import type { CarryOverItem } from '../../domain/scheduling/rollover';
+import type { ColumnDef } from '../../domain/columns/columnTypes';
 
 export interface AppState {
   tasks: Task[];
@@ -11,14 +12,14 @@ export interface AppState {
   settings: Settings;
   metadata: AppMetadata;
   carryOver: CarryOverItem[];
-  ui: { coachOpen: boolean; timerOpen: boolean; settingsOpen: boolean; changeSuggestionOpen: boolean; captureOpen: boolean; captureListening: boolean; announcement: string; activeTaskId: string | null; };
+  ui: { coachOpen: boolean; timerOpen: boolean; settingsOpen: boolean; changeSuggestionOpen: boolean; captureOpen: boolean; captureListening: boolean; announcement: string; activeTaskId: string | null; editingTaskId: string | null; };
 }
 
 export type AppAction =
   | { type: 'hydrate'; state: Omit<AppState, 'ui'> & { ui?: Partial<AppState['ui']> } }
   | { type: 'addTask'; task: Task }
   | { type: 'updateTask'; task: Task }
-  | { type: 'moveTask'; taskId: string; bucket: TaskBucket }
+  | { type: 'moveTask'; taskId: string; bucket: string }
   | { type: 'startTask'; taskId: string }
   | { type: 'resumeTask'; taskId: string }
   | { type: 'completeTask'; taskId: string }
@@ -29,9 +30,11 @@ export type AppAction =
   | { type: 'saveSettings'; settings: Settings }
   | { type: 'saveProfile'; profile: UserProfile }
   | { type: 'saveMetadata'; metadata: AppMetadata }
+  | { type: 'addColumn'; column: ColumnDef }
+  | { type: 'removeColumn'; columnId: string }
   | { type: 'toggleUi'; key: keyof AppState['ui']; value?: boolean | string | null };
 
-export const emptyUi: AppState['ui'] = { coachOpen: false, timerOpen: false, settingsOpen: false, changeSuggestionOpen: false, captureOpen: false, captureListening: false, announcement: '', activeTaskId: null };
+export const emptyUi: AppState['ui'] = { coachOpen: false, timerOpen: false, settingsOpen: false, changeSuggestionOpen: false, captureOpen: false, captureListening: false, announcement: '', activeTaskId: null, editingTaskId: null };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -64,6 +67,13 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'saveSettings': return { ...state, settings: action.settings };
     case 'saveProfile': return { ...state, profile: action.profile };
     case 'saveMetadata': return { ...state, metadata: action.metadata };
+    case 'addColumn': return { ...state, metadata: { ...state.metadata, customColumns: [...(state.metadata.customColumns ?? []), action.column] }, ui: { ...state.ui, announcement: `Added column ${action.column.label}` } };
+    case 'removeColumn': return {
+      ...state,
+      tasks: state.tasks.map(task => task.bucket === action.columnId ? moveTaskRule(task, 'planned') : task),
+      metadata: { ...state.metadata, customColumns: (state.metadata.customColumns ?? []).filter(column => column.id !== action.columnId) },
+      ui: { ...state.ui, announcement: 'Column removed' }
+    };
     case 'toggleUi': return { ...state, ui: { ...state.ui, [action.key]: action.value ?? !state.ui[action.key] } } as AppState;
     default: return state;
   }
