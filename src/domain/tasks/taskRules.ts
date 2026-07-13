@@ -1,5 +1,5 @@
 import { compareLocalDates, daysBetween, toLocalDate } from '../dates/localDate';
-import type { Task, TaskBucket } from './taskTypes';
+import type { Task } from './taskTypes';
 
 export type DeadlineState = 'overdue' | 'due-today' | 'due-soon' | 'none';
 export interface PresentationStatus { label: string; tone: 'danger' | 'warning' | 'neutral' | 'success'; reason: DeadlineState | 'needs-decision' | 'resume' | 'breakdown' | 'waiting' | 'none'; }
@@ -24,7 +24,7 @@ export function presentationStatus(task: Task, today = toLocalDate()): Presentat
   return null;
 }
 
-export function moveTask(task: Task, bucket: TaskBucket, now = new Date()): Task {
+export function moveTask(task: Task, bucket: string, now = new Date()): Task {
   return { ...task, bucket, moveCount: task.moveCount + 1, lastMovedAt: toLocalDate(now), updatedAt: now.toISOString() };
 }
 
